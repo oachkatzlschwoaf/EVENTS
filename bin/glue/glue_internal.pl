@@ -41,6 +41,10 @@ sub match {
     }
 }
 
+sub getConfig {
+    return YAML::LoadFile("../app/config/config.yml");
+}
+
 sub getParameters{
     return YAML::LoadFile("../app/config/parameters.yml");
 }
@@ -242,8 +246,11 @@ sub glueInternalEvents {
 print "\n\n\nGLUE INTERNAL";
 print "\n**********";
 
-my $config = getParameters();
-my $params = $config->{'parameters'}; 
+my $params = getParameters();
+my $params = $params->{'parameters'}; 
+
+my $config = getConfig();
+$config = $config->{'parameters'}; 
 
 my $d = connectDb( $params );
 $d->do("SET NAMES 'utf8'");
@@ -256,5 +263,5 @@ print "\nGet ".scalar(keys %$provider_events)." provider events to glue...";
 my $internal_events = getInternalEvents($d);
 print "\nGet ".scalar(keys %$internal_events)." intenrnal events to glue...";
 
-glueInternalEvents($d, $params, $provider_events, $internal_events);
+glueInternalEvents($d, $config, $provider_events, $internal_events);
 
