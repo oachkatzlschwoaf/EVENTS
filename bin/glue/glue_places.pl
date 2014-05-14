@@ -18,23 +18,12 @@ use DBI;
 use Text::Levenshtein::XS qw/distance/;
 
 binmode STDOUT, ':utf8';
-my $API_URL = "http://localhost/events/app_dev.php";
 
 sub trim($) {
     my $string = shift;
     $string =~ s/^\s+//;
     $string =~ s/\s+$//;
     return $string;
-}
-
-sub match {
-    my ($p_id, $i_id) = @_;
-
-    my $url = $API_URL."/admin/events/provider/".$p_id."/match?internal_id=".$i_id."&format=json&status=0";
-    my $result = JSON::decode_json(get($url)); 
-    if ($result->{'done'} eq 'matched') {
-        print " -> matched! ".$result->{'match_id'};
-    }
 }
 
 sub getParameters{
@@ -192,44 +181,6 @@ sub gluePlaces {
     }
 
     return $events;
-}
-
-sub glueInternalEvents {
-    my ($d, $events, $internal_events) = @_;
-
-    foreach my $e_id (keys %$events) {
-        my $e = $events->{$e_id};
-
-        my $ievents = $internal_events->{ $e->{'date'} }{ $e->{'place'} };
-
-        my $matched = 0;
-
-        if ($ievents && scalar(keys %$ievents) > 0) {
-            foreach my $ie_id (keys $ievents) {
-                my $ie = $ievents->{$ie_id};
-
-                if ($ie->{'start'} eq $e->{'start'}) {
-                    # We found a leader!
-                    $matched = $ie->{'id'};
-                    last;
-                } else {
-                    # TODO: Check names
-                }
-            }
-        }
-
-        if ($matched != 0) {
-            # Create a link InternalProvider
-            print "\n$e_id > $matched ";
-            match($e_id, $matched);
-        } else {
-            # Mark ProviderEvent as 'not found event status'
-            print "\n$e_id > not found internal event";
-            my $sql = "update `ProviderEvent` set status = 4 where id = '$e_id'";
-            my $sth = $d->prepare($sql);
-            $sth->execute(); 
-        }
-    }
 }
 
 # MAIN

@@ -107,3 +107,5 @@ parameters:
 
     lastfm_api_url: "http://ws.audioscrobbler.com/2.0/"
     lastfm_api_key: "04b9f94c1ea3169274aa362d880aca9f"
+
+    api_url: "http://localhost/events/app_dev.php"

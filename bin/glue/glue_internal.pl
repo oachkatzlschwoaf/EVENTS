@@ -18,7 +18,6 @@ use DBI;
 use Text::Levenshtein::XS qw/distance/;
 
 binmode STDOUT, ':utf8';
-my $API_URL = "http://localhost/events/app_dev.php";
 
 sub trim($) {
     my $string = shift;
@@ -28,9 +27,11 @@ sub trim($) {
 }
 
 sub match {
-    my ($p_id, $i_id) = @_;
+    my ($params, $p_id, $i_id) = @_;
 
-    my $url = $API_URL."/api/events/provider/".$p_id."/match?internal_id=".$i_id."&format=json&status=0";
+    my $api_url = $params->{'api_url'};
+
+    my $url = $api_url."/api/events/provider/".$p_id."/match?internal_id=".$i_id."&format=json&status=0";
 
     my $out = get($url);
     my $result = JSON::decode_json($out); 
@@ -199,7 +200,7 @@ sub gluePlaces {
 }
 
 sub glueInternalEvents {
-    my ($d, $events, $internal_events) = @_;
+    my ($d, $params, $events, $internal_events) = @_;
 
     foreach my $e_id (keys %$events) {
         my $e = $events->{$e_id};
@@ -226,7 +227,7 @@ sub glueInternalEvents {
         if ($matched != 0) {
             # Create a link InternalProvider
             print "\n$e_id > $matched ";
-            match($e_id, $matched);
+            match($params, $e_id, $matched);
         } else {
             # Mark ProviderEvent as 'not found event status'
             print "\n$e_id > not found internal event";
@@ -255,5 +256,5 @@ print "\nGet ".scalar(keys %$provider_events)." provider events to glue...";
 my $internal_events = getInternalEvents($d);
 print "\nGet ".scalar(keys %$internal_events)." intenrnal events to glue...";
 
-glueInternalEvents($d, $provider_events, $internal_events);
+glueInternalEvents($d, $params, $provider_events, $internal_events);
 
