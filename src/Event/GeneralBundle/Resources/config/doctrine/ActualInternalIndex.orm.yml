@@ -1,0 +1,25 @@
+Event\GeneralBundle\Entity\ActualInternalIndex:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        internal_id:
+            type: integer
+        name:
+            type: string
+            length: 255
+        artists:
+            type: text
+        tags:
+            type: text
+            nullable: true
+        artistsTags:
+            type: text
+            column: artists_tags
+            nullable: true
+    lifecycleCallbacks: {  }

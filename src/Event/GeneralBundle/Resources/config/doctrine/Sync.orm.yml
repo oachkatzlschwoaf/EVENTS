@@ -1,0 +1,34 @@
+Event\GeneralBundle\Entity\Sync:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        userId:
+            type: integer
+            column: user_id
+        network:
+            type: integer
+        networkId:
+            type: string
+            length: 255
+            column: network_id
+        authInfo:
+            type: string
+            length: 255
+            column: auth_info
+        additional:
+            type: string
+            length: 255
+            column: additional
+            nullable: true
+        status:
+            type: integer
+        lastSync:
+            type: datetime
+            column: last_sync
+    lifecycleCallbacks: {  }

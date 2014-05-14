@@ -1,0 +1,38 @@
+Event\GeneralBundle\Entity\User:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            length: 255
+        email:
+            type: string
+            length: 255
+            nullable: true
+        network:
+            type: integer
+        networkId:
+            type: string
+            length: 255
+            column: network_id
+        additional:
+            type: text
+            nullable: true
+        auth_info:
+            type: text
+            nullable: true
+        tags:
+            type: text
+            nullable: true
+        created_at:
+            type: datetime
+    lifecycleCallbacks: 
+        prePersist: [ processPrePersist ]
+        postPersist: [ processPostPersist ]
+        postUpdate: [ processPostUpdate ]

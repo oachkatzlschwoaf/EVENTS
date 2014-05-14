@@ -1,0 +1,52 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
+
+<div style='text-align: right; margin: 5px;'>
+    [ <a href="{{ path('add_artist') }}">Add artists</a> ]
+</div>
+
+<table class='top_menu'>
+    <tr>
+        <td><a href="{{ path('artists') }}">All</a></td>
+        <td><a href="{{ path('artists') }}?actual=1">Actual</a></td>
+    </tr>
+</table>
+
+<table class='events'>
+    <thead>
+        <tr>
+            <td style='width: 3%'>id</td>
+            <td style='width: 40%'>name</td>
+            <td style='width: 30%'>tags</td>
+            <td style='width: 20%'>mbid</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for a in artists %}
+            <tr>
+                <td>{{ a.id }}</td>
+                <td><a href="{{ path('artist', { 'id': a.id }) }}">{{ a.name }}</a></td>
+
+                {% if a.getTagsList()|length > 0 %}
+                    <td class='notice-green'>
+                        {% for t in a.getTagsList() %}
+                            {{ tags[ t ].name }}{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                    </td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+                
+                {% if a.mbid|length > 10 %}
+                    <td class='notice-green'>{{ a.mbid }}</td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,3 @@
+event_general:
+    resource: "@EventGeneralBundle/Resources/config/routing.yml"
+    prefix:   /

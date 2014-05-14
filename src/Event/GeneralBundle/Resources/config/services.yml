@@ -1,0 +1,7 @@
+parameters:
+#    event_general.example.class: Event\GeneralBundle\Example
+
+services:
+#    event_general.example:
+#        class: %event_general.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

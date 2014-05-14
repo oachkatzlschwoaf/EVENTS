@@ -1,0 +1,25 @@
+Event\GeneralBundle\Entity\Ticket:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        providerEvent:
+            type: integer
+            column: provider_event
+        sector:
+            type: string
+            length: 255
+        priceMin:
+            type: integer
+            column: price_min
+        priceMax:
+            type: integer
+            column: price_max
+        status:
+            type: integer
+    lifecycleCallbacks: {  }

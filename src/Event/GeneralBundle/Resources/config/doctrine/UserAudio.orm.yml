@@ -1,0 +1,24 @@
+Event\GeneralBundle\Entity\UserAudio:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        userId:
+            type: integer
+            column: user_id
+        artistId:
+            type: integer
+            column: artist_id
+            nullable: true
+        artist:
+            type: string
+            length: 255
+        title:
+            type: string
+            length: 255
+    lifecycleCallbacks: {  }

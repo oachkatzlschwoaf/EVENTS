@@ -1,0 +1,40 @@
+Event\GeneralBundle\Entity\ProviderEvent:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            length: 255
+        providerId:
+            type: string
+            length: 255
+            column: provider_id
+        date:
+            type: date 
+        start:
+            type: datetime 
+        duration:
+            type: integer
+        description:
+            type: text
+            nullable: true
+        status:
+            type: integer
+        provider:
+            type: integer
+        link:
+            type: string
+            length: 255
+        placeText:
+            type: string
+            length: 255
+            column: place_text
+        place:
+            type: integer
+    lifecycleCallbacks: {  }

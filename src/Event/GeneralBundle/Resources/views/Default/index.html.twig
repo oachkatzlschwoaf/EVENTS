@@ -1,0 +1,53 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+Hello {{ user_id }} ({{ session.get('access_token') }} - {{ session.get('network_id') }})!
+
+{% if not user_id %}
+    <a href="http://oauth.vk.com/authorize?client_id={{ vk_app_id }}&redirect_uri={{ vk_redirect }}&response_type=code&scope={{ vk_scope}}" title="Зайти через ВКонтакте">Зайти через ВКонтакте</a>
+
+{% else %}
+
+<div id='sync_status'>Sync status</div>
+
+<script>
+var sync_status = {{ sync.status }};
+
+function sortEventsByWeight(a, b) {
+    if (a.weight > b.weight) {
+        return 1;
+    }
+
+    return -1;
+}
+
+$( document ).ready(function() {
+    if (sync_status == 1) {
+        $('#sync_status').text('sync ok');
+         
+        $.getJSON("{{ path('personal_afisha') }}", function(data) {
+    
+            if (data.done == 1) {
+                var internal = data.internal_weight;
+
+                var sorted = internal.slice(0).sort(function(a, b) {
+                    return a.weight - b.weight;
+                });
+
+                $.each(sorted, function(i, e) {
+                    console.log(i);
+                    console.log(e);
+                });
+            }
+
+        });
+    } else {
+        console.log('check sync status');
+    }
+});
+
+</script>
+
+{% endif %}
+
+{% endblock %}

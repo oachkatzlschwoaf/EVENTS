@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}
+            <link href="{{ asset('css/jquery-ui-1.10.4.min.css') }}" rel="stylesheet" type="text/css">
+
+            <link href="{{ asset('css/jquery.tagit.css') }}" rel="stylesheet" type="text/css">
+            <link href="{{ asset('css/token-input.css') }}" rel="stylesheet" type="text/css">
+
+            <link href="{{ asset('css/admin_styles.css') }}?v=1" rel="stylesheet" type="text/css">
+        {% endblock %}
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+        {% block javascripts %}
+            <script src="{{ asset('js/jquery-2.1.1.min.js') }}" type="text/javascript"></script>
+            <script src="{{ asset('js/jquery-ui-1.10.4.min.js') }}" type="text/javascript"></script>
+
+            <script src="{{ asset('js/tag-it.min.js') }}" type="text/javascript"></script>
+            <script src="{{ asset('js/jquery.tokeninput.js') }}" type="text/javascript"></script>
+
+            <script src="{{ asset('js/main.js') }}" type="text/javascript"></script>
+        {% endblock %}
+
+        {% block body %}{% endblock %}
+    </body>
+</html>

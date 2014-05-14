@@ -1,0 +1,75 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
+
+<table class='top_menu'>
+    <tr>
+        <td><a href="{{ path('internal_events') }}?status={{ internal_status }}&suspicious=1">Suspicious</a></td>
+    </tr>
+</table>
+
+{% if internal_status == 0%}
+<div style='text-align: right; margin: 5px;'>
+    [ <a href="{{ path('work_all_internal_events') }}">all to work</a> ]
+</div>
+{% endif %}
+
+<table class='events'>
+    <thead>
+        <tr>
+            <td style='width: 3%'>id</td>
+            <td style='width: 3%'>matches</td>
+            <td style='width: 3%'>mat. total</td>
+            <td style='width: 3%'>artists</td>
+            <td style='width: 40%'>name</td>
+            <td style='width: 15%'>genres</td>
+            <td style='width: 15%'>place</td>
+            <td style='width: 10%'>date</td>
+        </tr>
+    </thead>
+        <tbody>
+            {% for dt, e_id in agg_events %}
+                <tr class='date'>
+                    <td colspan="8">{{ dt }}</td>
+                </tr>
+                {% for e in agg_events[dt] %}
+                    <tr>
+                        <td>{{ e.id }}</td>
+
+                        {% if matches_count[ e.id ] is defined and matches_count[ e.id ] > 0 %}
+                            <td>{{ matches_count[e.id] }}</td>
+                        {% else %}
+                            <td class='warning'>0</td>
+                        {% endif %}
+
+                        {% if agg_ipevents_total[ e.id ] is defined and agg_ipevents_total[ e.id ] > 0 %}
+                            <td>{{ agg_ipevents_total[e.id] }}</td>
+                        {% else %}
+                            <td class='warning'>0</td>
+                        {% endif %}
+
+                        <td {% if e.getArtistsCount() == 0 %}class='notice-pink'{% endif %}>
+                            {{ e.getArtistsCount() }}
+                        </td>
+
+                        <td><a href="{{ path('internal_event', { "id": e.id }) }}">{{ e.name }}</a></td>
+
+                        <td>
+                            {% for t in e.getTagsList() %}
+                                {{ tags[ t ].name }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                        </td>
+
+                        <td {% if places[ e.place ].status == 0 %}class='notice-pink'{% endif %}>
+                            {{ places[ e.place ].name }}
+                        </td>
+
+                        <td>{{ e.getHumanStart() }}</td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+</table>
+
+{% endblock %}

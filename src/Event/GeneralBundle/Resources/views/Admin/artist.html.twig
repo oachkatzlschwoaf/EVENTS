@@ -1,0 +1,150 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
+
+<h1>Add artist</h1>
+
+<div style='width: 700px; margin-right: 20px; float: left;'>
+<table class='settings'>
+<form id="general_form" action="{{ path('artist', { 'id': id }) }}" method="post" {{ form_enctype(form) }} novalidate>
+    <thead>
+        <td colspan="2">
+            Artst add 
+        </td>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>Name</b></td>
+            <td>{{ form_widget(form.name) }}</td>
+        </tr>
+        <tr>
+            <td><b>URL Name</b></td>
+            <td>{{ form_widget(form.urlName) }}</td>
+        </tr>
+        <tr>
+            <td><b>MBID</b></td>
+            <td>{{ form_widget(form.mbid) }}</td>
+        </tr>
+        <tr>
+            <td><b>Keywords</b></td>
+            <td class='small_textarea'>{{ form_widget(form.keywords ) }}</td>
+        </tr>
+        <tr>
+            <td><b>Genres</b></td>
+            <td>{{ form_widget(form.genres) }}</td>
+        </tr>
+        <tr>
+            <td><b>Tags</b></td>
+            <td class='small_textarea'>
+                <ul id="artist_tags" class='tagit'>
+                    {% for t in artist.getTagsList() %}
+                        <li>{{ tags[t].name }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"><b>Description</b></td>
+        </tr>
+        <tr>
+            <td colspan="2">{{ form_widget(form.description) }}</td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                {{ form_rest(form) }}
+                <input type="button" onclick="preSubmit()" value="Save" />
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<div style='width: 450px; float: left;'>
+    <table class='settings'>
+        <thead>
+            <tr>
+                <td colspan="2">MBID Suggest</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <input onclick='suggestMbid()' type="button" value="Suggest" />
+                    <div id='mbid_suggested'></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class='settings'>
+        <thead>
+            <tr>
+                <td colspan="2">Tags Suggest</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <input onclick='suggestTags()' type="button" value="Suggest" />
+                    <div id='tags_suggested'></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+$(document).ready(function () {
+    // Genres
+    $("#event_generalbundle_artist_genres").tokenInput("{{ path('genres') }}", {
+        prePopulate: [
+            {% for g_id, g_name in artist_genres %}
+                { id: '{{ g_id }}', name: '{{ g_name }}' }
+                {% if not loop.last %},{% endif %} 
+            {% endfor %}
+        ]
+    });
+
+    // Tags
+    $('#artist_tags').tagit({
+        singleField: 1,
+        allowSpaces: 1,
+        fieldName: 'tags',
+    });
+});
+
+function suggestMbid() {
+    $.getJSON("{{ path('suggest_mbid', { 'id': artist.id }) }}", function(data) {
+        if (data.mbid) {
+            $('#mbid_suggested').text(
+                data.name + ' (' + data.country + ') ' + data.mbid
+            );
+
+            $('#event_generalbundle_artist_mbid').val(data.mbid);
+        }
+    });
+}
+
+function suggestTags() {
+    $.getJSON("{{ path('suggest_tags', { 'id': artist.id }) }}", function(data) {
+        if (typeof data.error == 'undefined') {
+            $.each(data, function(i, e) {
+                $('#tags_suggested').text(
+                    $('#tags_suggested').text() + ' "' + e + '"'
+                );
+
+                $("#artist_tags").tagit("createTag", e);
+            });
+        }
+    });
+}
+
+function preSubmit() {
+    $("#event_generalbundle_artist_tags").val( $("[name='tags']").val() );
+    $("#general_form").submit();
+}
+
+</script>
+
+{% endblock %}

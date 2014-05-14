@@ -1,0 +1,40 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
+
+<table class='events'>
+    <thead>
+        <tr>
+            <td style='width: 7%'>id (pid)</td>
+            <td style='width: 40%'>name</td>
+            <td style='width: 10%'>provider</td>
+            <td style='width: 20%'>place</td>
+            <td style='width: 10%'>date</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dt, e_id in agg_events %}
+            <tr class='date'>
+                <td colspan="5">{{ dt }}</td>
+            </tr>
+            {% for e in agg_events[dt] %}
+                <tr>
+                    <td>{{ e.id }}</td>
+                    <td><a href="{{ path('provider_event', { "id": e.id }) }}">{{ e.name }}</a></td>
+                    <td>{{ providers[ e.provider ].getName() }}</td>
+                    {% if e.place and e.place != 0 %}
+                        <td>
+                            <a href="{{ path('place', {"id": e.place}) }}">{{ places[ e.place ].getName }}</a>
+                        </td>
+                    {% else %}
+                        <td class='notice-warning'>{{ e.placeText }}</td>
+                    {% endif %}
+                    <td>{{ e.getHumanStart() }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

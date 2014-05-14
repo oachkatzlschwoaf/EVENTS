@@ -1,0 +1,17 @@
+Event\GeneralBundle\Entity\Provider:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            length: 255
+        link:
+            type: string
+            length: 255
+    lifecycleCallbacks: {  }

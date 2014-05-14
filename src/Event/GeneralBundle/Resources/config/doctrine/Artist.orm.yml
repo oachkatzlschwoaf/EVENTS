@@ -1,0 +1,32 @@
+Event\GeneralBundle\Entity\Artist:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            length: 255
+        keywords:
+            type: text
+            nullable: true
+        genres:
+            type: string
+            length: 255
+        description:
+            type: text
+        mbid:
+            type: string
+            length: 255
+        tags:
+            type: text
+            nullable: true
+        urlName:
+            type: string
+            length: 255
+            column: url_name 
+    lifecycleCallbacks: {  }

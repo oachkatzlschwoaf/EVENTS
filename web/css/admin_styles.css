@@ -1,0 +1,148 @@
+.events {
+    width: 100%;
+    font-size: 12px;
+}
+
+.events thead {
+    background: #ddd;
+    font-weight: bold;
+}
+
+.events thead td {
+    border: 1px solid #000;
+}
+
+.events td {
+    padding-left: 10px;
+}
+
+.events tbody td {
+    border-bottom: 1px solid #eee;
+    padding: 5px;
+}
+
+.date {
+    background-color: #fffeab;
+    text-align: center;
+    font-weight: bold;
+}
+
+.warning {
+    color: white;
+    background-color: red;
+    font-weight: bold;
+}
+
+.warning a {
+    color: white;
+}
+
+.notice-warning {
+    background-color: red;
+    color: white;
+}
+
+.notice-warning a {
+    color: white;
+}
+
+.notice-pink {
+    background-color: #ffb0c3;
+}
+
+.notice-yellow {
+    background-color: #fbec5d;
+}
+
+.notice-orange {
+    background-color: #ff9900;
+}
+
+.notice-green {
+    background-color: #bef574;
+}
+
+.notice-green-light {
+    background-color: #e1ff98;
+}
+
+.notice-black {
+    background-color: #000;
+    color: #fff;
+}
+
+.notice-black a {
+    color: white;
+}
+
+.hl-border-green td {
+    border: 1px solid #46e646 !important;
+}
+
+.hl-border-red td {
+    border: 1px solid red !important;
+}
+
+.hl-border-orange td {
+    border: 1px solid orange !important;
+}
+
+h1 {
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+.settings {
+    width: 100%;
+    border: 1px solid black;
+    margin-bottom: 20px;
+}
+
+.settings thead {
+    background: #ddd;
+    font-weight: bold;
+}
+
+.settings thead td {
+    border: 1px solid #000;
+}
+
+.settings td {
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+.settings textarea {
+    width: 98%;
+    height: 150px;
+}
+
+.small_textarea textarea {
+    width: 98%;
+    height: 70px;
+}
+
+.settings input[type=text] {
+    width: 98%;
+}
+
+.tip {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #999;
+}
+
+.top_menu {
+    margin-bottom: 20px;
+    font-size: 12px;
+}
+
+.top_menu td {
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+}
+
+.top_menu .selected {
+    background: #ccc;
+}

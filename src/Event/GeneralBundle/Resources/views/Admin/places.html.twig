@@ -1,0 +1,31 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
+
+<table class='top_menu'>
+    <tr>
+        <td {% if place_status == -1 %}class='selected'{% endif %}><a href="{{ path('places') }}">All</a></td>
+        <td {% if place_status == 1 %}class='selected'{% endif %}><a href="{{ path('places') }}?status=1">Approved</a></td>
+        <td {% if place_status == 0 %}class='selected'{% endif %}><a href="{{ path('places') }}?status=0">Hidden</a></td>
+    </tr>
+</table>
+
+<table class='events'>
+    <thead>
+        <tr>
+            <td style='width: 3%'>id</td>
+            <td style='width: 40%'>name</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in places %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td {% if p.status == 0 %}class="notice-pink"{% endif %}><a href="{{ path('place', { "id": p.id }) }}">{{ p.name }}</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

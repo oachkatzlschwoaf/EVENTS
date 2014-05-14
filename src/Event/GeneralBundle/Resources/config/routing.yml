@@ -1,0 +1,135 @@
+index:
+    pattern:  /
+    defaults: { _controller: EventGeneralBundle:Default:index }
+
+login_vk:
+    pattern:  /login/vk
+    defaults: { _controller: EventGeneralBundle:Default:loginVk }
+
+# ADMIN
+
+provider_events:
+    pattern:  /admin/events/provider/
+    defaults: { _controller: EventGeneralBundle:Admin:providerEvents }
+
+provider_event:
+    pattern:  /admin/events/provider/{id}/
+    defaults: { _controller: EventGeneralBundle:Admin:providerEvent }
+
+create_internal_event:
+    pattern:  /admin/events/internal/create
+    defaults: { _controller: EventGeneralBundle:Admin:createInternalEvent }
+
+internal_event:
+    pattern:  /admin/events/internal/{id}/
+    defaults: { _controller: EventGeneralBundle:Admin:internalEvent }
+
+internal_events:
+    pattern:  /admin/events/internal/
+    defaults: { _controller: EventGeneralBundle:Admin:internalEvents }
+
+cancel_provider_event:
+    pattern:  /admin/events/provider/{id}/cancel
+    defaults: { _controller: EventGeneralBundle:Admin:cancelProviderEvent }
+
+matched_provider_event:
+    pattern:  /admin/events/provider/{id}/matched
+    defaults: { _controller: EventGeneralBundle:Admin:matchedProviderEvent }
+
+unmatch_provider_event:
+    pattern:  /admin/events/provider/{id}/unmatch
+    defaults: { _controller: EventGeneralBundle:Admin:unmatchProviderEvent }
+
+change_provider_event_place:
+    pattern:  /admin/place/{id}/place/change
+    defaults: { _controller: EventGeneralBundle:Admin:changeProviderEventPlace }
+
+cancel_internal_event:
+    pattern:  /admin/events/internal/{id}/cancel
+    defaults: { _controller: EventGeneralBundle:Admin:cancelInternalEvent }
+
+work_internal_event:
+    pattern:  /admin/events/internal/{id}/work
+    defaults: { _controller: EventGeneralBundle:Admin:workInternalEvent }
+
+work_all_internal_events:
+    pattern:  /admin/events/internal/work/all
+    defaults: { _controller: EventGeneralBundle:Admin:workAllInternalEvents }
+
+wait_internal_event:
+    pattern:  /admin/events/internal/{id}/wait
+    defaults: { _controller: EventGeneralBundle:Admin:waitInternalEvent }
+
+add_artist_to_internal:
+    pattern:  /admin/events/internal/{id}/artist/add
+    defaults: { _controller: EventGeneralBundle:Admin:addArtistToInternal }
+
+drop_artist_from_internal:
+    pattern:  /admin/events/internal/{id}/artist/drop
+    defaults: { _controller: EventGeneralBundle:Admin:dropArtistFromInternal }
+
+change_match_status:
+    pattern:  /admin/events/match/{id}/status/change/{status}/
+    defaults: { _controller: EventGeneralBundle:Admin:changeMatchStatus }
+
+places:
+    pattern:  /admin/places
+    defaults: { _controller: EventGeneralBundle:Admin:places }
+
+create_place:
+    pattern:  /admin/place/create
+    defaults: { _controller: EventGeneralBundle:Admin:createPlace }
+
+place:
+    pattern:  /admin/place/{id}/
+    defaults: { _controller: EventGeneralBundle:Admin:place }
+
+change_place_status:
+    pattern:  /admin/place/{id}/status/change/{status}/
+    defaults: { _controller: EventGeneralBundle:Admin:changePlaceStatus }
+
+matches:
+    pattern:  /admin/matches
+    defaults: { _controller: EventGeneralBundle:Admin:matches }
+
+change_ticket_status:
+    pattern:  /admin/ticket/{id}/status/change/{status}/
+    defaults: { _controller: EventGeneralBundle:Admin:changeTicketStatus }
+
+artists:
+    pattern:  /admin/artists
+    defaults: { _controller: EventGeneralBundle:Admin:artists }
+
+add_artist:
+    pattern:  /admin/artist/add
+    defaults: { _controller: EventGeneralBundle:Admin:addArtist }
+
+genres:
+    pattern:  /genres
+    defaults: { _controller: EventGeneralBundle:Admin:genres }
+
+artist:
+    pattern:  /artist/{id}/
+    defaults: { _controller: EventGeneralBundle:Admin:artist }
+
+search_artists:
+    pattern:  /artists/search
+    defaults: { _controller: EventGeneralBundle:Admin:searchArtists }
+
+# API ADMIN
+match_event:
+    pattern:  /api/events/provider/{id}/match
+    defaults: { _controller: EventGeneralBundle:Admin:matchEvent }
+
+suggest_mbid:
+    pattern:  /api/artist/{id}/mbid/suggest
+    defaults: { _controller: EventGeneralBundle:Admin:suggestMbid }
+
+suggest_tags:
+    pattern:  /api/artist/{id}/tags/suggest
+    defaults: { _controller: EventGeneralBundle:Admin:suggestTags }
+
+# API PUBLIC
+personal_afisha:
+    pattern:  /api/user/afisha/personal
+    defaults: { _controller: EventGeneralBundle:Default:getPersonalAfisha }

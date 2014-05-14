@@ -1,0 +1,82 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
+
+<table class='top_menu'>
+    <tr>
+        <td {% if match_status == 0 %}class='selected'{% endif %}><a href="{{ path('matches') }}?status=0">Hidden</a></td>
+        <td {% if match_status == 1 %}class='selected'{% endif %}><a href="{{ path('matches') }}?status=1">Approved</a></td>
+    </tr>
+</table>
+
+<table class='events'>
+    <thead>
+        <tr>
+            <td style='width: 3%'>id</td>
+            <td style='width: 2%'>work</td>
+            <td style='width: 2%'>status</td>
+            <td style='width: 20%'>provider</td>
+            <td style='width: 20%'>internal</td>
+            <td style='width: 10%'>actions</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for m in matches %}
+            <tr>
+                <td>{{ m.id }}</td>
+
+                {% if pevents[m.getProviderId].status == 1 and m.status == 1  %}
+                    <td class='notice-green'>on</td>
+                {% else %}
+                    <td class='notice-warning'>off</td>
+                {% endif %}
+
+                {% if m.status == 1  %}
+                    <td class='notice-green'>on</td>
+                {% else %}
+                    <td class='notice-warning'>off</td>
+                {% endif %}
+
+                <td
+                    {% if pevents[ m.getProviderId() ].status == 0 %}
+                        class='notice-pink'
+                    {% elseif pevents[ m.getProviderId() ].status == 1 %}
+                        class='notice-green-light'
+                    {% elseif pevents[ m.getProviderId() ].status == 2 %}
+                        class='notice-warning'
+                    {% elseif pevents[ m.getProviderId() ].status == 3 %}
+                        class='notice-yellow'
+                    {% elseif pevents[ m.getProviderId() ].status == 4 %}
+                        class='notice-orange'
+                    {% elseif pevents[ m.getProviderId() ].status == 5 %}
+                        class='notice-black'
+                    {% endif %} >
+                    <a href="{{ path('provider_event', { 'id': m.getProviderId() }) }}">{{ pevents[ m.getProviderId() ].name }}</a>
+                </td>
+                <td
+                    {% if ievents[ m.getInternalId() ].status == 0 %}
+                        class='notice-yellow'
+                    {% elseif ievents[ m.getInternalId() ].status == 1 %}
+                        class='notice-green-light'
+                    {% elseif ievents[ m.getInternalId() ].status == 2 %}
+                        class='warning'
+                    {% elseif ievents[ m.getInternalId() ].status == 3 %}
+                        class='notice-black'
+                    {% endif %} >
+                    <a href="{{ path('internal_event', { 'id': m.getInternalId() }) }}">{{ ievents[ m.getInternalId() ].name }}</a>
+                </td>
+                <td style='font-size: 14px;'>
+                    {% if m.status == 0 %}
+                        [ <a href="{{ path('change_match_status', { 'id': m.id, 'status': 1 }) }}?return_to_matches=1">approve</a> ]
+                    {% elseif m.status == 1 %}
+                        [ <a href="{{ path('change_match_status', { 'id': m.id, 'status': 0 }) }}?return_to_matches=1">hide</a> ]
+                    {% endif %}
+                    [ <a href="{{ path('unmatch_provider_event', { 'id': m.getProviderId }) }}?return_to_matches=1">unmatch</a> ]
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+Event\GeneralBundle\Entity\InternalProvider:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        internalId:
+            type: integer
+            column: internal_id
+        providerId:
+            type: integer
+            column: provider_id
+        status:
+            type: integer
+    lifecycleCallbacks: {  }

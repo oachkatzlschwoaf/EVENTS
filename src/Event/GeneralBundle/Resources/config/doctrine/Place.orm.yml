@@ -1,0 +1,26 @@
+Event\GeneralBundle\Entity\Place:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            length: 255
+        address:
+            type: string
+            length: 255
+            nullable: true
+        description:
+            type: text
+            nullable: true
+        keywords:
+            type: text
+            nullable: true
+        status:
+            type: integer
+    lifecycleCallbacks: {  }

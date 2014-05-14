@@ -1,0 +1,263 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
+
+<h1 style='color: green'>{{ event.id }}. {{ event.name }}<br />({{ event.getHumanDate() }})</h1>
+
+<div style='width: 700px; margin-right: 20px; float: left;'>
+
+<form action="{{ path('provider_event', { 'id': id }) }}" method="post" {{ form_enctype(form) }} novalidate>
+{{ form_errors(form) }}
+    <table class='settings'>
+        <thead>
+            <td colspan="2">
+                Settings
+            </td>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Name</b></td>
+                <td>{{ form_widget(form.name) }}</td>
+            </tr>
+            <tr>
+                <td style='width: 20%'><b>Status</b></td>
+                {% if event.status == 0 %}
+                    <td class='notice-pink' style='width: 60%'>{{ event.getStatusName() }}</td>
+                {% elseif event.status == 1 %}
+                    <td class='notice-green' style='width: 60%'>{{ event.getStatusName() }}</td>
+                {% elseif event.status == 2 %}
+                    <td class='warning' style='width: 60%'>{{ event.getStatusName() }}</td>
+                {% elseif event.status == 3 %}
+                    <td class='notice-yellow' style='width: 60%'>{{ event.getStatusName() }}</td>
+                {% elseif event.status == 4 %}
+                    <td class='notice-orange' style='width: 60%'>{{ event.getStatusName() }}</td>
+                {% elseif event.status == 5 %}
+                    <td class='notice-black' style='width: 60%'>{{ event.getStatusName() }}</td>
+                {% else %}
+                    <td style='width: 60%'>{{ event.getStatusName() }}</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td style='width: 20%'><b>Provider</b></td>
+                <td style='width: 60%'><b>{{ providers[ event.provider ].name }}</b></td>
+            </tr>
+            <tr>
+                <td style='width: 20%'><b>Link</b></td>
+                <td style='width: 60%'><a target='_blank' href="{{ event.link }}">{{ event.providerId }}</a></td>
+            </tr>
+            <tr>
+                <td style='width: 20%'><b>Place</b></td>
+                <td style='width: 60%' 
+                    {% if event.place and places[ event.place ].status != 1 %}
+                        class="notice-pink"
+                    {% endif %}>
+                    {% if not event.place %}
+                        {{ event.placeText }} (<b style='color:red'>not matched</b>)
+                        [ <a href="{{ path('create_place', { 'provider_event': event.id }) }}">create place</a> ] 
+                    {% else %}
+                        <a href="{{ path('place', { 'id': event.place }) }}">{{ places[ event.place ].name }}</a>
+                        <div class='tip'>{{ event.placeText }}</div>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td><b>Date</b></td>
+                <td>{{ form_widget(form.date) }}</td>
+            </tr>
+            <tr>
+                <td><b>Start</b></td>
+                <td>{{ form_widget(form.start) }}</td>
+            </tr>
+            <tr>
+                <td><b>Duration</b></td>
+                <td>{{ form_widget(form.duration) }}</td>
+            </tr>
+            <tr>
+                <td><b>Description</b></td>
+                <td>{{ form_widget(form.description) }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center">
+                    {{ form_rest(form) }}
+                    <input type="submit" value="Save" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </form>
+
+    {% if matched|length > 0 %}
+        <table class='settings'>
+            <thead>
+                <td>Matches</td>
+            </thead>
+            <tbody>
+                {% for m in matched %}
+                    <tr>
+                        <td>
+                            <a style='color: {% if m.status == 0 %}red{% elseif m.status == 1 %}green{% endif %}' 
+                            href="{{ path('internal_event', { 'id': m.getInternalId }) }}">{{ matched_events[ m.getInternalId ].name }} ({{ matched_events[ m.getInternalId ].getHumanDate() }})</a>
+                            [ <a href="{{ path('unmatch_provider_event', { 'id': id }) }}">unmatch</a> ]
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <table class='settings'>
+        <thead>
+            <td colspan="2">Actions</td>
+        </thead>
+        <tbody>
+            {% if matched|length == 0 %}
+                <tr>
+                    <td><b>Match to</b></td>
+                    <td>
+                        <form action="{{ path('match_event', { 'id': id }) }}" method="post" novalidate>
+                            <input name="internal_id" type="text" /> <input type="submit" value="Match" />
+                        </form>
+                    </td>
+                </tr>
+                {% if event.place is defined %}
+                    <tr>
+                        <td colspan="2"> 
+                            <a href="{{ path('create_internal_event') }}?provider_event={{ id }}">Create Internal Event</a>
+                        </td>   
+                    </tr>
+                {% endif %}
+            {% endif %}
+
+            {% if event.status != 2 %}
+                <tr>
+                    <td colspan="2"> 
+                        <a href="{{ path('cancel_provider_event', { 'id': id }) }}">Cancel event</a>
+                    </td>   
+                </tr>
+            {% else %}
+                {% if matched|length > 0 %}
+                    <tr>
+                        <td colspan="2"> 
+                            <a href="{{ path('matched_provider_event', { 'id': id }) }}">Return to matched</a>
+                        </td>   
+                    </tr>
+                {% endif %}
+            {% endif %}
+
+            <tr>
+                <td><b>Change place</b></td>
+                <td>
+                    <form action="{{ path('change_provider_event_place', { 'id': id }) }}" method="post" novalidate>
+                        <select name="place">
+                            {% for p in places %}
+                                {% if p.status == 1 %}
+                                    <option value="{{ p.id }}">{{ p.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <input type="submit" value="Change" />
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div style='width: 450px; float: left;'>
+    <table class='settings'>
+        <thead>
+            <tr>
+                <td>Places Tooltip</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for k, v in tips_place %}
+                <tr>
+                    <td>
+                        <a href="{{ path('change_provider_event_place', { 'id': id }) }}?place={{ k }}">{{ v.name }}</a> ({{ v.dist }}%)
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+     </table>
+
+    <table class='settings'>
+        <thead>
+            <tr>
+                <td colspan="4">Internal Events Tooltip</td>
+            </tr>
+            <tr>
+                <td style='width: 3%'>id</td>
+                <td style='width: 40%'>name</td>
+                <td style='width: 20%'>place</td>
+                <td style='width: 20%'>time</td>
+            </tr>
+        </thead>
+        <tbody style='font-size: 12px;'>
+            {% for ie in internal_events %}
+                <tr 
+                    {% if matched_events[ ie.id ] is defined %}
+                        class='hl-border-green'
+                    {% elseif ie.place == event.place %}
+                        class='hl-border-red'
+                    {% elseif ie.start == event.start %}
+                        class='hl-border-orange'
+                    {% endif %} >
+
+                    <td 
+                        {% if ie.status != 1 %}
+                            class='notice-warning'
+                        {% endif %}>
+                        <a href="{{ path('match_event', { 'id': id }) }}?internal_id={{ ie.id }}">{{ ie.id }}</a>
+                    </td>
+
+                    <td 
+                    {% if matched_events[ ie.id ] is defined %}
+                        class='notice-green'
+                    {% endif %}>
+                        <a href="{{ path('internal_event', { 'id': ie.id }) }}">{{ ie.name }}</ab
+                    </td>
+                    <td>{{ places[ ie.place ].name }}</td>
+                    <td>{{ ie.getHumanStart() }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <table class='settings'>
+        <thead>
+            <tr>
+                <td colspan="5">Tickets</td>
+            </tr>
+            <tr>
+                <td style='width: 3%'>id</td>
+                <td style='width: 40%'>sector</td>
+                <td style='width: 5%'>min</td>
+                <td style='width: 5%'>max</td>
+                <td style='width: 20%'>action</td>
+            </tr>
+        </thead>
+        <tbody style='font-size: 12px;'>
+            {% for t in tickets %}
+                <tr> 
+                    <td {% if t.status == 0 %}class="notice-warning"{% endif %}>
+                        {{ t.id }}
+                    </td>
+                    <td>{{ t.sector }}</td>
+                    <td>{{ t.priceMin}}</td>
+                    <td>{{ t.priceMax }}</td>
+                    <td>
+                        {% if t.status == 1 %}
+                            [ <a href="{{ path('change_ticket_status', { 'id': t.id, 'status': 0 }) }}">hide</a> ]
+                        {% else %}
+                            [ <a href="{{ path('change_ticket_status', { 'id': t.id, 'status': 1 }) }}">show</a> ]
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
