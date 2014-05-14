@@ -8,6 +8,10 @@ login_vk:
 
 # ADMIN
 
+admin:
+    pattern:  /admin
+    defaults: { _controller: EventGeneralBundle:Admin:internalEvents }
+
 provider_events:
     pattern:  /admin/events/provider/
     defaults: { _controller: EventGeneralBundle:Admin:providerEvents }
