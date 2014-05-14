@@ -133,3 +133,8 @@ suggest_tags:
 personal_afisha:
     pattern:  /api/user/afisha/personal
     defaults: { _controller: EventGeneralBundle:Default:getPersonalAfisha }
+
+sync_status:
+    pattern:  /api/user/sync/status
+    defaults: { _controller: EventGeneralBundle:Default:syncStatus }
+

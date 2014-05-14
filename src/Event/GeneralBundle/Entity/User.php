@@ -278,10 +278,8 @@ class User
 
         $ret;
         foreach ($tags as $t => $v) {
-            if ($t != 'pop' && $t != 'russian') { 
-                $p = $v / $sum;
-                $ret[$t] = $p;
-            }
+            $p = $v / $sum;
+            $ret[$t] = $p;
         }
 
         return $ret;

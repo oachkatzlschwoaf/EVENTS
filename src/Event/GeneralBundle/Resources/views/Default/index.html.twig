@@ -10,41 +10,54 @@ Hello {{ user_id }} ({{ session.get('access_token') }} - {{ session.get('network
 
 <div id='sync_status'>Sync status</div>
 
+<div id='list'></div>
+
 <script>
-var sync_status = {{ sync.status }};
 
-function sortEventsByWeight(a, b) {
-    if (a.weight > b.weight) {
-        return 1;
-    }
-
-    return -1;
-}
+var check_status_timer = { };
 
 $( document ).ready(function() {
-    if (sync_status == 1) {
-        $('#sync_status').text('sync ok');
-         
-        $.getJSON("{{ path('personal_afisha') }}", function(data) {
-    
-            if (data.done == 1) {
-                var internal = data.internal_weight;
+    checkSyncStatus();
 
-                var sorted = internal.slice(0).sort(function(a, b) {
-                    return a.weight - b.weight;
-                });
-
-                $.each(sorted, function(i, e) {
-                    console.log(i);
-                    console.log(e);
-                });
-            }
-
-        });
-    } else {
-        console.log('check sync status');
-    }
+    //setTimeout(function() { }, 5000);
 });
+
+function checkSyncStatus() {
+    $.getJSON("{{ path('sync_status') }}", function(data) {
+        if (typeof data.error == 'undefined') {
+            var sync_status = data.done;
+
+            if (sync_status == 1) {
+                $('#sync_status').text('sync ok');
+                clearTimeout(check_status_timer);
+                getPersonalAfisha();
+
+            } else {
+                $('#sync_status').text('sync status: '+sync_status);
+
+                check_status_timer = setTimeout('checkSyncStatus()', 1000);
+            }
+        }
+    });
+}
+
+function getPersonalAfisha() {
+    $.getJSON("{{ path('personal_afisha') }}", function(data) {
+        if (data.done == 1) {
+            var internal = data.internal_weight;
+
+            var sorted = internal.slice(0).sort(function(a, b) {
+                return b.weight - a.weight;
+            });
+
+            $.each(sorted, function(i, e) {
+                console.log(i);
+                console.log(e);
+                $('#list').append("<p>"+e.name+"</p>");                    
+            });
+        }
+    });
+}
 
 </script>
 

@@ -298,7 +298,7 @@ class DefaultController extends Controller {
             $i = 0;
             foreach ($tags as $t => $w) {
                 $i++;
-                if ($i > 5)
+                if ($i > 3)
                     break;
 
                 $weight += $tags[$t];
@@ -318,5 +318,30 @@ class DefaultController extends Controller {
 
         $answer = array( 'done' => 1, 'internal_weight' => $internal_weight );
         return new Response(json_encode($answer));
+    }
+
+    public function syncStatusAction(Request $r) {
+        $session = $r->getSession();
+        $user_id = $session->get('user_id');
+
+        if (!$user_id) {
+            $answer = array( 'error' => 'no auth' );
+            return new Response(json_encode($answer));
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $sync_list = $em->createQuery("select p from EventGeneralBundle:Sync p where p.userId = :user_id")
+            ->setParameter('user_id', $user_id)  
+            ->getResult();
+
+        if ($sync_list && isset($sync_list[0])) {
+            $sync = $sync_list[0];
+            $answer = array( 'done' => $sync->getStatus() );
+            return new Response(json_encode($answer));
+
+        } else {
+            $answer = array( 'error' => 'no sync' );
+            return new Response(json_encode($answer));
+        }
     }
 }
