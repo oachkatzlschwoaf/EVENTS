@@ -23,4 +23,27 @@ Event\GeneralBundle\Entity\Place:
             nullable: true
         status:
             type: integer
+        metro:
+            type: string
+            length: 255
+        phone:
+            type: string
+            length: 255
+            nullable: true
+        url:
+            type: string
+            length: 255
+            nullable: true
+        latitude:
+            type: string
+            length: 255
+            nullable: true
+        longitude:
+            type: string
+            length: 255
+            nullable: true
+        zoom:
+            type: string
+            length: 255
+            nullable: true
     lifecycleCallbacks: {  }

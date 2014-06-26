@@ -30,6 +30,25 @@ Event\GeneralBundle\Entity\User:
         tags:
             type: text
             nullable: true
+        tagsFull:
+            type: text
+            column: tags_full 
+            nullable: true
+        tagsNormal:
+            type: text
+            column: tags_normal
+            nullable: true
+        artistsNormal:
+            type: text
+            column: artists_normal
+            nullable: true
+        subscribe:
+            type: integer
+            nullable: true
+        subscribeSecret:
+            type: string
+            length: 255
+            column: subscribe_secret 
         created_at:
             type: datetime
     lifecycleCallbacks: 

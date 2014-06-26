@@ -201,7 +201,8 @@ class Sync
         $diff = $dt->getTimestamp() - $this->lastSync->getTimestamp();
 
         #if ($diff > 60 * 60 * 24) {
-        if ($diff > 60) {
+        #if ($diff > 60) {
+        if ($diff > 60 * 60) {
             return 0;
         }
 
@@ -236,5 +237,9 @@ class Sync
     public function getAdditional()
     {
         return $this->additional;
+    }
+
+    public function getAdditionalArray() {
+        return $this->additional ? json_decode($this->additional, 1) : array();
     }
 }

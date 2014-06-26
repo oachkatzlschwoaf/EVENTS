@@ -13,6 +13,11 @@ Event\GeneralBundle\Entity\ActualInternalIndex:
         name:
             type: string
             length: 255
+        urlName:
+            type: string
+            length: 255
+            column: url_name 
+            nullable: true
         artists:
             type: text
         tags:
@@ -21,5 +26,21 @@ Event\GeneralBundle\Entity\ActualInternalIndex:
         artistsTags:
             type: text
             column: artists_tags
+            nullable: true
+        tagsNames:
+            type: string
+            length: 255
+            column: tags_names 
+            nullable: true
+        catalogRate:
+            type: integer
+            column: catalog_rate 
+            nullable: true
+        start:
+            type: datetime
+        place:
+            type: text 
+        tickets:
+            type: text 
             nullable: true
     lifecycleCallbacks: {  }

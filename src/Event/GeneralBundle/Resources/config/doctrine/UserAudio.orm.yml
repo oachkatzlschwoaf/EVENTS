@@ -21,4 +21,7 @@ Event\GeneralBundle\Entity\UserAudio:
         title:
             type: string
             length: 255
+        tags:
+            type: text 
+            nullable: true
     lifecycleCallbacks: {  }

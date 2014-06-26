@@ -11,7 +11,7 @@ framework:
         strict_requirements: ~
     form:            ~
     csrf_protection: ~
-    validation:      { enable_annotations: true }
+    validation:      { enabled: true }
     templating:
         engines: ['twig']
         #assets_version: SomeVersionScheme
@@ -22,7 +22,7 @@ framework:
         # handler_id set to null will use default session handler from php.ini
         #handler_id:  ~
         handler_id: session.handler.mc 
-        cookie_lifetime: 3600
+        cookie_lifetime: 7200
         name: eventmate
     fragments:       ~
     http_method_override: true
@@ -66,6 +66,12 @@ doctrine:
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         auto_mapping: true
+        result_cache_driver:
+            type: memcache
+            host: localhost
+            port: 11211
+            class: Doctrine\Common\Cache\MemcacheCache
+            instance_class: Memcache
 
 # Swiftmailer Configuration
 swiftmailer:

@@ -1,0 +1,76 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
+
+<h1>Subscribe</h1>
+
+<div style='width: 700px; margin-right: 20px; float: left;'>
+    <table class='settings'>
+        <form id="general_form" action="{{ path('admin_subscribe') }}" method="post" novalidate>
+            <thead>
+                <td colspan="2">
+                    Subscribe Add
+                </td>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>Text</b></td>
+                </tr>
+                <tr>
+                    <td>
+                        <textarea id="text" name="text" style='width: 600px; height: 200px;'>{% if id %}{{ subscribe.getText() }}{% endif %}</textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="hidden" name="id" value="{{ id }}" />
+                        <input type="submit" value="Save" />
+                    </td>
+                </tr>
+            </tbody>
+        </form>
+    </table>
+
+</div>
+<div style='width: 450px; float: left;'>
+    <table class='settings'>
+        <thead>
+            <td>
+                Subscribes 
+            </td>
+        </thead>
+        <tbody>
+            {% for s in subscribes %}
+                <tr>
+                    <td>
+                        <div {% if s.getId() == publish_id %}style='background: #E1FDCE'{% endif %}>
+                            <div style='background: #eee; padding: 3px;'>= <b><a href="{{ path('admin_subscribe') }}?id={{ s.id }}">{{ s.id }}</a></b> =</div> 
+                            Status: 
+                                {% if s.status == 1 %}
+                                    <span style='color: green'>Ready to publish</span>
+                                {% elseif s.status == 2 %}
+                                    <span style='color: red'>Stopped</span>
+                                {% elseif s.status == 3 %}
+                                    <span style='color: black'>Done</span>
+                                {% endif %}
+                            (<a href="{{ path('change_subscribe_status') }}?id={{ s.id }}&status=1">ready</a>, <a href="{{ path('change_subscribe_status') }}?id={{ s.id }}&status=2">stop</a>, <a href="{{ path('change_subscribe_status') }}?id={{ s.id }}&status=3">done</a>)
+                        </div>
+                        <div>
+                            {{ s.text|slice(0,100) }}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+tinymce.init({
+    plugins: "link",
+    selector: "textarea#text"
+});
+</script>
+
+{% endblock %}

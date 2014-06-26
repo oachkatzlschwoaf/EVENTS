@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Museo Cyr';
+    src: url('museo_cyrillic_500.eot');
+    src: local('Museo Cyrl 500 Regular'), local('MuseoCyrl-500'), url('museo_cyrillic_500.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Museo Sans Cyr';
+    /*src: url('http://64424.selcdn.ru/webfont/museocyr/museocyrl-500.eot');*/
+    src: local('Museo Sans Cyrl 500 Regular'), local('MuseoSansCyrl-500'), url('museosanscyrl-500.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}

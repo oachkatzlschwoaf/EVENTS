@@ -1,0 +1,127 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Default:top.html.twig' %}
+
+<div class="container min-height-500">
+    <div class="section group">
+        <div class="col span_9_of_12">
+            <div class="unit-100 text-centered">
+                <h4 id='afisha_title'>Результаты поиска</h4>
+            </div>
+
+            <div id="no-results" class='text-centered' {% if events|length > 0 %}style='display: none'{% endif %}>
+                <h3 class='color-gray-light'>Ой, событий не найдено</h3>
+                <img src="{{ asset('images/sad_ia.jpg') }}">
+            </div>
+
+            <div id="general_events_list">
+                {% set i = 0 %}
+                
+                {% for e in events %}
+                    {% if i == 0 %}
+                        <div class="section group">
+                    {% endif %}
+
+                    {% set el = 3 %}
+                    {% if i == 0 or i == 1 %} 
+                        {% if e.catalogRate == 5 %}
+                            {% set el = 6 %}
+                            {% set i = i + 1 %}
+                        {% endif %}
+                    {% endif %}
+
+                    {% set i = i + 1 %}
+
+                    <a id="event_{{ e.id }}" href="{{ path('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" class="col span_{{ el }}_of_12 event-block {% if likes[e.id] is defined and likes[e.id].type == 2 %}hidden{% endif %}" style="background-image: url('{% if el == 3 %}{{ asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}{% elseif el == 6 %}{{ asset('uploads/catalog/medium_' ~ e.internalId ~ '.jpg') }}{% endif %}')">
+                        <div id='event-content_{{ e.id }}' class='event-content {% if likes[e.id] is defined %}likes-show{% endif %}'>
+                            <div class='head'>
+                                <h3>{{ e.shortName(120) }}</h3>
+                                {% if user_id %}
+                                    <div class="event-likes">
+                                        <span id="like_{{ e.id }}" href="#" onclick="likeAfisha({{ e.id }}); return false;" class="icon-30 {% if likes[e.id] is defined and likes[e.id].type == 1 %}like-active-icon{% else %}like-icon{% endif %}"></span>    
+                                        <span id="dislike_{{ e.id }}" href="#" onclick="dislikeAfisha({{ e.id }}); return false;" class="icon-30 {% if likes[e.id] is defined and likes[e.id].type == 2 %}dislike-active-icon{% else %}dislike-icon{% endif %}"></span>    
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class='additional'>
+                                <div class='date-time left'>
+                                    {{ e.shortStartHuman() }}
+                                </div>
+                                <ul class='tags right'>
+                                    {% if el == 3 %}
+                                        {% for t in e.getTagsNamesList(0, 10) %}
+                                            <li>{{ t }}</li>
+                                        {% endfor %}
+                                    {% elseif el == 6 %}
+                                        {% for t in e.getTagsNamesList(0, 25) %}
+                                            <li>{{ t }}</li>
+                                        {% endfor %}
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </a>
+
+                    {% if i == 3 or loop.last %}
+                        {% set i = 0 %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col span_3_of_12 filters">
+            <h4>Время</h4>
+            <nav class="nav nav-stroked">
+                <ul>
+                    <li><a href="#" interval="all" class='time-interval selected'>Все</a></li>
+                    <li><a href="#" interval="weekend" class='time-interval'>Выходные</a></li>
+                    <li><a href="#" interval="14d" class='time-interval'>Ближайшие 2 недели</a></li>
+                    <li><a href="#" interval="31d" class='time-interval'>Ближайший месяц</a></li>
+                    {% for m, name in month_intervals %}
+                        <li><a href="#" interval="m{{ m }}" class='time-interval'>{{ name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<script>
+    var time_interval = "all";
+    var search_query  = "{{ query }}";
+    var search_sort   = "{{ sort }}";
+
+    var tags_name_selected = { 
+        {% if tags_name_selected|length > 0 %}
+            {% for t, v in tags_name_selected %}
+                '{{ t }}': 1
+                {% if not loop.last %},{% endif %}
+            {% endfor %}
+        {% endif %}
+    };
+
+    var likes = {
+        {% for index_id, like in likes %}
+            {{ index_id }} : {{ like.type }}
+            {% if not loop.last %},{% endif %}
+        {% endfor %}
+    };
+
+    $('.time-interval').click(function(e) {
+        $("#afisha_title").text($(this).text());
+        setPeriod(this); 
+
+        $('#no-results').hide();
+        
+        getSearchResults();
+
+        e.preventDefault();
+    });
+</script>
+
+{% include 'EventGeneralBundle:Default:bottom.html.twig' %}
+
+{% endblock %}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+        <style>
+            body { -webkit-text-size-adjust: none; }
+            a { color: #3570c3 }
+            @media only screen and (max-width: 690px) {
+                body { padding: 0px !important; }
+                .wrap { width: 320px !important; border: none !important; }
+                .intro-name { margin: 23px 0 10px 12px !important ;font-size: 25px!important; }
+                .intro-text { margin: 0 12px 15px 12px !important; font-size: 14px !important; width: auto !important; }
+                .container { width: auto !important; padding: 10px 0 15px 0 !important; margin-top: 0px !important; }
+                .container .head { font-size: 26px !important; font-weight: bold !important; margin: 0 0 10px 10px !important; }
+                .container .columns { margin-left: 10px !important; }
+                .footer-logo { display: none !important }
+                .dontforget { width: 90% !important; padding: 10px 0 15px 0 !important; }
+                .dontforget-bottom { width: 85% !important; margin-bottom: 10px !important; }
+            }
+        </style>
+    </head>
+    <body style='margin: 0px; padding: 20px 0; color:#222'>
+
+        <div class='wrap' style='width: 690px; margin: auto; background: #fff; border: 1px solid #ccc;'>
+            <div style='margin: 0px; background: #eee; height: 40px; padding: .6em; text-align: center;'>
+                <a href="{{ url('index') }}" target="_blank"><img src="{{ app.request.scheme ~'://' ~ app.request.httpHost ~  asset('images/logo.png') }}" style="margin-top: 8px" /></a>
+            </div>
+
+            <div class='intro-name' style="margin: 33px 0 19px 65px; font-size: 30px; font-family: 'Georgia', serif">
+                Привет, {{ user.getFirstName() }}!
+            </div>
+            <div class='intro-text' style="margin: 0 0 1.5em 65px; font-size: 15px; line-height: 22px; font-family: 'Georgia', serif;  width: 560px;">
+                {{ subscribe.text|raw }}
+            </div>
+
+            {% if like_events|length > 0 %}
+                <div class='dontforget' style="padding: 15px; margin: 0px auto; width: 90%; border: 1px solid #bbb; overflow: hidden;">
+                    <div class='head' style="margin: 0 0 10px 10px; font-size: 18px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif">
+                        Не пропустите 
+                    </div>
+                    {% for e in like_events %}
+                        <div style="margin: 10px 10px 15px 10px; font-size: 16px; line-height: 22px;">
+                            <a href="{{ url('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" target="_blank" style="color: #222; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; font-weight: bold; text-decoration: none;">{{ e.name }}</a>
+                            <div style="color: #d70a16; font-size: 13px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;">{{ e.howLong() }}</div>
+                            <div style="font-size: 14px; color: #555; font-family: 'Georgia', serif;">{{ e.fullEventDate() }} &mdash; {{ e.getPlaceInfo('name') }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class='dontforget-bottom' style="border: 2px solid #ccc; width: 91%; margin: 0px auto;"></div>
+            {% endif %}
+
+            {% if events_weekend|length > 0 %}
+                <div class="container" style="padding: 15px; margin-top: 30px; background: #eee; overflow: hidden;">
+                    <div class="head" style="margin: 0 0 19px 20px; font-size: 26px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif">
+                        В эти выходные 
+                    </div>
+
+                    <div class="columns" style="margin-left: 42px; font-size: 15px; overflow: hidden;">
+                        {% for i in 0..1 %}
+                            <div style='display: inline-block; vertical-align: top; width: 262px; margin: 0 10px'>
+                                {% for e in events_weekend|slice(i * 2, 2) %}
+                                    <div style="width: 231px; margin: 0 15px 15px; padding: 9px 9px 15px; background: #fff; border: 1px solid #ccc; overflow: hidden;">
+                                        <a href="{{ url('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" target="_blank">
+                                            <img style="margin: 0 0 9px; width: 231px; height: 260px;" src="{{ app.request.scheme ~'://' ~ app.request.httpHost ~  asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}">
+                                        </a>
+                                        <div style="font-weight: bold; font-size: 18px; line-height:20px; padding: 0 6px; margin-bottom: 2px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif"><a href="{{ url('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" target="_blank" style="color: #222; text-decoration: none;">{{ e.name }}</a></div>
+                                        <div style="color: #d70a16; font-size: 13px; padding: 0 6px; margin-bottom: 6px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;">
+                                            {% for t in e.getTagsNamesList(0, 25) %}
+                                                {{ t }}{% if not loop.last %},{% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <div style="color: #555; font-size: 14px; padding: 0 6px; font-family: 'Georgia', serif;">{{ e.shortStartHuman() }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div style="font-weight: bold; font-size: 16px; line-height:20px; padding: 10px 0 10px; margin: 0px auto; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; border-top: 1px solid #ccc; width: 90%; text-align: center;">
+                        <a href="{{ url('index') }}" target="_blank" style='color: #d70a16; text-decoration: none'>еще концерты на выходных</a>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="container" style="padding: 15px 15px 0; background: #fff; overflow: hidden;">
+                <div class="head" style="margin: 0 0 19px 20px; font-size: 26px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif">
+                    Персональная афиша
+                </div>
+
+                <div class="columns" style="margin-left: 42px; font-size: 15px; overflow: hidden;">
+                    {% for i in 0..1 %}
+                        <div style='display: inline-block; vertical-align: top; width: 262px; margin: 0 10px'>
+                            {% for e in events|slice(i * 2, 2) %}
+                                <div style="width: 231px; margin: 0 15px 15px; padding: 9px 9px 15px; background: #fff; border: 1px solid #ccc; overflow: hidden;">
+                                    <a href="{{ url('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" target="_blank">
+                                        <img style="margin: 0 0 9px; width: 231px; height: 260px;" src="{{ app.request.scheme ~'://' ~ app.request.httpHost ~  asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}">
+                                    </a>
+                                    <div style="font-weight: bold; font-size: 18px; line-height:20px; padding: 0 6px; margin-bottom: 2px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif"><a href="{{ url('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" target="_blank" style="color: #222; text-decoration: none;">{{ e.name }}</a></div>
+                                    <div style="color: #d70a16; font-size: 13px; padding: 0 6px; margin-bottom: 6px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;">
+                                        {% for t in e.getTagsNamesList(0, 25) %}
+                                            {{ t }}{% if not loop.last %},{% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div style="color: #555; font-size: 14px; padding: 0 6px; font-family: 'Georgia', serif;">{{ e.shortStartHuman() }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div style="font-weight: bold; font-size: 16px; line-height:20px; padding: 10px 0 10px; margin: 0px auto; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; border-top: 1px solid #ccc; width: 90%; text-align: center;">
+                    <a href="{{ url('index') }}" target="_blank" style='color: #d70a16; text-decoration: none'>посмотреть всю афишу</a>
+                </div>
+            </div>
+
+            <div style="padding: 15px 15px 0; height: 60px; border-top: 1px solid #ccc; background: #eee; overflow: hidden; font-family: 'Arial', sans-serif; font-size: 12px; line-height: 1.3em;">
+                <div class='footer-logo' style='display: inline-block; width: 200px; text-align: center; vertical-align: top;'>
+                    <img src="{{ asset('images/logo.png') }}" style="margin-top: 8px" />
+                </div>
+                <div style='display: inline-block; vertical-align: top;'>
+                    © 2010−2014 EVENTMATE
+                    <br />
+                    Персональная афиша концертов.
+                    <br />
+                    Надоела рассылка? <a href="#" style='color: #3570c3;'>Отписаться</a> 
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

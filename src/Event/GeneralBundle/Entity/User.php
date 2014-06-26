@@ -175,6 +175,16 @@ class User
         return $this->name;
     }
 
+    public function getFirstName()
+    {
+        $arr = explode(' ', $this->name);
+        if ($arr[0]) {
+            return $arr[0];
+        } else {
+            return $this->name;
+        }
+    }
+
     /**
      * Set auth_info
      *
@@ -268,20 +278,209 @@ class User
         return $this->tags;
     }
 
-    public function getTagsListNormal() {
-        $tags = json_decode($this->tags);
+    public function getTagsList() {
+        return json_decode($this->tags, 1);
+    }
 
-        $sum = 0;
-        foreach ($tags as $t => $v) {
-            $sum += $v;
+    public function getTagsListFull($sort = null) {
+        if (!$this->tagsFull) {
+            return array();
         }
 
-        $ret;
-        foreach ($tags as $t => $v) {
-            $p = $v / $sum;
-            $ret[$t] = $p;
-        }
+        if (!$sort) {
+            return json_decode($this->tagsFull, 1);
+        } else {
+            $tags = json_decode($this->tagsFull, 1);
+            arsort($tags);
 
-        return $ret;
+            return $tags;
+        }
+    }
+
+    public function getTagsListNormal($sort = null) {
+        if (!$sort) {
+            return json_decode($this->tagsNormal, 1);
+        } else {
+            $tags = json_decode($this->tagsNormal, 1);
+            arsort($tags);
+
+            return $tags;
+        }
+    }
+
+    public function getArtistsListNormal($sort = null) {
+        if (!$sort) {
+            return json_decode($this->artistsNormal, 1);
+        } else {
+            $tags = json_decode($this->artistsNormal, 1);
+            arsort($tags);
+
+            return $tags;
+        }
+    }
+
+    /**
+     * @var string
+     */
+    private $tagsFull;
+
+
+    /**
+     * Set tagsFull
+     *
+     * @param string $tagsFull
+     * @return User
+     */
+    public function setTagsFull($tagsFull)
+    {
+        $this->tagsFull = $tagsFull;
+
+        return $this;
+    }
+
+    /**
+     * Get tagsFull
+     *
+     * @return string 
+     */
+    public function getTagsFull()
+    {
+        return $this->tagsFull;
+    }
+
+    public function setAdditionalInfo($key, $val) {
+        $add = $this->additional;
+
+        if ($add) {
+            $json = json_decode($add, 1);
+            $json[$key] = $val;
+
+            $json_str = json_encode($json);
+            $this->additional = $json_str;
+            
+            return 1; 
+        }
+    }
+
+    public function getAdditionalInfo($what) {
+        $add = $this->additional;
+
+        if ($add) {
+            $json = json_decode($add, 1);
+            
+            return $json[$what]; 
+        }
+    }
+    /**
+     * @var string
+     */
+    private $tagsNormal;
+
+    /**
+     * @var string
+     */
+    private $artistsNormal;
+
+
+    /**
+     * Set tagsNormal
+     *
+     * @param string $tagsNormal
+     * @return User
+     */
+    public function setTagsNormal($tagsNormal)
+    {
+        $this->tagsNormal = $tagsNormal;
+
+        return $this;
+    }
+
+    /**
+     * Get tagsNormal
+     *
+     * @return string 
+     */
+    public function getTagsNormal()
+    {
+        return $this->tagsNormal;
+    }
+
+    /**
+     * Set artistsNormal
+     *
+     * @param string $artistsNormal
+     * @return User
+     */
+    public function setArtistsNormal($artistsNormal)
+    {
+        $this->artistsNormal = $artistsNormal;
+
+        return $this;
+    }
+
+    /**
+     * Get artistsNormal
+     *
+     * @return string 
+     */
+    public function getArtistsNormal()
+    {
+        return $this->artistsNormal;
+    }
+    /**
+     * @var integer
+     */
+    private $subscribe;
+
+
+    /**
+     * Set subscribe
+     *
+     * @param integer $subscribe
+     * @return User
+     */
+    public function setSubscribe($subscribe)
+    {
+        $this->subscribe = $subscribe;
+
+        return $this;
+    }
+
+    /**
+     * Get subscribe
+     *
+     * @return integer 
+     */
+    public function getSubscribe()
+    {
+        return $this->subscribe;
+    }
+    /**
+     * @var integer
+     */
+    private $subscribeSecret;
+
+
+    /**
+     * Set subscribeSecret
+     *
+     * @param integer $subscribeSecret
+     * @return User
+     */
+    public function setSubscribeSecret($subscribeSecret)
+    {
+        $this->subscribeSecret = $subscribeSecret;
+
+        return $this;
+    }
+
+    /**
+     * Get subscribeSecret
+     *
+     * @return integer 
+     */
+    public function getSubscribeSecret()
+    {
+        return $this->subscribeSecret;
     }
 }

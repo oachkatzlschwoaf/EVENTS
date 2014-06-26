@@ -1,0 +1,191 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Default:top.html.twig' %}
+
+<div class="container">
+    <div class="units-row">
+        <div class="unit-100">
+            <h1 class="left">{{ user.name }}</h1>
+
+            <a id="exit" alt="Выход" href="{{ path('logout') }}" class='icon-40 exit-icon right'></a>
+        </div>
+    </div>
+</div>
+
+<div class="container min-height-500">
+    <div class="section group">
+        {% if events|length == 0 %}
+            <div class="col span_9_of_12">
+                <div id='no-events' class='text-centered'>
+                    <hgroup>
+                        <span class='icon-40 like-active-icon'></span>
+                        <h3 class='color-gray-light'>У вас еще нет понравившихся событий</h3>
+                        <small>Отметьте понравившееся событие сердечком и вы его никогда не пропустите</small>
+                    </hgroup>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if events|length > 0 %}
+            <div class="col span_9_of_12">
+                <div class="text-centered">
+                    <h4 id='afisha_title'>Мне понравилось</h4>
+                </div>
+                <div id="general_events_list">
+                    {% set i = 0 %}
+                    
+                    {% for e in events %}
+                        {% if i == 0 %}
+                            <div class="section group">
+                        {% endif %}
+
+                        {% set el = 3 %}
+                        {% if i == 0 or i == 1 %} 
+                            {% if e.catalogRate == 5 %}
+                                {% set el = 6 %}
+                                {% set i = i + 1 %}
+                            {% endif %}
+                        {% endif %}
+
+                        {% set i = i + 1 %}
+
+                        <a id="event_{{ e.id }}" href="{{ path('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" class="col span_{{ el }}_of_12 event-block {% if likes[e.id] is defined and likes[e.id].type == 2 %}hidden{% endif %}" style="background-image: url('{% if el == 3 %}{{ asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}{% elseif el == 6 %}{{ asset('uploads/catalog/medium_' ~ e.internalId ~ '.jpg') }}{% endif %}')">
+                            <div id='event-content_{{ e.id }}' class='event-content {% if likes[e.id] is defined %}likes-show{% endif %}'>
+                                <div class='head'>
+                                    <h3>{{ e.shortName(120) }}</h3>
+                                    {% if user_id %}
+                                        <div class="event-likes">
+                                            <span id="like_{{ e.id }}" href="#" onclick="likeAfisha({{ e.id }}); return false;" class="icon-30 {% if likes[e.id] is defined and likes[e.id].type == 1 %}like-active-icon{% else %}like-icon{% endif %}"></span>    
+                                            <span id="dislike_{{ e.id }}" href="#" onclick="dislikeAfisha({{ e.id }}); return false;" class="icon-30 {% if likes[e.id] is defined and likes[e.id].type == 2 %}dislike-active-icon{% else %}dislike-icon{% endif %}"></span>    
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class='additional'>
+                                    <div class='date-time left'>
+                                        {{ e.shortStartHuman() }}
+                                    </div>
+                                    <ul class='tags right'>
+                                        {% if el == 3 %}
+                                            {% for t in e.getTagsNamesList(0, 10) %}
+                                                <li {% if tags_name_selected[t] is defined %}class='highlight'{% endif %}>{{ t }}</li>
+                                            {% endfor %}
+                                        {% elseif el == 6 %}
+                                            {% for t in e.getTagsNamesList(0, 25) %}
+                                                <li {% if tags_name_selected[t] is defined %}class='highlight'{% endif %}>{{ t }}</li>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </a>
+
+                        {% if i == 3 or loop.last %}
+                            {% set i = 0 %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="col span_3_of_12 filters">
+            <h4>Управление подпиской</h4>
+            <p>
+                <button onclick="showSubscribeWindow()" class="btn {% if not user.subscribe %}btn-red{% endif %} width-100">
+                    изменить 
+                </button>
+            </p>
+
+            <h4>Мои тэги</h4>
+            <div id='my-tags' class='event-tags tags-list' style='width: 100%'>
+                {% for tag, value in my_tags %}
+                    <a href="{{ path('search') }}?query=(@tags_names+{{ tag }})&sort=date">{{ tag }}</a>
+                {% endfor %}
+            </div>
+            {% if my_tags|length >= 60 %}
+                <button id="more-tags" onclick="showMoreTags()" class="btn width-100">
+                    показать больше    
+                </button>
+            {% endif %}
+
+            <h4>Мои артисты</h4>
+            <div id='my-artists' class='event-tags tags-list' style='width: 100%'>
+                {% for artist, value in my_artists %}
+                    <a href="{{ path('search') }}?query={{ artist }}&sort=date">{{ artist }}</a>
+                {% endfor %}
+            </div>
+            {% if my_artists|length >= 60 %}
+                <button id="more-artists" onclick="showMoreArtists()" class="btn width-100">
+                    показать больше    
+                </button>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<div style='display:none'>
+    <div id='subscribe-window' class='window'>
+        <div class='head text-centered '>
+            <h3>Управление подпиской</h3>
+        </div>
+        <div class='window-main-content'>
+            <p class='color-gray'>
+                Мы заботимся о наших пользователях и не надоедаем назойлевыми письмами. Ваш персонализированный дайджест концертов приходит только один раз в неделю.
+            </p>
+            <form class="forms">
+                <label>
+                    Адрес электронной почты:
+                    <input type="email" id="user-email" name="user-email" class="width-100" style='width:100%' value="{{ user.email }}" />
+                </label>
+                <ul class="forms-list">
+                <label>
+                    <li>
+                        <input type="checkbox" id="subscribe-on" name="subscribe-on" {% if user.subscribe == 1 %}checked{% endif %} />
+                        <label for="subscribe-on">Присылать персональный дайджест концертов</label>
+                    </li>
+                </label>
+                </ul>
+                <a href="#" onclick="submitUserSettings(); return false;" class="btn btn-green">Сохранить</a>
+                <a href="#" onclick="$.fancybox.close()" class="btn">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+var tags_more = 0;
+var artists_more = 0;
+
+function showMoreTags() {
+    if (tags_more == 0) {
+        $('#my-tags').css('height', 'auto');
+        $('#more-tags').text('показать меньше');
+        tags_more = 1;
+    } else {
+        $('#my-tags').css('height', '250px');
+        $('#more-tags').text('показать больше');
+        tags_more = 0;
+    }
+}
+
+function showMoreArtists() {
+    if (artists_more == 0) {
+        $('#my-artists').css('height', 'auto');
+        $('#more-artists').text('показать меньше');
+        artists_more = 1;
+    } else {
+        $('#my-artists').css('height', '250px');
+        $('#more-artists').text('показать больше');
+        artists_more = 0;
+    }
+}
+
+</script>
+
+{% include 'EventGeneralBundle:Default:bottom.html.twig' %}
+
+{% endblock %}

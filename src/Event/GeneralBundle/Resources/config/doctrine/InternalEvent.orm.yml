@@ -11,6 +11,10 @@ Event\GeneralBundle\Entity\InternalEvent:
         name:
             type: string
             length: 255
+        urlName:
+            type: string
+            length: 255
+            column: url_name 
         date:
             type: date
         start:
@@ -32,4 +36,30 @@ Event\GeneralBundle\Entity\InternalEvent:
             type: string
             length: 255
             nullable: true
-    lifecycleCallbacks: {  }
+        catalogRate:
+            type: integer
+            nullable: true
+            column: catalog_rate
+        additionalInfo:
+            type: text 
+            nullable: true
+            column: additional_info 
+        style:
+            type: integer
+            nullable: true
+        theme:
+            type: integer
+            nullable: true
+        bigTheme:
+            type: integer
+            nullable: true
+            column: big_theme 
+        video:
+            type: string
+            length: 255
+            nullable: true
+    lifecycleCallbacks: 
+        prePersist: [ processPrePersist ]
+        postPersist: [ processPostPersist ]
+        preUpdate: [ processPreUpdate ]
+        postUpdate: [ processPostUpdate ]

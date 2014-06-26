@@ -1,6 +1,8 @@
 {% extends '::base.html.twig' %}
 {% block body %}
 
+<div class='admin_container'>
+
 {% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
 
 <h1 style='color: orange'>
@@ -23,6 +25,10 @@
             <tr>
                 <td><b>Name</b></td>
                 <td>{{ form_widget(form.name) }}</td>
+            </tr>
+            <tr>
+                <td {% if not event.urlName %}class='notice-warning'{% endif %}><b>URL Name</b></td>
+                <td>{{ form_widget(form.urlName) }}</td>
             </tr>
             <tr>
                 <td style='width: 20%'><b>Status</b></td>
@@ -56,7 +62,27 @@
                 <td>{{ form_widget(form.duration) }}</td>
             </tr>
             <tr>
-                <td><b>Tags</b></td>
+                <td {% if not event.catalogRate or event.catalogRate == 0 %}class='notice-warning'{% endif %}><b>Catalog Rate</b> (0-5)</td>
+                <td>{{ form_widget(form.catalogRate) }}</td>
+            </tr>
+            <tr>
+                <td><b>Style</b></td>
+                <td>{{ form_widget(form.style) }}</td>
+            </tr>
+            <tr>
+                <td><b>Medium Theme</b></td>
+                <td>{{ form_widget(form.theme) }}</td>
+            </tr>
+            <tr>
+                <td><b>Big Theme</b></td>
+                <td>{{ form_widget(form.bigTheme) }}</td>
+            </tr>
+            <tr>
+                <td {% if not event.video  %}class='notice-warning'{% endif %}><b>Videos</b> (comma sep: xxx,yyy)</td>
+                <td>{{ form_widget(form.video) }}</td>
+            </tr>
+            <tr>
+                <td {% if event.getTagsList()|length == 0  %}class='notice-warning'{% endif %}><b>Tags</b></td>
                 <td class='small_textarea'>
                     <ul id="tags" class='tagit'>
                         {% for t in event.getTagsList() %}
@@ -72,7 +98,7 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="2"><b>Description</b></td>
+                <td colspan="2" {% if not event.description or event.description|length < 100 %}class='notice-warning'{% endif %}><b>Description</b></td>
             </tr>
             <tr>
                 <td colspan="2">{{ form_widget(form.description) }}</td>
@@ -90,7 +116,7 @@
 
     <table class='settings'>
         <thead>
-            <td colspan="2">Actions</td>
+            <td colspan="2" style='background-color: #ffc866'>Actions</td>
         </thead>
         <tbody>
             {% if event.status != 0 %}
@@ -113,6 +139,141 @@
         </tbody>
     </table>
 
+    <table class='settings'>
+        <thead>
+            <td colspan="2">Images</td>
+        </thead>
+        <tbody>
+            <form action="{{ path('crop_image') }}" method="post" enctype='multipart/form-data'>
+                <input type="hidden" id="small_x" name="x" />
+                <input type="hidden" id="small_y" name="y" />
+                <input type="hidden" id="small_w" name="w" />
+                <input type="hidden" id="small_h" name="h" />
+
+                <input type="hidden" name="t_w" value="231" />
+                <input type="hidden" name="t_h" value="260" />
+
+                <input type="hidden" id="small_image_width" name="iw" />
+                <input type="hidden" id="small_image_height" name="ih" />
+
+                <input type="hidden" value="{{ event.id }}" name="id" />
+                <input type="hidden" value="catalog" name="image_type" />
+                <input type="hidden" value="small" name="type" />
+
+                <tr>
+                    <td {% if not event.getAdditional('catalog-image-small') %}class='notice-warning'{% endif %}><b>Image Catalog Small</b> (231 x 260)</td>
+                    <td>
+                        <input type="file" name="image" id="image_small">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <img src="" id="small_target" />
+                        <img src="{{ asset('uploads/catalog/small_' ~ event.id ~ '.jpg') }}" id="small_preview" style="border: 1px solid black; width: 231px; height: 260px"/>
+                        <br />
+                        <input type="submit" value="CROP" />
+                    </td>
+                </tr>
+            </form>
+
+            <form action="{{ path('crop_image') }}" method="post" enctype='multipart/form-data'>
+                <input type="hidden" id="medium_x" name="x" />
+                <input type="hidden" id="medium_y" name="y" />
+                <input type="hidden" id="medium_w" name="w" />
+                <input type="hidden" id="medium_h" name="h" />
+
+                <input type="hidden" name="t_w" value="474" />
+                <input type="hidden" name="t_h" value="260" />
+
+                <input type="hidden" id="medium_image_width" name="iw" />
+                <input type="hidden" id="medium_image_height" name="ih" />
+
+                <input type="hidden" value="{{ event.id }}" name="id" />
+                <input type="hidden" value="catalog" name="image_type" />
+                <input type="hidden" value="medium" name="type" />
+
+                <tr>
+                    <td {% if not event.getAdditional('catalog-image-medium') %}class='notice-warning'{% endif %}><b>Image Catalog Medium</b> (474 x 260)</td>
+                    <td>
+                        <input type="file" name="image" id="image_medium">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <img src="" id="medium_target" />
+                        <img src="{{ asset('uploads/catalog/medium_' ~ event.id ~ '.jpg') }}" id="medium_preview" style="border: 1px solid black; width: 474px; height: 260px"/>
+                        <br />
+                        <input type="submit" value="CROP" />
+                    </td>
+                </tr>
+            </form>
+
+            <form action="{{ path('crop_image') }}" method="post" enctype='multipart/form-data'>
+                <input type="hidden" id="medium2_x" name="x" />
+                <input type="hidden" id="medium2_y" name="y" />
+                <input type="hidden" id="medium2_w" name="w" />
+                <input type="hidden" id="medium2_h" name="h" />
+
+                <input type="hidden" id="medium2_image_width" name="iw" />
+                <input type="hidden" id="medium2_image_height" name="ih" />
+
+                <input type="hidden" name="t_w" value="636" />
+                <input type="hidden" name="t_h" value="450" />
+
+                <input type="hidden" value="{{ event.id }}" name="id" />
+                <input type="hidden" value="event" name="image_type" />
+                <input type="hidden" value="medium" name="type" />
+
+                <tr>
+                    <td {% if not event.getAdditional('event-image-medium') %}class='notice-warning'{% endif %}><b>Image Event Medium</b> (636 x 450)</td>
+                    <td>
+                        <input type="file" name="image" id="image_medium2">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <img src="" id="medium2_target" />
+                        <img src="{{ asset('uploads/event/medium_' ~ event.id ~ '.jpg') }}" id="medium2_preview" style="border: 1px solid black; width: 636px; height: 450px"/>
+                        <br />
+                        <input type="submit" value="CROP" />
+                    </td>
+                </tr>
+            </form>
+
+
+            <form action="{{ path('crop_image') }}" method="post" enctype='multipart/form-data'>
+                <input type="hidden" id="big_x" name="x" />
+                <input type="hidden" id="big_y" name="y" />
+                <input type="hidden" id="big_w" name="w" />
+                <input type="hidden" id="big_h" name="h" />
+
+                <input type="hidden" id="big_image_width" name="iw" />
+                <input type="hidden" id="big_image_height" name="ih" />
+
+                <input type="hidden" name="t_w" value="636" />
+                <input type="hidden" name="t_h" value="600" />
+
+                <input type="hidden" value="{{ event.id }}" name="id" />
+                <input type="hidden" value="event" name="image_type" />
+                <input type="hidden" value="big" name="type" />
+
+                <tr>
+                    <td {% if not event.getAdditional('event-image-big') %}class='notice-warning'{% endif %}><b>Image Event Big</b> (636 x 600)</td>
+                    <td>
+                        <input type="file" name="image" id="image_big">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <img src="" id="big_target" />
+                        <img src="{{ asset('uploads/event/big_' ~ event.id ~ '.jpg') }}" id="big_preview" style="border: 1px solid black; width: 636px; height: 600px"/>
+                        <br />
+                        <input type="submit" value="CROP" />
+                    </td>
+                </tr>
+            </form>
+        </tbody>
+    </table>
 </div>
 
 <div style='width: 450px; float: left;'>
@@ -258,6 +419,8 @@
     </table>
 <div>
 
+<div>
+
 <script>
 $(document).ready(function () {
     $("#artist").tokenInput("{{ path('search_artists') }}", {
@@ -284,6 +447,53 @@ function suggestTags() {
         {% endfor %}
     {% endfor %}
 }
+
+// Crop
+var image_sizes = { 'small': 0.888, 'medium': 1.784, 'big': 1.06, 'medium2': 1.413 };
+var selected_size = 'small';
+
+$.each(image_sizes, function(size, ratio) {
+    $("#image_" + size).change(function() {
+        $("#" + size + "_preview").hide();
+        readURL(this, size, ratio);
+    });
+});
+
+function readURL(input, size, ratio) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#' + size + '_target').attr('src', e.target.result);
+
+            $('#' + size + '_image_width').val( $('#' + size + '_target').width() );
+            $('#' + size + '_image_height').val( $('#' + size + '_target').height() );
+
+            selected_size = size;
+
+            jQuery(function($) {
+                    $('#' + size + '_target').Jcrop({
+                        onSelect: updateCoords,
+                        aspectRatio: ratio 
+                    });
+            });
+        }
+
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function updateCoords(c) {
+    $('#' + selected_size + '_x').val(c.x);
+    $('#' + selected_size + '_y').val(c.y);
+    $('#' + selected_size + '_w').val(c.w);
+    $('#' + selected_size + '_h').val(c.h);
+};
+
+tinymce.init({
+    selector: "textarea#event_generalbundle_internalevent_description"
+});
+
 </script>
 
 {% endblock %}

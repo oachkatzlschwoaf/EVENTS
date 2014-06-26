@@ -66,7 +66,7 @@ class VkApi {
     }
 
     public function getUserInfo($uid, $access_token) {
-        $data = $this->requestSecure('users.get', array('access_token' => $access_token, 'user_ids' => $uid, 'fields' => 'sex,bdate,city,country,photo_max,photo_max_orig,domain,has_mobile,common_count,relation,counters,screen_name,timezone')); 
+        $data = $this->requestSecure('users.get', array('access_token' => $access_token, 'user_ids' => $uid, 'fields' => 'sex,bdate,city,country,photo_max,photo_50,domain,has_mobile,common_count,relation,counters,screen_name,timezone')); 
 
         if (isset($data->error)) {
             error_log( print_r($data, 1) );

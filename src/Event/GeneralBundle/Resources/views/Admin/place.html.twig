@@ -51,7 +51,31 @@
             </tr>
             <tr>
                 <td><b>Address</b></td>
-                <td>{{ form_widget(form.address ) }}</td>
+                <td>{{ form_widget(form.address) }}</td>
+            </tr>
+            <tr>
+                <td><b>Metro</b></td>
+                <td>{{ form_widget(form.metro) }}</td>
+            </tr>
+            <tr>
+                <td><b>Url</b></td>
+                <td>{{ form_widget(form.url) }}</td>
+            </tr>
+            <tr>
+                <td><b>Phone</b></td>
+                <td>{{ form_widget(form.phone) }}</td>
+            </tr>
+            <tr>
+                <td><b>Latitude</b></td>
+                <td>{{ form_widget(form.latitude) }}</td>
+            </tr>
+            <tr>
+                <td><b>Longitude</b></td>
+                <td>{{ form_widget(form.longitude) }}</td>
+            </tr>
+            <tr>
+                <td><b>Zoom</b></td>
+                <td>{{ form_widget(form.zoom) }}</td>
             </tr>
             <tr>
                 <td><b>Description</b></td>
@@ -63,9 +87,31 @@
                     <input type="submit" value="Save" />
                 </td>
             </tr>
+            <tr>
+                {% if place.longitude and place.latitude and form.zoom %}
+                    <td colspan="2">
+                        <div id="map"></div>
+                    </td>
+
+                    <script>
+                        ymaps.ready(map_init);
+
+                        function map_init () {
+                            map = new ymaps.Map('map', {
+                                center: [{{ place.latitude }}, {{ place.longitude }}], 
+                                zoom: {{ place.zoom }}
+                            });
+
+                            var pm = new ymaps.Placemark([{{ place.latitude }}, {{ place.longitude }}]);
+                            map.geoObjects.add(pm);
+                        }
+                    </script>
+                {% endif %}
+            </tr>
         </tbody>
     </table>
     </form>
+
 </div>
 
 <div style='width: 450px; float: left;'>

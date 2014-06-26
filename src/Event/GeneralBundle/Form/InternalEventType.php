@@ -16,12 +16,38 @@ class InternalEventType extends AbstractType
     {
         $builder
             ->add('name')
+            ->add('urlName')
             ->add('date')
             ->add('start')
             ->add('duration')
             ->add('description')
+            ->add('video')
+            ->add('catalogRate', 'choice', array(
+                'choices' => array(
+                    1 => 1,
+                    2 => 2,
+                    3 => 3,
+                    4 => 4,
+                    5 => 5
+            )))
             ->add('tags', 'hidden')
             ->add('status', 'hidden')
+            ->add('theme', 'choice', array(
+                'choices' => array(
+                    0  => 'black',
+                    1  => 'white',
+            )))
+            ->add('bigTheme', 'choice', array(
+                'choices' => array(
+                    0  => 'black',
+                    1  => 'white',
+            )))
+            ->add('style', 'choice', array(
+                'choices' => array(
+                    0  => 'head',
+                    1  => 'medium pic',
+                    2  => 'big pic',
+            )))
         ;
     }
     

@@ -136,4 +136,32 @@ class UserAudio
     {
         return $this->title;
     }
+    /**
+     * @var string
+     */
+    private $tags;
+
+
+    /**
+     * Set tags
+     *
+     * @param string $tags
+     * @return UserAudio
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+
+        return $this;
+    }
+
+    /**
+     * Get tags
+     *
+     * @return string 
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
 }

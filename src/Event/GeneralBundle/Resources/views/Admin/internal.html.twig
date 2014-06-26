@@ -1,6 +1,8 @@
 {% extends '::base.html.twig' %}
 {% block body %}
 
+<div class='admin_container'>
+
 {% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
 
 <table class='top_menu'>
@@ -19,23 +21,40 @@
     <thead>
         <tr>
             <td style='width: 3%'>id</td>
-            <td style='width: 3%'>matches</td>
+            <td style='width: 3%'>start</td>
+            <td style='width: 20%'>name</td>
+            <td style='width: 10%'>place</td>
+            <td style='width: 10%'>genres</td>
+            <td style='width: 3%'>mat. ok</td>
             <td style='width: 3%'>mat. total</td>
             <td style='width: 3%'>artists</td>
-            <td style='width: 40%'>name</td>
-            <td style='width: 15%'>genres</td>
-            <td style='width: 15%'>place</td>
-            <td style='width: 10%'>date</td>
+            <td style='width: 3%'>images</td>
+            <td style='width: 3%'>rate</td>
         </tr>
     </thead>
         <tbody>
             {% for dt, e_id in agg_events %}
                 <tr class='date'>
-                    <td colspan="8">{{ dt }}</td>
+                    <td colspan="10">{{ dt }}</td>
                 </tr>
                 {% for e in agg_events[dt] %}
                     <tr>
                         <td>{{ e.id }}</td>
+
+                        <td>{{ e.getHumanStartTime() }}</td>
+
+                        <td><a href="{{ path('internal_event', { "id": e.id }) }}">{{ e.name }}</a></td>
+
+                        <td {% if places[ e.place ].status == 0 %}class='notice-pink'{% endif %}>
+                            {{ places[ e.place ].name }}
+                        </td>
+
+                        <td>
+                            {% for t in e.getTagsList() %}
+                                {{ tags[ t ].name }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                        </td>
+
 
                         {% if matches_count[ e.id ] is defined and matches_count[ e.id ] > 0 %}
                             <td>{{ matches_count[e.id] }}</td>
@@ -53,23 +72,27 @@
                             {{ e.getArtistsCount() }}
                         </td>
 
-                        <td><a href="{{ path('internal_event', { "id": e.id }) }}">{{ e.name }}</a></td>
-
-                        <td>
-                            {% for t in e.getTagsList() %}
-                                {{ tags[ t ].name }}{% if not loop.last %},{% endif %}
-                            {% endfor %}
+                        <td {% if not e.getAddParam('catalog-image-small') or
+                            not e.getAddParam('catalog-image-medium') %}
+                            class='notice-pink'
+                        {% endif %}>
+                            {% if e.getAddParam('catalog-image-small') %}
+                                <b>S</b>
+                            {% endif %}
+                            {% if e.getAddParam('catalog-image-medium') %}
+                                <b>M</b>
+                            {% endif %}
                         </td>
 
-                        <td {% if places[ e.place ].status == 0 %}class='notice-pink'{% endif %}>
-                            {{ places[ e.place ].name }}
+                        <td {% if not e.catalogRate or e.catalogRate == 0 %}class='notice-pink'{% endif %}>
+                            {{ e.catalogRate }}
                         </td>
-
-                        <td>{{ e.getHumanStart() }}</td>
                     </tr>
                 {% endfor %}
             {% endfor %}
         </tbody>
 </table>
+
+</div>
 
 {% endblock %}

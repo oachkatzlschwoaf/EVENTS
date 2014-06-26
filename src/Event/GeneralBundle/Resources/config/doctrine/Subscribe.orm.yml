@@ -1,0 +1,15 @@
+Event\GeneralBundle\Entity\Subscribe:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        status:
+            type: integer
+        text:
+            type: text
+    lifecycleCallbacks: {  }

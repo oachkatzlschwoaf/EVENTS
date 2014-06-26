@@ -35,6 +35,18 @@ sub connectDb {
     );
 }
 
+sub cleanWord {
+    my ($w) = @_;
+
+    Encode::_utf8_on($w);
+    $w = lc($w);
+    $w =~ s/[\"\'\(\)]//g;
+    $w =~ s/^\s+//;
+    $w =~ s/\s+$//;
+
+    return $w;
+}
+
 sub requestVkApi {
     my ($method, $params, $c) = @_;
 
@@ -51,7 +63,7 @@ sub requestVkApi {
 sub getAudioList {
     my ($uid, $sk, $c) = @_;
 
-    print "\n\tGet user $uid audio list";
+    print "\n\tUID $uid: GET PLAYLIST... ";
 
     my $params = {
         'access_token' => $sk,
@@ -63,7 +75,7 @@ sub getAudioList {
     if ($data->{'error'}) {
         return;
     } else {
-        print " -> done!";
+        print "DONE!";
         return $data->{'response'};
     }
 }
@@ -85,17 +97,24 @@ sub getTopTags {
     $uri->query_form($params);
     
     my $out = get($uri);
-    my $json = decode_json($out);
+    my $json = {}; 
+    eval {
+        $json = decode_json($out);
+    };
+
+    if ($@) {
+        return {};
+        warn $@;
+    }
 
     my $tags = {}; 
-
     if (!$json->{'error'} && $json->{'toptags'}{'tag'}) {
         my $info = $json->{'toptags'}{'tag'};
 
         if (ref $info eq 'ARRAY') {
             foreach my $tag (@$info) {
                 next if ($tag->{'count'} < 30);
-                $tags->{ $tag->{'name'} }++;
+                $tags->{ $tag->{'name'} } += $tag->{'count'};
             }
         }
     }
@@ -104,34 +123,53 @@ sub getTopTags {
 }
 
 sub analyzeTags {
-    my ($list, $c) = @_;
+    my ($d, $user_id, $c, $list) = @_;
 
-    print "\n\tAnalyze tags";
+    print "\n\tUID $user_id: ANALYZE TAGS";
 
-    my $i = 0;
-    my $user_tags = {};
-    foreach my $a (@$list) {
-        my $tags = getTopTags($a->{'artist'}, $c);
-        
-        foreach my $t (keys %$tags) {
-            $user_tags->{ $t } += $tags->{$t};
+    my $untagged = 0;
+    foreach my $id (keys %$list) {
+        my $info = $list->{$id};
+
+        if (!$info->{'tags'}) {
+            $untagged++;
         }
     }
 
-    my $ret = { };
-    foreach my $t (keys %$user_tags) {
-        $ret->{$t} = $user_tags->{$t};
+    updateAdditional($d, $user_id,
+        { 'untagged' => $untagged, 'processed' => 0 }
+    );
+
+    my $i = 0;
+    foreach my $id (keys %$list) {
+        my $info = $list->{$id};
+
+        if (!$info->{'tags'}) {
+            
+            my $tags = getTopTags($info->{'clean_artist'}, $c);
+
+            my $tags_str = lc(encode_json($tags));
+
+            my $sql = "update `UserAudioArtist` set `tags` = ? where `id` = ?";
+            my $sth = $d->prepare($sql);
+
+            $sth->execute(
+                $tags_str,
+                $id, 
+            ); 
+
+            $i++;
+            updateAdditional($d, $user_id,
+                { 'processed' => $i }
+            );
+        }
     }
-
-    print " -> done!";
-
-    return $ret;
 }
 
-sub syncDb {
+sub syncAudioDb {
     my ($d, $user_id, $network_list) = @_;
 
-    print "\n\tSync user $user_id db";
+    print "\n\tUID $user_id: SYNC DB PLAYLIST";
 
     # Make hash
     my $network_hash = { };
@@ -142,20 +180,28 @@ sub syncDb {
     # Get Db Audio List
     my $changes = {};
 
-    my $sql = "select `id`, `artist_id`, `artist`, `title` from `UserAudio` where user_id = '$user_id'";
+    my $sql = "select `id`, `artist_id`, `artist`, `title`, `tags` from `UserAudio` where user_id = '$user_id'";
     my $sth = $d->prepare($sql);
     $sth->execute();
 
     my $db_hash = { };
-    while ( my @row = $sth->fetchrow_array() ) {
-        my $artist = $row[2];
-        my $title  = $row[3];
-        
+    while ( my ($id, $artist_id, $artist, $title, $tags) = $sth->fetchrow_array() ) {
         $db_hash->{ $artist.'+'.$title } = {
-            'id'     => $row[0],
+            'id'     => $id,
             'artist' => $artist,
             'title'  => $title,
         };
+    }
+
+    # If no playlist yet in db - set first time
+    if (scalar(keys $db_hash) == 0) {
+        updateAdditional($d, $user_id,
+            { 'first_time' => 1 }
+        );
+    } else {
+        updateAdditional($d, $user_id,
+            { 'first_time' => 0 }
+        );
     }
 
     # To add
@@ -172,7 +218,7 @@ sub syncDb {
                 $t->{'title'}, 
             ); 
 
-            push( @{ $changes->{'add'} }, $t);
+            print "\n\t\tUID $user_id: ADD AUDIO '$k'";
         }
     }
 
@@ -187,12 +233,132 @@ sub syncDb {
 
             $sth->execute( ); 
 
-            push( @{ $changes->{'delete'} }, $t);
+            print "\n\t\tUID $user_id: DELETE AUDIO '$k'";
+        }
+    }
+}
+
+sub syncArtistDb {
+    my ($d, $user_id, $list) = @_;
+
+    print "\n\tUID $user_id: SYNC ARTISTS";
+
+    my $artists = { };
+    foreach my $aid (keys %$list) {
+        my $audio = $list->{$aid};
+        my $artist = $audio->{'artist'};
+        my $clean_artist = cleanWord($artist);
+
+        $artists->{ $clean_artist }{'artist'} = $artist;
+        $artists->{ $clean_artist }{'count'}++;
+    }
+
+    my $sql = "select `clean_artist`, `count` from `UserAudioArtist` where user_id = '$user_id'";
+    my $sth = $d->prepare($sql);
+    $sth->execute();
+
+    my $db_artists = { };
+    while ( my ($clean_artist, $count) = $sth->fetchrow_array() ) {
+        $db_artists->{ $clean_artist } = $count;
+    }
+
+    foreach my $clean_artist (keys %$db_artists) {
+        if (!$artists->{$clean_artist}) {
+            # Delete
+            my $sql = "delete from `UserAudioArtist` where `clean_artist` = ? and `user_id` = ?";
+            my $sth = $d->prepare($sql);
+
+            $sth->execute(
+                $clean_artist, 
+                $user_id, 
+            ); 
+
+            print "\n\tUID $user_id: DELETE ARTIST '$clean_artist'";
+
+        } elsif ($db_artists->{$clean_artist} != $artists->{$clean_artist}{'count'}) {
+            my $artist = $artists->{$clean_artist}{'artist'};
+            my $count = $artists->{$clean_artist}{'count'};
+
+            # Update
+            my $sql = "update `UserAudioArtist` set `count` = ? where `clean_artist` = ? and `user_id` = ?";
+            my $sth = $d->prepare($sql);
+
+            $sth->execute(
+                $count, 
+                $clean_artist,
+                $user_id, 
+            ); 
+
+            print "\n\tUID $user_id: UPDATE ARTIST '$clean_artist' ($count)";
         }
     }
 
-    print " -> done!";
-    return $changes;
+    foreach my $clean_artist (keys %$artists) {
+        if (!$db_artists->{$clean_artist}) {
+            my $artist = $artists->{$clean_artist}{'artist'};
+            my $count = $artists->{$clean_artist}{'count'};
+
+            # Add
+            my $sql = "insert into `UserAudioArtist` (`user_id`, `artist`, `clean_artist`, `count`) values(?, ?, ?, ?)";
+            my $sth = $d->prepare($sql);
+
+            $sth->execute(
+                $user_id, 
+                $artist, 
+                $clean_artist, 
+                $count, 
+            ); 
+
+            print "\n\t\tUID $user_id: ADD ARTIST '$artist'";
+        }
+    }
+}
+
+sub getUserAudio {
+    my ($d, $user_id) = @_;
+
+    print "\n\tUID $user_id: GET PLAYLIST... ";
+
+    my $sql = "select `id`, `artist_id`, `artist`, `title`, `tags` from `UserAudio` where user_id = '$user_id'";
+    my $sth = $d->prepare($sql);
+    $sth->execute();
+
+    my $audio = { };
+    while ( my ($id, $artist_id, $artist, $title, $tags) = $sth->fetchrow_array() ) {
+        $audio->{ $id } = {
+            'artist' => $artist,
+            'title'  => $title,
+            'tags'   => $tags,
+        };
+    }
+
+    print "DONE!";
+
+    return $audio;
+}
+
+sub getUserAudioArtist {
+    my ($d, $user_id) = @_;
+
+    print "\n\tUID $user_id: GET ARTISTS... ";
+
+    my $sql = "select `id`, `artist`, `clean_artist`, `tags`, `count` from `UserAudioArtist` where user_id = '$user_id'";
+    my $sth = $d->prepare($sql);
+    $sth->execute();
+
+    my $audio = { };
+    while ( my ($id, $artist, $clean_artist, $tags, $count) = $sth->fetchrow_array() ) {
+        $audio->{ $id } = {
+            'artist' => $artist,
+            'clean_artist' => $clean_artist,
+            'tags' => $tags,
+            'count' => $count,
+        };
+    }
+
+    print "DONE!";
+
+    return $audio;
 }
 
 sub updateSyncStatus {
@@ -209,23 +375,117 @@ sub updateSyncStatus {
     return;
 }
 
+sub updateAdditional {
+    my ($d, $user_id, $add) = @_;
+
+    my $sql = "select `additional` from `Sync` where user_id = ?";
+    my $sth = $d->prepare($sql);
+    $sth->execute( $user_id );
+    my ($json) = $sth->fetchrow_array();
+
+    $json = $json ? decode_json($json) : { };
+
+    foreach my $k (keys %$add) {
+        $json->{$k} = $add->{$k};
+    }
+
+    $sql = "update `Sync` set additional = ? where user_id = ?";
+    $sth = $d->prepare($sql);
+
+    $sth->execute(
+        encode_json($json),
+        $user_id, 
+    ); 
+}
+
 sub saveTags {
-    my ($d, $user_id, $tags) = @_;
+    my ($d, $user_id, $list) = @_;
 
-    print "\n\tSave user $user_id tags";
-    my $json = encode_json($tags);
+    print "\n\tUID $user_id: SAVE TAGS... ";
 
-    my $sql = "update `User` set tags = ? where id = ?";
+    my $stat      = {};
+    my $art_stat  = {};
+    my $val_max   = 0;
+    my $count_max = 0;
+
+    foreach my $id (keys %$list) {
+        my $tags  = $list->{$id}{'tags'};
+        my $count = $list->{$id}{'count'};
+
+        if ($tags) {
+            my $tags_json = decode_json($tags);
+
+            foreach my $tag (keys %$tags_json) {
+                $stat->{'count'}{$tag} += $count;
+                $stat->{'sum'}{$tag} += $tags_json->{$tag} * $count;
+
+                if ($stat->{'sum'}{$tag} > $val_max) {
+                    $val_max = $stat->{'sum'}{$tag};
+                }
+            }
+        }
+
+        my $cartist = $list->{$id}{'clean_artist'};
+        $art_stat->{'count'}{$cartist} += $count; 
+
+        if ($count > $count_max) {
+            $count_max = $count;
+        }
+    }
+
+    foreach my $artist (keys %{ $art_stat->{'count'} }) {
+        my $count = $art_stat->{'count'}{$artist};
+        my $p = $count * 100 / $count_max;
+
+        my $art_val = 1;
+        if ($p > 80) {
+            $art_val = 5;
+        } elsif ($p > 60 && $p <= 80) {
+            $art_val = 4;
+        } elsif ($p > 40 && $p <= 60) {
+            $art_val = 3;
+        } elsif ($p > 20 && $p <= 40) {
+            $art_val = 2;
+        }
+        
+        $art_stat->{'norm'}{$artist} = $art_val;
+    }
+
+    foreach my $tag (keys %{ $stat->{'sum'} }) {
+        my $val = $stat->{'sum'}{$tag};
+        my $p = $val * 100 / $val_max;
+        
+        my $tag_val = 1;
+        if ($p > 80) {
+            $tag_val = 5;
+        } elsif ($p > 60 && $p <= 80) {
+            $tag_val = 4;
+        } elsif ($p > 40 && $p <= 60) {
+            $tag_val = 3;
+        } elsif ($p > 20 && $p <= 40) {
+            $tag_val = 2;
+        }
+
+        $stat->{'norm'}{$tag} = $tag_val;
+    }
+
+    my $tags_count_str = encode_json( $stat->{'count'} );
+    my $tags_sum_str   = encode_json( $stat->{'sum'} );
+    my $tags_norm_str  = encode_json( $stat->{'norm'} );
+    my $art_norm_str   = encode_json( $art_stat->{'count'} );
+
+    my $sql = "update `User` set tags = ?, tags_full = ?, tags_normal = ?, artists_normal = ? where id = ?";
     my $sth = $d->prepare($sql);
 
     $sth->execute(
-        $json,
-        $user_id, 
+        $tags_count_str,
+        $tags_sum_str,
+        $tags_norm_str,
+        $art_norm_str,
+        $user_id
     ); 
 
-    print " -> done!";
-
-    return;
+    print "DONE!";
 }
 
 sub addTags {
@@ -255,6 +515,8 @@ sub deleteTags {
 sub getUserTags {
     my ($d, $user_id) = @_;
 
+    print "\n\tUID $user_id: GET TAGS... ";
+
     my $sql = "select `tags` from `User` where id = ?";
     my $sth = $d->prepare($sql);
 
@@ -263,6 +525,8 @@ sub getUserTags {
     ); 
 
     my @row = $sth->fetchrow_array();
+
+    print "DONE!";
 
     if (!$row[0]) {
         return { };
@@ -274,11 +538,15 @@ sub getUserTags {
 sub getSync {
     my ($d, $sync_id) = @_;
 
+    print "SYNC $sync_id: GET INFO... ";
+
     my $sql = "select `id`, `user_id`, `network`, `network_id`, `auth_info`, `status`, `last_sync` from `Sync` where id = ?";
     my $sth = $d->prepare($sql);
     $sth->execute(
         $sync_id,
     );
+
+    print "DONE!";
 
     if (my @row = $sth->fetchrow_array()) {
         my $json = decode_json( $row[4] );
@@ -307,37 +575,41 @@ $d->do("SET NAMES 'utf8'");
 $d->{'mysql_enable_utf8'} = 1;
 
 if (my $sync_id = $ARGV[0]) {
-    print "Look for sync $sync_id";
     my $to_sync = getSync($d, $sync_id);
 
     if ($to_sync) {
-        print "\nStart process sync $sync_id";
+        print "\nSYNC $sync_id: START";
+
+        my $user_id = $to_sync->{'user_id'};
 
         # Get Network Audio List
-        updateSyncStatus($d, $to_sync->{'user_id'}, 2); # sync audio list
-        my $audio_list = getAudioList($to_sync->{'user_id'}, $to_sync->{'access_token'}, $config);
+        updateSyncStatus($d, $user_id, 2); # sync audio list
+        my $audio_list = getAudioList($user_id, $to_sync->{'access_token'}, $config);
 
         if (!$audio_list) {
-            updateSyncStatus($d, $to_sync->{'user_id'}, 4); # sync error 
-            die "\nERROR: Sync $sync_id cannot get audio list";
+            updateSyncStatus($d, $user_id, -1); # sync error 
+            die "\nSYNC $sync_id: ERROR (cannot get audio list)";
         }
 
         # Sync DB
-        updateSyncStatus($d, $to_sync->{'user_id'}, 3); # sync tags 
-        my $diff = syncDb($d, $to_sync->{'user_id'}, $audio_list);
+        updateSyncStatus($d, $user_id, 3); # sync audio & artists 
+        syncAudioDb($d, $to_sync->{'user_id'}, $audio_list);
 
-        # Analyse tags to add
-        my $user_tags = getUserTags($d, $to_sync->{'user_id'});
+        my $actual_audio_list = getUserAudio($d, $user_id);
 
-        my $add_tags = analyzeTags($diff->{'add'}, $config);
-        $user_tags = addTags($user_tags, $add_tags);
+        syncArtistDb($d, $user_id, $actual_audio_list);
 
-        my $del_tags = analyzeTags($diff->{'delete'}, $config);
-        $user_tags = deleteTags($user_tags, $del_tags);
+        my $actual_artist_list = getUserAudioArtist($d, $user_id);
 
-        saveTags($d, $to_sync->{'user_id'}, $user_tags);
+        # Sync tags 
+        updateSyncStatus($d, $user_id, 4); # sync tags 
+        analyzeTags($d, $user_id, $config, $actual_artist_list);
+
+        $actual_artist_list = getUserAudioArtist($d, $user_id);
+
+        saveTags($d, $user_id, $actual_artist_list);
 
         updateSyncStatus($d, $to_sync->{'user_id'}, 1); # sync done 
-        print "\nSync $sync_id done";
+        print "\nSYNC $sync_id: DONE";
     }
 }

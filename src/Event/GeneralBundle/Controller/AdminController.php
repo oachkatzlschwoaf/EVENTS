@@ -13,6 +13,7 @@ use Event\GeneralBundle\Entity\Place;
 use Event\GeneralBundle\Entity\Artist;
 use Event\GeneralBundle\Entity\User;
 use Event\GeneralBundle\Entity\Tag;
+use Event\GeneralBundle\Entity\Subscribe;
 
 # Forms
 use Event\GeneralBundle\Form\ProviderEventType; 
@@ -360,10 +361,10 @@ class AdminController extends Controller {
         if ($r->getMethod() == 'POST') {
             $form->handleRequest($r);
 
-            if ($form->isValid()) {
-                $tags = $this->processTags( $event->getTags() );
-                $event->setTags( implode(',', $tags) );
+            $process_tags = $this->processTags( $event->getTags() );
+            $event->setTags( implode(',', $process_tags) );
 
+            if ($form->isValid()) {
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($event);
                 $em->flush();
@@ -840,6 +841,8 @@ class AdminController extends Controller {
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($place);
                 $em->flush();
+
+                return $this->redirect($this->generateUrl('place', array('id' => $p_id)));
             }
         }
 
@@ -1320,5 +1323,143 @@ class AdminController extends Controller {
 
         $answer = array( 'error' => 'not found', 'url' => $url );
         return new Response(json_encode($answer));
+    }
+
+
+    public function cropImageAction(Request $r) {
+        $id = $r->request->get('id');
+
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:InternalEvent');
+        $ie = $rep->find( $id );
+
+        if (!$ie) {
+            return $this->redirect($this->generateUrl('internal_events'));
+        }
+
+        $image = $r->files->get('image');
+        $type = $r->request->get('type');
+        $image_type = $r->request->get('image_type');
+
+        $x = $r->request->get('x');
+        $y = $r->request->get('y');
+        $w = $r->request->get('w');
+        $h = $r->request->get('h');
+
+        $iw = $r->request->get('iw');
+        $ih = $r->request->get('ih');
+
+        $t_w = $r->request->get('t_w');
+        $t_h = $r->request->get('t_h');
+
+        if ($image && $x && $y && $w && $h) {
+            $web_path = $this->get('kernel')->getRootDir() . '/../web';
+            $save_path = $web_path.'/uploads/'.$image_type.'/'.$type.'_'.$id.'.jpg';
+
+            $im = new \Imagick( $image->getPathName() );  
+            $geo = $im->getImageGeometry();  
+
+            $pw = $geo['width'] / $iw;
+            $ph = $geo['height'] / $ih;
+
+            $x *= $pw;
+            $y *= $ph;
+
+            $w *= $pw;
+            $h *= $ph;
+
+            $im->cropImage($w, $h, $x, $y);
+            $im->resizeImage($t_w, $t_h, \Imagick::FILTER_LANCZOS, 1);
+            $im->writeImage($save_path);
+
+            $em = $this->getDoctrine()->getManager();
+            $ie->setAdditionalInfo(array( $image_type.'-image-'.$type => 1 ));
+            $em->persist($ie);
+            $em->flush();
+        }
+
+        return $this->redirect($this->generateUrl('internal_event', array('id' => $id)));
+    }
+
+    public function subscribeAction(Request $r) {
+        $counters  = $this->getCounters();
+        $id = $r->get('id'); 
+
+        $em = $this->getDoctrine()->getManager();
+
+        $subscribe = null;
+        if ($id) {
+            $rep = $this->getDoctrine()
+                ->getRepository('EventGeneralBundle:Subscribe');
+
+            $subscribe = $rep->find($id);
+        }
+
+        if ($r->getMethod() == 'POST') {
+            $text = $r->get('text'); 
+
+            if (!$id) {
+                // Save new subscribe text
+                $s = new Subscribe;
+                $s->setText($text);
+                $s->setStatus(1);
+
+                $em->persist($s);
+                $em->flush();
+
+                return $this->redirect($this->generateUrl('admin_subscribe'));
+
+            } else {
+                $subscribe->setText($text);
+                $subscribe->setStatus(1);
+
+                $em->persist($subscribe);
+                $em->flush();
+
+                return $this->redirect($this->generateUrl('admin_subscribe')."?id=".$id);
+            }
+        }
+
+        # Get subscribes
+        $subscribes = $em->createQuery("select p from EventGeneralBundle:Subscribe p order by p.id desc")
+            ->getResult();
+
+        $max_id = 0;
+
+        foreach ($subscribes as $s) {
+            if ($s->getStatus() == 1 && $s->getId() > $max_id) {
+                $max_id = $s->getId();
+            }
+        }
+
+        return $this->render('EventGeneralBundle:Admin:subscribe.html.twig', array(
+            'subscribe_selected' => 1, 
+            'counters' => $counters,
+            'subscribes' => $subscribes, 
+            'publish_id' => $max_id, 
+            'id' => $id, 
+            'subscribe' => $subscribe, 
+        ));
+    }
+
+    public function changeSubscribeStatusAction(Request $r) {
+        $counters  = $this->getCounters();
+        $id = $r->get('id'); 
+        $status = $r->get('status'); 
+
+        $subscribe = null;
+        if ($id) {
+            $rep = $this->getDoctrine()
+                ->getRepository('EventGeneralBundle:Subscribe');
+
+            $subscribe = $rep->find($id);
+            $subscribe->setStatus($status);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($subscribe);
+            $em->flush();
+        }
+
+        return $this->redirect($this->generateUrl('admin_subscribe'));
     }
 }

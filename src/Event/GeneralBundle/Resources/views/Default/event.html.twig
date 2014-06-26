@@ -1,0 +1,214 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Default:top.html.twig' %}
+
+<div class="container">
+    <div class="section group">
+        <div class="col span_8_of_12 event-content">
+            {% if event.style == 2 %}
+                <div id="event-title" style="background-image: url('{{ asset('uploads/event/big_' ~ event.id ~ '.jpg') }}')" class='text-centered
+                    {% if event.bigTheme == 1 %}
+                        event-big-white
+                    {% endif %}
+                '>
+                    <div class='border'>
+                        <div class="title">
+                            <p>{{ event.fullStartHuman() }}</p>
+                            <h1>{{ event.name }}</h1>
+                            <h5>{{ place.name }}</h5>
+                        </div>
+                        <div class='buttons'>
+                            <a href="#" onclick='dislike({{ index.id }}); return false;' class='dislike icon-40 right margin-right-10
+                                {% if not like or (like and like.type == 1) %}dislike-icon{% else %}dislike-active-icon{% endif %}'></a>
+                            <a href="#" onclick='like({{ index.id }}); return false;' class='like icon-40 right margin-right-10 
+                                {% if not like or (like and like.type == 2) %}like-icon{% else %}like-active-icon{% endif %}'></a>
+                        </div>
+                    </div>
+                </div>
+            {% elseif event.style == 1 %}
+                <div id="event-title-medium" style="background-image: url('{{ asset('uploads/event/medium_' ~ event.id ~ '.jpg') }}')" class='text-centered
+                    {% if event.theme == 1 %}
+                        event-white
+                    {% endif %}
+                '>
+                    <div class='border'>
+                        <div class="title">
+                            <p>{{ event.fullStartHuman() }}</p>
+                            <h1>{{ event.name }}</h1>
+                            <h5>{{ place.name }}</h5>
+                        </div>
+                        <div class='buttons text-centered'>
+                            <a href="#" onclick='like({{ index.id }}); return false;' class='like icon-40 margin-right-10 
+                                {% if not like or (like and like.type == 2) %}like-icon{% else %}like-active-icon{% endif %}'></a>
+                            <a href="#" onclick='dislike({{ index.id }}); return false;' class='dislike icon-40  
+                                {% if not like or (like and like.type == 1) %}dislike-icon{% else %}dislike-active-icon{% endif %}'></a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <h1>{{ event.name }}</h1>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="section group">
+        <div class="col span_8_of_12 event-content">
+            {% if event.description %}
+                <div class="event-desc">
+                    {{ event.description|raw }}
+                </div>
+            {% endif %}
+
+            <div class='tags-like'>
+                {% if index.getTagsNamesList()|length > 0 %}
+                    <div class='event-tags'>
+                        {% for tag in index.getTagsNamesList() %}
+                            <a href="{{ path('search') }}?query=(@tags_names+{{ tag }})&sort=date">{{ tag }}</a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class='likes'>
+                    <div class='button-container'>
+                        <a href="#" onclick='like({{ index.id }}); return false;' class='like icon-40 left 
+                            {% if not like or (like and like.type == 2) %}like-icon{% else %}like-active-icon{% endif %} 
+                            '>
+                            <small>нравится событие</small>    
+                        </a>
+                    </div>
+                    <div class='button-container'>
+                        <a href="#" onclick='dislike({{ index.id }}); return false;' class='dislike icon-40 left
+                            {% if not like or (like and like.type == 1) %}dislike-icon{% else %}dislike-active-icon{% endif %} 
+                            '>
+                            <small>не нравится событие</small>    
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if event.getVideoList()|length > 0 %}
+        <div class="section group">
+            <div class="col span_9_of_12 event-content">
+                <h3>Послушать<h3>
+                    {% for video in event.getVideoList() %}
+                        <iframe width="235" height="132" src="//www.youtube.com/embed/{{ video }}?controls=0&showinfo=0" frameborder="0" allowfullscreen></iframe>
+                    {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="section group">
+        <div class="col span_9_of_12 event-content">
+            <h3>Когда?</h3>
+            <p class='when'>
+                {{ event.fullEventDate() }} - {{ event.howLong() }} 
+            </p>
+        </div>
+    </div>
+
+    <div class="section group">
+        <div class="col span_9_of_12 event-content">
+            <h3>Где?</h3>
+            {% if place.latitude and place.longitude and place.zoom %}
+                <div id="map"></div>
+            {% endif %}
+            <div id="map-desc">
+                <address>
+                    <h4>{% if place.url %}<a href="{{ place.url }}">{{ place.name }}</a>{% else %}{{ place.name }}{% endif %}</h4>
+                    {% if place.metro %}м. {{ place.metro }}<br>{% endif %}
+                    {% if place.address %}{{ place.address }}<br>{% endif %}
+                    {% if place.phone %}<a href="tel:{{ place.phone }}">{{ place.phone }}</a><br>{% endif %}
+                </address>
+            </div>
+        </div>
+    </div>
+
+    {% if tickets|length > 0 %}
+        <div class="section group">
+            <div class="col span_9_of_12 event-content">
+                <h3 id="tickets-sub-title">Билеты</h3>
+
+                <table class='width-100'>
+                    <thead>
+                        <tr>
+                            <th class='width-40'>Сектор</th>
+                            <th class='width-20'>Цена</th>
+                            <th class='width-10'>Оператор</th>
+                            <th class='width-10'>Купить</th>
+                        </tr>
+                    </thead> 
+                    <tbody>
+                        {% for t in tickets %}
+                            <tr>
+                                <td>{{ t.sector }}</td>
+                                <td>{% if t.price_min == t.price_max %}{{ t.price_min|number_format(0, ',', ' ') }}{% else %}{{ t.price_min|number_format(0, ',', ' ') }} &mdash; {{ t.price_max|number_format(0, ',', ' ') }}{% endif %} р.</td>
+                                <td>{{ t.provider_name }}</td>
+                                <td>
+                                    <a target='_blank' href='{{ t.link }}' class='btn btn-small'>Купить</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if similar|length > 0 %}
+        <div class="section group">
+            <div class="col span_9_of_12 event-content">
+                <h3>Похожие события</h3>
+
+                {% set i = 0 %}
+                {% for e in similar %}
+                    {% if i == 0 %}<div id="similar-events" class="section group">{% endif %}
+                        <a href="{{ path('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" class="col span_3_of_12 event-block" style="background-image: url('{{ asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}')">
+                            <div class='event-content'>
+                                <div class='head'>
+                                    <h3>{{ e.shortName(120) }}</h3>
+                                </div>
+                                <div class='additional'>
+                                    <div class='date-time left'>
+                                        {{ e.shortStartHuman() }}
+                                    </div>
+                                    <ul class='tags right'>
+                                        {% for t in e.getTagsNamesList(0, 10) %}
+                                            <li>{{ t }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </a>
+                    {% set i = i + 1 %}
+                    {% if i == 3 or loop.last %}
+                        </div>
+                        {% set i = 0 %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+{% if place.latitude and place.longitude and place.zoom %}
+    <script>
+        ymaps.ready(map_init);
+
+        function map_init () {
+            map = new ymaps.Map('map', {
+                center: [{{ place.latitude }}, {{ place.longitude }}], 
+                zoom: {{ place.zoom }}
+            });
+
+            var pm = new ymaps.Placemark([{{ place.latitude }}, {{ place.longitude }}]);
+            map.geoObjects.add(pm);
+        }
+    </script>
+{% endif %}
+
+{% include 'EventGeneralBundle:Default:bottom.html.twig' %}
+
+{% endblock %}

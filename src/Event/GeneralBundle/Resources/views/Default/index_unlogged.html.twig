@@ -1,0 +1,73 @@
+<div id="general_events" class="container">
+    <h2>Главные концерты</h2>
+
+    <div id='popular_tags' class='unit-100'>
+        {% for t_id, t in popular_tags %}
+            <a href="#" class='music-tag lead {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
+        {% endfor %}
+    </div>
+
+    <div id="general_events_list">
+        {% set i = 0 %}
+        {% set more_visible = 1 %}
+        {% for row in grid %} 
+            <div class="section group">
+                {% for el in row %} 
+                    {% if events[i] is defined %}
+                        {% set e = events[i] %}
+
+                        <a href="{{ path('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" class="col span_{{ el }}_of_12 event-block" style="background-image: url('{% if el == 3 %}{{ asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}{% elseif el == 6 %}{{ asset('uploads/catalog/medium_' ~ e.internalId ~ '.jpg') }}{% endif %}')">
+                            <div class='event-content'>
+                                <div class='head'>
+                                    <h3>{{ e.shortName(120) }}</h3>
+                                </div>
+                                <div class='additional'>
+                                    <div class='date-time left'>
+                                        {{ e.shortStartHuman() }}
+                                    </div>
+                                    <ul class='tags right'>
+                                        {% if el == 3 %}
+                                            {% for t in e.getTagsNamesList(0, 10) %}
+                                                <li {% if tags_name_selected[t] is defined %}class='highlight'{% endif %}>{{ t }}</li>
+                                            {% endfor %}
+                                        {% elseif el == 6 %}
+                                            {% for t in e.getTagsNamesList(0, 25) %}
+                                                <li {% if tags_name_selected[t] is defined %}class='highlight'{% endif %}>{{ t }}</li>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </a>
+
+                        {% set i = i + 1 %}
+                    {% else %}
+                        {% set more_visible = 0 %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="container">
+    <div class="unit-100 text-centered">
+        <button id="load_more" onclick="loadEvents()" class="btn width-100" {% if more_visible == 0 %}style='display: none'{% endif %}>
+            еще концерты
+        </button>
+    </div>
+</div>
+
+<script>
+    $('.music-tag').click(function(e) {
+        setTag(this).done(function() {
+            $.getJSON(util.api.get_general_events, { 'offset': events_offset }, function(data) {
+                $('#general_events_list').fadeOut("fast", function() {
+                    $('#general_events_list').html('');   
+                    renderGeneralEvents(data.grid, data.events);
+                    $('#general_events_list').fadeIn("fast");
+                });
+            });
+        });
+    });
+</script>

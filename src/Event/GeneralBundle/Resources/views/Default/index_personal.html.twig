@@ -1,0 +1,139 @@
+<div class="container min-height-800">
+    <div class="section group">
+        <div class="col span_9_of_12">
+            <div id="personal-afisha">
+                <div id='personal-head' class="unit-100 text-centered" style='display: none'>
+                    <h4 id='afisha_title'>Персональная афиша</h4>
+                </div>
+
+                <div id="no-results" class='unit-100 text-centered' style='display: none'>
+                    <h3 class='color-gray-light'>Ой, событий не найдено</h3>
+                    <img src="{{ asset('images/sad_ia.jpg') }}">
+                </div>
+
+                <div id="first-time" class='unit-100 text-centered' style='display: none'>
+                    <hgroup>
+                        <h3 class='color-gray-light'>Роботы слушают вашу музыку!</h3>
+                        <h3 id="sync-status" class='subheading'>Статус синхронизации</h3>
+                    </hgroup>
+                    <img src="http://media-cache-ec0.pinimg.com/236x/2e/2e/01/2e2e01246062c9e04286ced7b59d3080.jpg">
+                    <div class='desc'>
+                        <small class='color-gray'>Сейчас мы анализируем ваш плейлист в социальной сети и подбираем лучшие концерты, которые могут вас заинтересовать. Первый раз это может занять несколько минут. <br />Спасибо за ожидание :-)</small>
+                    </div>
+                </div>
+
+                <div id="general_events_list">
+                </div>
+            </div>
+        </div>
+
+        <div class="col span_3_of_12 filters">
+            <h4>Время</h4>
+            <nav class="nav nav-stroked">
+                <ul>
+                    <li><a href="#" interval="all" class='time-interval selected'>Все</a></li>
+                    <li><a href="#" interval="weekend" class='time-interval'>Выходные</a></li>
+                    <li><a href="#" interval="14d" class='time-interval'>Ближайшие 2 недели</a></li>
+                    <li><a href="#" interval="31d" class='time-interval'>Ближайший месяц</a></li>
+                    {% for m, name in month_intervals %}
+                        <li><a href="#" interval="m{{ m }}" class='time-interval'>{{ name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            <h4>Мои Тэги</h4>
+            <p id='popular_tags'>
+                {% for t, val in my_tags %}
+                    <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
+                {% endfor %}
+            </p>
+
+            <h4>Популярные Тэги</h4>
+            <p id='popular_tags'>
+                {% for t_id, t in popular_tags %}
+                    <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<div style='display:none'>
+    <div id='email-window' class='window'>
+        <div class='head text-centered '>
+            <h3>Спасибо за регистрацию!</h3>
+        </div>
+        <div class='window-main-content'>
+            <p class='color-gray'>
+                Последний шаг - подтверждение email адреса. 
+                </br>
+                Укажите вашу актуальную почту:
+            </p>
+            <label>
+                <input type="email" id="user-email" name="user-email" class="width-100" style='width:100%' value="{{ user.email }}" />
+            </label>
+            <p>
+                <a href="#" onclick="submitUserEmail(); return false;" class="btn btn-green width-100">Сохранить</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    var check_status_timer = { };
+    var sync_status = {{ sync.status }};
+    var processing = false;
+    var time_interval = "all";
+
+    var first_time = {{ app.session.flashbag.get('first_time')|length }};
+
+    var likes = {
+        {% for index_id, like in likes %}
+            {{ index_id }} : {{ like.type }}
+            {% if not loop.last %},{% endif %}
+        {% endfor %}
+    };
+
+    $( document ).ready(function() {
+        if (sync_status != 1) {
+            checkSyncStatus();
+        } else {
+            showPersonalAfisha();
+        }
+
+        if (first_time == 1) {
+            $.fancybox.open('#email-window', {
+                'autoScale': true,
+                'autoDimensions': true,
+                'closeBtn': false,
+                'centerOnScroll': true, 
+                'padding': 0, 
+                'helpers': {
+                    'overlay': {
+                        'css': {
+                            'background': 'rgba(0, 0, 0, 0.3)'
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    $('.time-interval').click(function(e) {
+        $("#afisha_title").text($(this).text());
+        setPeriod(this); 
+
+        showPersonalAfisha();
+
+        e.preventDefault();
+    });
+
+    $('.music-tag').click(function(e) {
+        setTag(this).done(function() {
+            showPersonalAfisha();
+        });
+
+        e.preventDefault();
+    });
+
+</script>

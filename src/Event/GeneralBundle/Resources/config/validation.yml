@@ -1,0 +1,9 @@
+#Event\GeneralBundle\Entity\InternalEvent:
+#    properties:
+#        catalog_small:
+#            - Image:
+#                mimeTypes: ['image/jpeg']
+#                minWidth: 231
+#                maxWidth: 240
+#                minHeight: 260
+#                maxHeight: 270

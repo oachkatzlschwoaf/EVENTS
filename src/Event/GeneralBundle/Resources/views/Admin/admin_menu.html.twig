@@ -63,4 +63,11 @@
             <a href="{{ path('artists') }}">Artists</a>
         </td>
     </tr>
+
+    <tr>
+        <td {% if subscribe_selected is defined %}class='selected'{% endif %}>
+            <a href="{{ path('admin_subscribe') }}">Subscribe</a>
+        </td>
+    </tr>
+
 </table>

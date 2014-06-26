@@ -2,9 +2,33 @@ index:
     pattern:  /
     defaults: { _controller: EventGeneralBundle:Default:index }
 
+afisha:
+    pattern:  /afisha
+    defaults: { _controller: EventGeneralBundle:Default:afisha }
+
+search:
+    pattern:  /search
+    defaults: { _controller: EventGeneralBundle:Default:search }
+
+event:
+    pattern:  /events/{year}/{month}/{event_id}
+    defaults: { _controller: EventGeneralBundle:Default:event }
+
+profile:
+    pattern:  /profile
+    defaults: { _controller: EventGeneralBundle:Default:profile }
+
 login_vk:
     pattern:  /login/vk
     defaults: { _controller: EventGeneralBundle:Default:loginVk }
+
+logout:
+    pattern:  /logout
+    defaults: { _controller: EventGeneralBundle:Default:logout }
+
+subscribe:
+    pattern:  /user/{uid}/subscribe
+    defaults: { _controller: EventGeneralBundle:Default:subscribe }
 
 # ADMIN
 
@@ -120,6 +144,18 @@ search_artists:
     pattern:  /artists/search
     defaults: { _controller: EventGeneralBundle:Admin:searchArtists }
 
+crop_image:
+    pattern:  /admin/image/crop
+    defaults: { _controller: EventGeneralBundle:Admin:cropImage }
+
+admin_subscribe:
+    pattern:  /admin/subscribe
+    defaults: { _controller: EventGeneralBundle:Admin:subscribe }
+
+change_subscribe_status:
+    pattern:  /admin/subscribe/status
+    defaults: { _controller: EventGeneralBundle:Admin:changeSubscribeStatus }
+
 # API ADMIN
 match_event:
     pattern:  /api/events/provider/{id}/match
@@ -142,3 +178,34 @@ sync_status:
     pattern:  /api/user/sync/status
     defaults: { _controller: EventGeneralBundle:Default:syncStatus }
 
+set_tag:
+    pattern:  /api/user/tag/set
+    defaults: { _controller: EventGeneralBundle:Default:setTag }
+
+get_general_events:
+    pattern:  /api/events/general
+    defaults: { _controller: EventGeneralBundle:Default:getGeneralEvents }
+
+get_afisha_events:
+    pattern:  /api/events/afisha
+    defaults: { _controller: EventGeneralBundle:Default:getAfishaEvents }
+
+search_autocomplete:
+    pattern:  /api/events/search/autocomplete
+    defaults: { _controller: EventGeneralBundle:Default:searchAutocomplete }
+
+get_search_results:
+    pattern:  /api/events/search
+    defaults: { _controller: EventGeneralBundle:Default:getSearchResults }
+
+like_event:
+    pattern:  /api/user/event/like
+    defaults: { _controller: EventGeneralBundle:Default:likeEvent }
+
+updateUserEmail:
+    pattern:  /api/user/email/update
+    defaults: { _controller: EventGeneralBundle:Default:updateUserEmail }
+
+updateUserSettings:
+    pattern:  /api/user/settings/update
+    defaults: { _controller: EventGeneralBundle:Default:updateUserSettings }

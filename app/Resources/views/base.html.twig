@@ -1,15 +1,23 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>{% block title %}EVENTMATE{% endblock %}</title>
+
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         {% block stylesheets %}
+
             <link href="{{ asset('css/jquery-ui-1.10.4.min.css') }}" rel="stylesheet" type="text/css">
+            <link href="{{ asset('css/kube.css') }}" rel="stylesheet" type="text/css">
+            <link href="{{ asset('js/fancybox/jquery.fancybox.css') }}?v=2.1.5" rel="stylesheet"  type="text/css" media="screen" />
+            <link href="{{ asset('css/eventmate.css') }}" rel="stylesheet" type="text/css">
 
-            <link href="{{ asset('css/jquery.tagit.css') }}" rel="stylesheet" type="text/css">
-            <link href="{{ asset('css/token-input.css') }}" rel="stylesheet" type="text/css">
-
-            <link href="{{ asset('css/admin_styles.css') }}?v=1" rel="stylesheet" type="text/css">
+            {% if top is not defined %} 
+                <link href="{{ asset('css/jquery.tagit.css') }}" rel="stylesheet" type="text/css">
+                <link href="{{ asset('css/token-input.css') }}" rel="stylesheet" type="text/css">
+                <link href="{{ asset('css/jquery.Jcrop.min.css') }}" rel="stylesheet" type="text/css">
+                <link href="{{ asset('css/admin_styles.css') }}?v=1" rel="stylesheet" type="text/css">
+            {% endif %}
         {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
@@ -17,11 +25,20 @@
         {% block javascripts %}
             <script src="{{ asset('js/jquery-2.1.1.min.js') }}" type="text/javascript"></script>
             <script src="{{ asset('js/jquery-ui-1.10.4.min.js') }}" type="text/javascript"></script>
+            <script src="{{ asset('js/fancybox/jquery.fancybox.pack.js') }}?v=2.1.5" type="text/javascript"></script>
 
-            <script src="{{ asset('js/tag-it.min.js') }}" type="text/javascript"></script>
-            <script src="{{ asset('js/jquery.tokeninput.js') }}" type="text/javascript"></script>
+            <script src="{{ asset('js/eventmate.js') }}" type="text/javascript"></script>
 
-            <script src="{{ asset('js/main.js') }}" type="text/javascript"></script>
+            {% if top is defined and top == 'event' %} 
+                <script src="//api-maps.yandex.ru/2.1/?lang=ru_RU&load=Map,Placemark&key=AME2kFMBAAAAMMHkEAQAVovssaAYV6aFSto2g9L6Kagy2NgAAAAAAAAAAAB8UPHO67gswIN8ly1G9A_ZWEb9XQ==" type="text/javascript"></script>
+            {% endif %}
+
+            {% if top is not defined %} 
+                <script src="{{ asset('js/tinymce/tinymce.min.js') }}" type="text/javascript"></script>
+                <script src="{{ asset('js/tag-it.min.js') }}" type="text/javascript"></script>
+                <script src="{{ asset('js/jquery.tokeninput.js') }}" type="text/javascript"></script>
+                <script src="{{ asset('js/jquery.Jcrop.min.js') }}" type="text/javascript"></script>
+            {% endif %}
         {% endblock %}
 
         {% block body %}{% endblock %}

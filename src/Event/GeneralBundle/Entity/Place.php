@@ -175,4 +175,172 @@ class Place
             return "error";
         }
     }
+    /**
+     * @var string
+     */
+    private $metro;
+
+    /**
+     * @var string
+     */
+    private $phone;
+
+
+    /**
+     * Set metro
+     *
+     * @param string $metro
+     * @return Place
+     */
+    public function setMetro($metro)
+    {
+        $this->metro = $metro;
+
+        return $this;
+    }
+
+    /**
+     * Get metro
+     *
+     * @return string 
+     */
+    public function getMetro()
+    {
+        return $this->metro;
+    }
+
+    /**
+     * Set phone
+     *
+     * @param string $phone
+     * @return Place
+     */
+    public function setPhone($phone)
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * Get phone
+     *
+     * @return string 
+     */
+    public function getPhone()
+    {
+        return $this->phone;
+    }
+    /**
+     * @var string
+     */
+    private $url;
+
+
+    /**
+     * Set url
+     *
+     * @param string $url
+     * @return Place
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string 
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+    /**
+     * @var string
+     */
+    private $latitude;
+
+    /**
+     * @var string
+     */
+    private $longitude;
+
+
+    /**
+     * Set latitude
+     *
+     * @param string $latitude
+     * @return Place
+     */
+    public function setLatitude($latitude)
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    /**
+     * Get latitude
+     *
+     * @return string 
+     */
+    public function getLatitude()
+    {
+        return $this->latitude;
+    }
+
+    /**
+     * Set longitude
+     *
+     * @param string $longitude
+     * @return Place
+     */
+    public function setLongitude($longitude)
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * Get longitude
+     *
+     * @return string 
+     */
+    public function getLongitude()
+    {
+        return $this->longitude;
+    }
+    /**
+     * @var string
+     */
+    private $zoom;
+
+
+    /**
+     * Set zoom
+     *
+     * @param string $zoom
+     * @return Place
+     */
+    public function setZoom($zoom)
+    {
+        $this->zoom = $zoom;
+
+        return $this;
+    }
+
+    /**
+     * Get zoom
+     *
+     * @return string 
+     */
+    public function getZoom()
+    {
+        return $this->zoom;
+    }
 }

@@ -81,7 +81,7 @@ while (42) {
         foreach my $s (@$sync_list) {
             my $id = $s->{'id'};
             print "\n\tSYNC: $id sync...";
-            #`./sync_audio.pl $id &`;
+            `./sync_audio.pl $id &`;
         }
 
     } else {

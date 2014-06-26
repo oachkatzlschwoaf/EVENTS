@@ -1,66 +1,35 @@
 {% extends '::base.html.twig' %}
 {% block body %}
 
-Hello {{ user_id }} ({{ session.get('access_token') }} - {{ session.get('network_id') }})!
+{% include 'EventGeneralBundle:Default:top.html.twig' %}
 
 {% if not user_id %}
-    <a href="http://oauth.vk.com/authorize?client_id={{ vk_app_id }}&redirect_uri={{ vk_redirect }}&response_type=code&scope={{ vk_scope}}" title="Зайти через ВКонтакте">Зайти через ВКонтакте</a>
+    <div class="container">
+        <div class="unit-100 text-centered" id="welcome">
+            <p class="lead">
+            Восемьдесят  три процента всех дней в году начинаются одинаково: звенит будильник. Этот звон вливается в последние сны  то  судорожным  стрекотанием итогового  перфоратора,  то  гневными  раскатами баса Федора Симеоновича, то скрежетом когтей василиска, играющего в термостате.
+            </p>
+        </div>
+    </div>
+{% endif %}
 
+{% if not user_id %}
+    {% include 'EventGeneralBundle:Default:index_unlogged.html.twig' %}
 {% else %}
+    {% include 'EventGeneralBundle:Default:index_personal.html.twig' %}
+{% endif %}
 
-<div id='sync_status'>Sync status</div>
-
-<div id='list'></div>
+{% include 'EventGeneralBundle:Default:bottom.html.twig' %}
 
 <script>
-
-var check_status_timer = { };
-
-$( document ).ready(function() {
-    checkSyncStatus();
-
-    //setTimeout(function() { }, 5000);
-});
-
-function checkSyncStatus() {
-    $.getJSON("{{ path('sync_status') }}", function(data) {
-        if (typeof data.error == 'undefined') {
-            var sync_status = data.done;
-
-            if (sync_status == 1) {
-                $('#sync_status').text('sync ok');
-                clearTimeout(check_status_timer);
-                getPersonalAfisha();
-
-            } else {
-                $('#sync_status').text('sync status: '+sync_status);
-
-                check_status_timer = setTimeout('checkSyncStatus()', 1000);
-            }
-        }
-    });
-}
-
-function getPersonalAfisha() {
-    $.getJSON("{{ path('personal_afisha') }}", function(data) {
-        if (data.done == 1) {
-            var internal = data.internal_weight;
-
-            var sorted = internal.slice(0).sort(function(a, b) {
-                return b.weight - a.weight;
-            });
-
-            $.each(sorted, function(i, e) {
-                console.log(i);
-                console.log(e);
-                $('#list').append("<p>"+e.name+"</p>");                    
-            });
-        }
-    });
-}
-
+    var tags_name_selected = { 
+        {% if tags_name_selected|length > 0 %}
+            {% for t, v in tags_name_selected %}
+                '{{ t }}': 1
+                {% if not loop.last %},{% endif %}
+            {% endfor %}
+        {% endif %}
+    };
 </script>
-
-{% endif %}
 
 {% endblock %}

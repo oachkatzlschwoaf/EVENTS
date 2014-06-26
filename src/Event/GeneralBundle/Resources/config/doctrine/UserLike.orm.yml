@@ -1,0 +1,24 @@
+Event\GeneralBundle\Entity\UserLike:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        userId:
+            type: integer
+            column: user_id
+        indexId:
+            type: integer
+            column: index_id
+        type:
+            type: integer
+        start:
+            type: datetime
+    lifecycleCallbacks: {  }
+    uniqueConstraints:
+        uid_ind_idx:
+            columns: user_id, index_id
