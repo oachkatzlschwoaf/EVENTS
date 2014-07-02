@@ -1,4 +1,7 @@
 {% extends '::base.html.twig' %}
+
+{% block title %}Афиша - Eventmate{% endblock %}
+
 {% block body %}
 
 {% include 'EventGeneralBundle:Default:top.html.twig' %}
@@ -12,7 +15,7 @@
 
             <div id="no-results" class='text-centered' {% if events|length > 0 %}style='display: none'{% endif %}>
                 <h3 class='color-gray-light'>Ой, событий не найдено</h3>
-                <img src="{{ asset('images/sad_ia.jpg') }}">
+                <img src="{{ asset('images/sad_robot.jpg') }}">
             </div>
 
             <div id="general_events_list">

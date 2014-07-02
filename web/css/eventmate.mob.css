@@ -1,0 +1,527 @@
+@import "museocyr.css";
+@import "charis.css";
+
+body {
+    font-family: 'Museo Sans Cyr';
+    background-color: #eee;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Museo Sans Cyr';
+}
+
+h1, h2, h3, h4 {
+    font-weight: normal;
+}
+
+p {
+    font-family: 'Charis';
+}
+
+h2 {
+    font-size: 20px;
+}
+
+#logo {
+    display: block;
+    background-image: url('../images/logo-mob.png');
+    background-size: cover;
+    width: 40px;
+    height: 40px;
+    float: left;
+}
+
+#top-bar {
+    background-color: #fff;
+    height: 50px;
+    padding: 5px;
+    overflow: hidden;
+    margin-bottom: 0;
+    box-shadow: 0 1px 0 rgba(0,0,0,.05), 0 0 4px 2px rgba(0,0,0,.1);
+}
+
+.top-nav {
+    margin: 10px 0 0 35px;
+    font-size: 18px;
+    float: left;
+}
+
+.top-nav a {
+    color: #000;
+    margin: 0 10px 0 10px;
+    text-decoration: none;
+}
+
+.top-nav span {
+    color: #d70a16;
+}
+
+.container {
+    display: block;
+    position: relative; 
+    width: 97%; 
+    max-width: 710px;
+    margin: 0 auto; 
+    padding: 0; 
+    background-color: #fff;
+    border: 1px solid #ccc;
+
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+#welcome {
+    padding: .8em;
+    margin-top: .6em;
+}
+
+#welcome p {
+    margin: 0px;
+}
+
+.event-container {
+    margin-bottom: .4em;
+    background-size: cover;
+    max-width: 350px;
+    height: 260px;
+    background-color: #999;
+    display: inline-block !important;
+    text-align: left;
+}
+
+.event-container .content {
+    padding: 1em;
+    height: 260px;
+
+    background: 
+        linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 20%) top,
+        linear-gradient(to top, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 30%) bottom; 
+}
+
+.event-container .head {
+    clear: both;
+    height: 180px;
+    overflow: hidden;
+}
+
+.event-container .head h3 {
+    font-family: 'Museo Sans Cyr';
+    font-size: 22px;
+    line-height: 24px;
+    color: #fff;
+    overflow: hidden;
+    float: left;
+    width: 70%;
+}
+
+.event-container .additional {
+    margin-top: 32px;
+    color: #ccc;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+.event-container .date-time {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 0 .8em 0 .8em;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    font-weight: bold;
+    float: left;
+}
+
+.event-container .tags {
+    list-style: none;
+    float: right;
+}
+
+.event-container .tags li {
+    display: inline-block;
+    color: #111;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 0 .3em 0 .3em;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.event-container .tags .highlight {
+    color: #000;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+#footer {
+    color: #5e6165;
+    padding: 1em;
+    overflow: hidden;
+    background: #282b2f linear-gradient(to bottom, rgba(22,24,26,1) 0%,rgba(22,24,26,0) 100%) top no-repeat;
+    background-size: 100% 10px;
+}
+
+#footer p {
+    font-family: 'Museo Sans Cyr';
+    font-size: 14px;
+    line-height: 16px;
+}
+
+.padding-1 {
+    padding: 1em;
+}
+
+#load_more {
+    margin: 0 0 1.6em 0;
+    width: 97%; 
+    max-width: 710px;
+}
+
+#search_form {
+    display: block;
+    position: relative; 
+    width: 97%; 
+    max-width: 710px;
+    margin: 0 auto; 
+    margin-top: .6em;
+}
+
+#search_form form {
+    margin-bottom: 0;
+}
+
+#top-search {
+    width: 100%;
+}
+
+.page-head {
+    width: 97%; 
+    margin: 0 auto; 
+    overflow: hidden;
+    margin-top: 1.2em;
+    max-width: 710px;
+}
+
+.page-head h2 {
+    float: left;
+    margin: 0;
+}
+
+.page-head-sub {
+    width: 97%; 
+    margin: 0 auto; 
+    overflow: hidden;
+    padding: .6em 0 .8em 0;
+    max-width: 710px;
+}
+
+.page-head-sub small {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.5);
+    padding: .4em .8em .4em .8em;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    font-weight: bold;
+    float: left;
+    margin-right: 1em;
+}
+
+.page-head-sub a {
+    color: #222;
+    text-decoration: none;
+}
+
+#popular-tags-window {
+    padding: .8em;
+    border: 1px solid #ccc;
+    max-width: 610px;
+}
+
+#my-tags-window {
+    padding: .8em;
+    border: 1px solid #ccc;
+    max-width: 610px;
+}
+
+#time-window {
+    padding: .8em;
+    border: 1px solid #ccc;
+    min-width: 300px;
+}
+
+#login-signup-window {
+    padding: .8em;
+    border: 1px solid #ccc;
+}
+
+.popular_tags {
+    font-family: 'Charis';
+    margin: 1em 0 1em 0;
+}
+
+.music-tag {
+    display: inline-block;
+    font-size: 18px;
+    margin: .4em .8em 0 0;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.selected {
+    color: #d70a16;
+}
+
+#no-results {
+    padding-top: 6em;
+    min-height: 500px;
+}
+
+.btn-vk {
+  background: #5a7ca0;
+  color: #fff;
+}
+
+.btn-vk img {
+    width: 22px;
+    margin-right: 10px;
+}
+
+.btn-vk:hover {
+  background: #4b6b8f;
+  color: #fff;
+}
+
+.event-cover {
+    display: block;
+    position: relative; 
+    height: 400px;
+    width: 100%; 
+    background-color: #fff;
+    overflow: hidden;
+    background-position: center;
+    background-size: cover;
+    max-width: 710px;
+    margin: 0px auto;
+}
+
+.event-cover .content {
+    padding: 1em;
+    height: 400px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 30%,rgba(0,0,0,0.92) 100%);
+}
+
+.event-cover .content .head {
+    margin: 0px auto;
+    margin-top: 220px;
+    width: 80%;
+    text-align: center;
+}
+
+.event-cover h1 {
+    color: #fff;
+    font-size: 21px;
+    margin-bottom: .2em;
+    max-height: 95px; 
+    overflow: hidden;
+}
+
+.event-cover p {
+    color: #eee;
+    font-size: 16px;
+    margin-bottom: .4em;
+}
+
+.event-cover h5 {
+    color: #eee;
+    font-size: 16px;
+}
+
+.desc-container {
+    display: block;
+    position: relative; 
+    padding: 1em; 
+    background-color: #fff;
+    overflow: hidden;
+    max-width: 710px;
+    margin: 0px auto;
+}
+
+.when {
+    font-family: 'Museo Sans Cyr';
+    margin-bottom: .6em; 
+}
+
+.desc-container .desc p {
+    margin-bottom: 1em;
+}
+
+.desc-container address {
+    margin-bottom: .6em; 
+}
+
+.desc-container table {
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+.desc-container th {
+    font-size: 13px;
+}
+
+.desc-container h5 {
+    font-size: 18px;
+}
+
+.desc-container td, th {
+    padding: 5px 2px 5px 2px;
+}
+
+.back-gray-light {
+    background: #eee !important;
+}
+
+.desc-container .similar h4 {
+    line-height: 1.2em;
+}
+
+.desc-container .similar a {
+    color: #222;
+    padding: 0;
+}
+
+.desc-container .similar li {
+    border-bottom: 1px solid #ccc;
+    padding: 1em 0 0 0;
+}
+
+.desc-container .similar p {
+    margin-bottom: 1em;
+    color: #777;
+}
+
+#avatar {
+    width: 40px;
+    height: 40px;
+
+    display: inline-block;
+    vertical-align: top;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    float: right;
+    margin-right: .2em;
+
+    background-size: cover;
+}
+
+#login-vk {
+    width: 40px;
+    height: 40px;
+
+    background-image: url('../images/vk-login.png');
+    display: inline-block;
+    vertical-align: top;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    float: right;
+    margin-right: .2em;
+
+    background-size: cover;
+}
+
+.first-time {
+    min-height: 500px;
+    padding: 1.6em;
+}
+
+.first-time small {
+    display: block;
+    line-height: 1.5em;
+    margin-top: 2em;
+}
+
+.like-icon {
+    background-image: url('../images/heart-inactive.png');
+    color: #000;
+}
+
+.like-icon:hover {
+    background-image: url('../images/heart-hover.png');
+    opacity: .8 !important;
+    color: #000;
+}
+
+.like-active-icon {
+    background-image: url('../images/active-heart.png');
+    opacity: 1 !important;
+    color: #d70a16;
+}
+
+.like-active-icon:hover {
+    background-image: url('../images/active-heart-hover.png');
+    opacity: 1 !important;
+    color: #d70a16;
+}
+
+.dislike-icon {
+    background-image: url('../images/broken-heart-inactive.png');
+    color: #000;
+}
+
+.dislike-icon:hover {
+    background-image: url('../images/broken-heart-hover.png');
+    opacity: .8 !important;
+    color: #000;
+}
+
+.dislike-active-icon {
+    background-image: url('../images/active-broken-heart.png');
+    opacity: 1 !important;
+    color: #d70a16;
+}
+
+.dislike-active-icon:hover {
+    background-image: url('../images/active-broken-heart-hover.png');
+    opacity: 1 !important;
+    color: #d70a16;
+}
+
+.icon-40 {
+    display: inline-block;
+    width: 40px;
+    height: 39px;
+    opacity: .5;
+    border-radius: 50px;
+    background-size: 100% 100%;
+    margin-right: .6em;
+}
+
+.buttons {
+    display: block;
+    overflow: hidden;
+    clear: both;
+}
+
+.hidden {
+    opacity: .2;
+}
+
+.margin-top-06 {
+    margin-top: .6em !important;
+}
+
+#exit {
+    margin: 0 0 1.6em 0;
+    width: 97%; 
+    max-width: 710px;
+}
+
+#general_events_list {
+    margin: 0px auto;
+    width: 97%; 
+    max-width: 710px;
+}
+
+@media only screen and (max-width: 690px) {
+    #general_events_list {
+        text-align: center;
+    }
+}

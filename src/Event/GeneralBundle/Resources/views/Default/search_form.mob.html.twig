@@ -1,0 +1,5 @@
+<div id="search_form">
+    <form action="{{ path('search') }}">
+        <input name="query" id='top-search' type="text" class="input-search" placeholder="Искать концерты" value="{% if query is defined %}{{ query }}{% endif %}" />
+    </form>
+</div>

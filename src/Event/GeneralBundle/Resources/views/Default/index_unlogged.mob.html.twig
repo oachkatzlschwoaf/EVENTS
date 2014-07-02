@@ -1,0 +1,74 @@
+<div class="container" id="welcome">
+    <div class="unit-100 text-centered">
+        <p>
+            Восемьдесят  три процента всех дней в году начинаются одинаково: звенит будильник. Этот звон вливается в последние сны. 
+        </p>
+        <a href="#" class="btn btn-green" onclick="showLoginSignupWindow()">Составить афишу</a>
+    </div>
+</div>
+
+{% include 'EventGeneralBundle:Default:search_form.mob.html.twig' %}
+
+<div class="page-head">
+    <h2>Главные концерты</h2>
+</div>
+<div class="page-head-sub">
+    <small><a href="#" onclick="showPopularTagsWindow()">популярные тэги</a></small>
+</div>
+
+<div id="general_events_list">
+    {% set i = 0 %}
+    {% set more_visible = 1 %}
+    {% for row in grid %} 
+        {% for el in row %} 
+            {% if events[i] is defined %}
+                {% set e = events[i] %}
+
+                <a href="{{ path('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" class="container event-container" style="background-image: url('{{ asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}')">
+                    <div class='content'>
+                        <div class='head'>
+                            <h3>{{ e.shortName(120) }}</h3>
+                        </div>
+                        <div class='additional'>
+                            <div class='date-time left'>
+                                {{ e.shortStartHuman() }}
+                            </div>
+                            <ul class='tags right'>
+                                {% for t in e.getTagsNamesList(0, 10) %}
+                                    <li {% if tags_name_selected[t] is defined %}class='highlight'{% endif %}>{{ t }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </a>
+
+
+                {% set i = i + 1 %}
+            {% else %}
+                {% set more_visible = 0 %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+</div>
+
+<div class="text-centered">
+    <button id="load_more" onclick="loadEvents()" class="btn btn-green" {% if more_visible == 0 %}style='display: none'{% endif %}>
+        еще концерты
+    </button>
+</div>
+
+<script>
+    $( document ).ready(function() {
+        $('.music-tag').click(function(e) {
+            setTag(this).done(function() {
+                $.getJSON(util.api.get_general_events, { 'offset': events_offset }, function(data) {
+                    $('#general_events_list').fadeOut("fast", function() {
+                        $('#general_events_list').html('');   
+                        renderGeneralEvents(data.grid, data.events);
+                        $('#general_events_list').fadeIn("fast");
+                    });
+                });
+            });
+        });
+    });
+</script>

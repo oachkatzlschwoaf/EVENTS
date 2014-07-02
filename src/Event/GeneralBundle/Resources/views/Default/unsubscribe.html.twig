@@ -1,0 +1,26 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Default:top.html.twig' %}
+
+<div class="container">
+    <div class='units-row'>
+        <div class='unit-100'>
+            <div id="sad-full" class='text-centered'>
+                {% if not error %} 
+                    <h3 class='color-gray-light'>Вы были отписаны от рассылки</h3>
+                    <img src="{{ asset('images/sad_robot.jpg') }}">
+                    <p class='lead'>На ваш ящик <strong>{{ user.email }}</strong> больше не будет приходить наша рассылка. Мы будем очень скучать по вам!<br /><a href="{{ path('index') }}">Заходите еще!</a></p>
+                {% else %}
+                    <h3 class='color-gray-light'>Ой! Мы не можем найти пользователя!</h3>
+                    <img src="{{ asset('images/sad_robot.jpg') }}">
+                    <p class='lead'>Пожалуйста проверьте правильность ссылки<br />по которой вы переходите из письма</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'EventGeneralBundle:Default:bottom.html.twig' %}
+
+{% endblock %}

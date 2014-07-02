@@ -1,7 +1,15 @@
+<div class="container">
+    <div class="unit-100 text-centered" id="welcome">
+        <p class="lead">
+        Восемьдесят  три процента всех дней в году начинаются одинаково: звенит будильник. Этот звон вливается в последние сны  то  судорожным  стрекотанием итогового  перфоратора,  то  гневными  раскатами баса Федора Симеоновича, то скрежетом когтей василиска, играющего в термостате.
+        </p>
+    </div>
+</div>
+
 <div id="general_events" class="container">
     <h2>Главные концерты</h2>
 
-    <div id='popular_tags' class='unit-100'>
+    <div class='unit-100 popular_tags'>
         {% for t_id, t in popular_tags %}
             <a href="#" class='music-tag lead {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
         {% endfor %}
@@ -59,13 +67,15 @@
 </div>
 
 <script>
-    $('.music-tag').click(function(e) {
-        setTag(this).done(function() {
-            $.getJSON(util.api.get_general_events, { 'offset': events_offset }, function(data) {
-                $('#general_events_list').fadeOut("fast", function() {
-                    $('#general_events_list').html('');   
-                    renderGeneralEvents(data.grid, data.events);
-                    $('#general_events_list').fadeIn("fast");
+    $( document ).ready(function() {
+        $('.music-tag').click(function(e) {
+            setTag(this).done(function() {
+                $.getJSON(util.api.get_general_events, { 'offset': events_offset }, function(data) {
+                    $('#general_events_list').fadeOut("fast", function() {
+                        $('#general_events_list').html('');   
+                        renderGeneralEvents(data.grid, data.events);
+                        $('#general_events_list').fadeIn("fast");
+                    });
                 });
             });
         });

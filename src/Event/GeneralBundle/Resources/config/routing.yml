@@ -26,9 +26,17 @@ logout:
     pattern:  /logout
     defaults: { _controller: EventGeneralBundle:Default:logout }
 
+subscribe_title:
+    pattern:  /user/{uid}/subscribe/title
+    defaults: { _controller: EventGeneralBundle:Default:subscribeTitle }
+
 subscribe:
     pattern:  /user/{uid}/subscribe
     defaults: { _controller: EventGeneralBundle:Default:subscribe }
+
+unsubscribe:
+    pattern:  /user/{hash}/unsubscribe
+    defaults: { _controller: EventGeneralBundle:Default:unsubscribe }
 
 # ADMIN
 
@@ -209,3 +217,4 @@ updateUserEmail:
 updateUserSettings:
     pattern:  /api/user/settings/update
     defaults: { _controller: EventGeneralBundle:Default:updateUserSettings }
+

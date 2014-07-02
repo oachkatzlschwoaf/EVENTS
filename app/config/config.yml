@@ -85,6 +85,8 @@ services:
     vk_api:
         class: Event\GeneralBundle\VkApi 
         arguments: ["%vk_api%"]
+    mobile_detect:
+        class: Event\GeneralBundle\MobileDetect
     session.memcache:
         class: Memcache
         calls:
@@ -114,4 +116,9 @@ parameters:
     lastfm_api_url: "http://ws.audioscrobbler.com/2.0/"
     lastfm_api_key: "04b9f94c1ea3169274aa362d880aca9f"
 
-    api_url: "http://localhost/events/app_dev.php"
+    api_url: "http://localhost/events/app.php"
+
+    smtpserver: 's02.atomsmtp.com'
+    smtpport: '2525'
+    smtpuser: 'roman.olegovich.novikov@gmail.com'
+    smtppassword: 'cMBkfMAMfDeii3'

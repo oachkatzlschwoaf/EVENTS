@@ -25,6 +25,7 @@ use Event\GeneralBundle\Form\ArtistType;
 
 # Services
 use Event\GeneralBundle\VkApi;
+use Event\GeneralBundle\MobileDetect;
 
 class DefaultController extends Controller {
 
@@ -339,8 +340,13 @@ class DefaultController extends Controller {
         $user->setNetworkId($network_id);
         $user->setAdditional(json_encode($u));
         $user->setAuthInfo(json_encode($auth));
-        $user->setSubscribe(1);
         $user->setSubscribeSecret(md5( time() . 'subscribe' . $network_id . $name . json_encode($auth) ));
+
+        if ($email) {
+            $user->setSubscribe(1);
+        } else {
+            $user->setSubscribe(0);
+        }
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($user);
@@ -464,7 +470,14 @@ class DefaultController extends Controller {
             }
         }
 
-        return $this->render('EventGeneralBundle:Default:index.html.twig', array(
+        // Detect Mobile
+        $mob = $this->get('mobile_detect');
+        $template = 'EventGeneralBundle:Default:index.html.twig';
+        if ($mob->isMobile()) {
+            $template = 'EventGeneralBundle:Default:index.mob.html.twig';
+        }
+
+        return $this->render($template, array(
             'top'     => 'index',
             'user_id' => $user_id,
             'user'    => $user,
@@ -476,6 +489,7 @@ class DefaultController extends Controller {
             'popular_tags' => $this->getPopularTags(),
             'tags_name_selected' => $tags,
             'my_tags' => $my_tags,
+            'my_tags_short' => array_slice($my_tags, 0, 30),
             'likes'   => $likes,
             'month_intervals' => $this->getMonthIntervals(),
         ));
@@ -763,7 +777,14 @@ class DefaultController extends Controller {
             $pre_events = $events;
         }
 
-        return $this->render('EventGeneralBundle:Default:afisha.html.twig', array(
+        // Mobile detect
+        $mob = $this->get('mobile_detect');
+        $template = 'EventGeneralBundle:Default:afisha.html.twig';
+        if ($mob->isMobile()) {
+            $template = 'EventGeneralBundle:Default:afisha.mob.html.twig';
+        }
+
+        return $this->render($template, array(
             'top' => 'afisha',
             'user_id' => $user_id,
             'user'    => $user,
@@ -773,6 +794,7 @@ class DefaultController extends Controller {
             'events' => $pre_events,
             'tags_name_selected' => $tags,
             'my_tags' => $my_tags,
+            'my_tags_short' => array_slice($my_tags, 0, 30),
         ));
     }
 
@@ -842,7 +864,14 @@ class DefaultController extends Controller {
         // Tags selected
         $tags = $this->getSessionTags($session);
 
-        return $this->render('EventGeneralBundle:Default:search.html.twig', array(
+        // Mobile detect
+        $mob = $this->get('mobile_detect');
+        $template = 'EventGeneralBundle:Default:search.html.twig';
+        if ($mob->isMobile()) {
+            $template = 'EventGeneralBundle:Default:search.mob.html.twig';
+        }
+
+        return $this->render($template, array(
             'top'     => 'afisha',
             'user_id' => $user_id,
             'user'    => $user,
@@ -1001,7 +1030,14 @@ class DefaultController extends Controller {
             $like = $like[0];
         }
 
-        return $this->render('EventGeneralBundle:Default:event.html.twig', array(
+        // Detect Mobile
+        $mob = $this->get('mobile_detect');
+        $template = 'EventGeneralBundle:Default:event.html.twig';
+        if ($mob->isMobile()) {
+            $template = 'EventGeneralBundle:Default:event.mob.html.twig';
+        }
+
+        return $this->render($template, array(
             'top' => 'event',
             'user_id' => $user_id,
             'user'    => $user,
@@ -1073,7 +1109,14 @@ class DefaultController extends Controller {
             )
         );
 
-        return $this->render('EventGeneralBundle:Default:profile.html.twig', array(
+        // Detect Mobile
+        $mob = $this->get('mobile_detect');
+        $template = 'EventGeneralBundle:Default:profile.html.twig';
+        if ($mob->isMobile()) {
+            $template = 'EventGeneralBundle:Default:profile.mob.html.twig';
+        }
+
+        return $this->render($template, array(
             'top'     => 'profile',
             'user_id' => $user_id,
             'user'    => $user,
@@ -1279,4 +1322,93 @@ class DefaultController extends Controller {
             'events' => $events,
         ));
     }
+
+    public function unsubscribeAction(Request $r) {
+        $hash = $r->get('hash');
+
+        $em = $this->getDoctrine()->getManager();
+        $users = $em->createQuery("select p from EventGeneralBundle:User p where p.subscribeSecret = :hash")
+            ->setParameter('hash', $hash)  
+            ->getResult();
+
+        $subscribe_error = 0;
+        $user = array();
+        $user_id = null;
+
+        if (!$users || count($users) == 0) {
+            $subscribe_error = 1;
+        } else {
+            $user = $users[0];
+            $user->setSubscribe(0);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+
+            $user_id = $user->getId();
+        }
+
+        return $this->render('EventGeneralBundle:Default:unsubscribe.html.twig', array(
+            'top'     => 'index',
+            'user'    => $user,
+            'error'   => $subscribe_error,
+            'user_id' => $user_id
+        ));
+    }
+
+    public function subscribeTitleAction(Request $r) {
+        $user_id = $r->get('uid');
+
+        // Get User
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:User');
+
+        $user = $rep->find($user_id);
+
+        if (!$user) {
+            throw new \Exception('NO USER');
+        }
+
+        // Don't forget 
+        $period = $this->prepareTimeInterval('31d'); 
+        $likes = $this->getUserLikes(array(
+            'user_id' => $user_id, 
+            'start'   => $period['start'], 
+            'end'     => $period['end'] 
+        ));
+
+        $only_likes = array();
+        foreach ($likes as $id => $l) {
+            if ($l->getType() == 1) {
+                array_push($only_likes, $id);
+            }
+        }
+        
+        $like_events = $this->getActualInternalIndexByIds(
+            $only_likes, 
+            array( 
+                'start' => $period['start'], 
+                'end' => $period['end'] 
+            )
+        );
+
+        $like_events = array_slice($like_events, 0, 3);
+        
+        $events = $this->getPersonalAfisha($user, null, 'all');
+        $events = array_slice($events, 0, 6);
+
+        $all = array_merge($like_events, $events);
+
+        $names = array();
+        foreach ($all as $e) {
+            array_push($names, $e->getName());
+        }
+
+        $names = array_unique($names);
+        shuffle($names);
+        $names = array_slice($names, 0, 3);
+
+        return new Response(json_encode($names));
+    }
+
 }

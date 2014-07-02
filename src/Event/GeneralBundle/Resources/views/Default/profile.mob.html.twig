@@ -1,0 +1,39 @@
+{% extends '::base.mob.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Default:top.mob.html.twig' %}
+
+<div class="page-head">
+    <h2 id='afisha_title'>Мне понравилось</h2>
+</div>
+
+<div id="general_events_list" class="margin-top-06">
+    {% for e in events %}
+        <a id="event_{{ e.id }}" href="{{ path('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" class="container event-container {% if likes[e.id] is defined and likes[e.id].type == 2 %}hidden{% endif %}" style="background-image: url('{{ asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}')">
+            <div id='event-content_{{ e.id }}' class='content {% if likes[e.id] is defined %}likes-show{% endif %}'>
+                <div class='head'>
+                    <h3>{{ e.shortName(120) }}</h3>
+                </div>
+
+                <div class='additional'>
+                    <div class='date-time left'>
+                        {{ e.shortStartHuman() }}
+                    </div>
+                    <ul class='tags right'>
+                        {% for t in e.getTagsNamesList(0, 10) %}
+                            <li {% if tags_name_selected[t] is defined %}class='highlight'{% endif %}>{{ t }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </a>
+    {% endfor %}
+</div>
+
+<div class="text-centered">
+    <a id="exit" alt="Выход" href="{{ path('logout') }}" class='btn btn-red'>Выход</a>
+</div>
+
+{% include 'EventGeneralBundle:Default:bottom.mob.html.twig' %}
+
+{% endblock %}

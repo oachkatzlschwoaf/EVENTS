@@ -1,0 +1,94 @@
+{% extends '::base.mob.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Default:top.mob.html.twig' %}
+
+{% include 'EventGeneralBundle:Default:search_form.mob.html.twig' %}
+
+<div class="page-head">
+    <h2 id='afisha_title'>Ближайшие 2 недели</h2>
+</div>
+<div class="page-head-sub">
+    <small><a href="#" onclick="showTimeWindow()">время</a></small>
+    {% if user_id %}<small><a href="#" onclick="showMyTagsWindow()">мои тэги</a></small>{% endif %}
+    <small><a href="#" onclick="showPopularTagsWindow()">популярные тэги</a></small>
+</div>
+
+<div id="no-results" class='text-centered' {% if events|length > 0 %}style='display: none'{% endif %}>
+    <h3 class='color-gray-light'>Ой!<br />Событий не найдено</h3>
+</div>
+
+<div id="general_events_list">
+    {% set i = 0 %}
+    
+    {% for e in events %}
+        <a id="event_{{ e.id }}" href="{{ path('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" class="container event-container {% if likes[e.id] is defined and likes[e.id].type == 2 %}hidden{% endif %}" style="background-image: url('{{ asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}')">
+            <div id='event-content_{{ e.id }}' class='content {% if likes[e.id] is defined %}likes-show{% endif %}'>
+                <div class='head'>
+                    <h3>{{ e.shortName(120) }}</h3>
+                </div>
+
+                <div class='additional'>
+                    <div class='date-time left'>
+                        {{ e.shortStartHuman() }}
+                    </div>
+                    <ul class='tags right'>
+                        {% for t in e.getTagsNamesList(0, 10) %}
+                            <li {% if tags_name_selected[t] is defined %}class='highlight'{% endif %}>{{ t }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </a>
+    {% endfor %}
+</div>
+
+<script>
+    var time_interval = "14d";
+
+    var tags_name_selected = { 
+        {% if tags_name_selected|length > 0 %}
+            {% for t, v in tags_name_selected %}
+                '{{ t }}': 1
+                {% if not loop.last %},{% endif %}
+            {% endfor %}
+        {% endif %}
+    };
+
+    var likes = {
+        {% for index_id, like in likes %}
+            {{ index_id }} : {{ like.type }}
+            {% if not loop.last %},{% endif %}
+        {% endfor %}
+    };
+
+    $( document ).ready(function() {
+        updatePeriod();
+
+        $('.music-tag').click(function(e) {
+            $('#no-results').hide();
+
+            setTag(this).done(function() {
+                getAfishaEvents();
+            });
+
+            e.preventDefault();
+        });
+
+        $('.time-interval').click(function(e) {
+            $("#afisha_title").text($(this).text());
+            setPeriod(this); 
+
+            $('#no-results').hide();
+            
+            getAfishaEvents();
+
+            e.preventDefault();
+        });
+    });
+</script>
+
+{% include 'EventGeneralBundle:Default:bottom.mob.html.twig' %}
+
+{% endblock %}
+

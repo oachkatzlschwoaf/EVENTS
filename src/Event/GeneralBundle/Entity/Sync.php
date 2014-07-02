@@ -201,8 +201,8 @@ class Sync
         $diff = $dt->getTimestamp() - $this->lastSync->getTimestamp();
 
         #if ($diff > 60 * 60 * 24) {
-        #if ($diff > 60) {
-        if ($diff > 60 * 60) {
+        if ($diff > 60) {
+        #if ($diff > 60 * 60) {
             return 0;
         }
 

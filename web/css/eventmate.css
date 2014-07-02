@@ -247,7 +247,7 @@ h2 {
     font-family: 'Museo Sans Cyr';
 }
 
-#popular_tags {
+.popular_tags {
     font-family: 'Charis';
     margin: 1em 0 1em 0;
 }
@@ -741,3 +741,16 @@ h2 {
     width: 520px;
     margin: 0px auto;
 }
+
+#sad-full {
+    margin: 0px auto;
+    width: 70%;
+}
+
+.like-buttons {
+    min-height: 34px;
+    overflow: hidden;
+    clear: both;
+    display: block;
+}
+

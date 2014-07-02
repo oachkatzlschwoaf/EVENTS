@@ -16,7 +16,12 @@ function renderAfishaEvents(events, rows_limit) {
         }
 
         if (typeof rows_limit != 'undefined' && row > rows_limit) {
-            $('#general_events_list').append('<div class="section group">'+html+'</div>');
+            if (is_mobile == 0) { 
+                $('#general_events_list').append('<div class="section group">'+html+'</div>');
+            } else {
+                $('#general_events_list').append(html);
+            }
+
             return false
         }
 
@@ -26,18 +31,68 @@ function renderAfishaEvents(events, rows_limit) {
         if (i == 3 || (j + 1) == events.length) {
             i = 0;
 
-            $('#general_events_list').append('<div class="section group">'+html+'</div>');
+            if (is_mobile == 0) {
+                $('#general_events_list').append('<div class="section group">'+html+'</div>');
+            } else {
+                $('#general_events_list').append(html);
+            }
+
             html = '';
         }
     });
 }
 
-function renderEvent(event, size) {
-    if (typeof event == 'undefined') {
-        $('#load_more').hide();  
-        return false;
-    }
+function renderMobileEvent(event, size) {
+    // Prepare Image
+    var image = '';
+    var image_path = util.uploads_catalog;
     
+    if (size == 3) {
+        image = image_path + '/small_' + event.internal_id + '.jpg'; 
+    } else if (size == 6) {
+        image = image_path + '/medium_' + event.internal_id + '.jpg'; 
+    }
+
+    // Date prepare 
+    var dt = event.start_short;
+
+    // Tags prepare
+    var tags = '';
+    var tags_list = event.tags_short;
+
+    $.each(tags_list, function(k, t) {
+        var is_selected = '';
+        if (tags_name_selected[t] == 1) {
+            is_selected = 'class="highlight"';
+        }
+
+        tags += '<li '+is_selected+'>' + t + '</li> \
+        ';
+    });
+    
+    var hide = '';
+    if (user_id) {
+        var like_class, dislike_class; 
+
+        if (likes[event.id] == 2) {
+            hide = 'hidden';
+        }
+    }
+
+    // Make html
+    html = '<a id="event_'+event.id+'" href="'+event.link+'" class="container event-container '+hide+'" style="background-image: url(' + image + ')">'+
+    '<div id="event-content_'+event.id+'" class="content"><div class="head"><h3>'+event.name+'</h3>'+
+    '</div><div class="additional">' +
+    '<div class="date-time left">' + dt + '</div>' +
+    '<ul class="tags right">' + tags + '</ul>' +
+    '</div></div></a> \
+    ';
+
+    return html;
+}
+
+function renderWebEvent(event, size) {
+
     // Prepare Image
     var image = '';
     var image_path = util.uploads_catalog;
@@ -116,6 +171,15 @@ function renderEvent(event, size) {
     '</div></div></a>';
 
     return html;
+
+}
+
+function renderEvent(event, size) {
+    if (is_mobile) {
+        return renderMobileEvent(event, size);
+    } else {
+        return renderWebEvent(event, size);
+    }
 }
 
 function setTag(e) {
@@ -140,9 +204,7 @@ function setTag(e) {
     return dfd.promise();
 }
 
-function setPeriod(e) {
-    time_interval = $(e).attr('interval');
-
+function updatePeriod() {
     $(".time-interval").each(function(i, el) {
         $(el).removeClass('selected');
 
@@ -150,6 +212,12 @@ function setPeriod(e) {
             $(el).addClass('selected');
         }
     });
+}
+
+function setPeriod(e) {
+    time_interval = $(e).attr('interval');
+    
+    updatePeriod();
 }
 
 function showLoginSignupWindow() {
@@ -189,22 +257,29 @@ function renderGeneralEvents(grid, events) {
     }
 
     $.each(grid, function(i, row) {
-        var html = '<div class="section group">';
+        var html = '';
+        if (is_mobile == 0) {
+            html = '<div class="section group">';
+        }
         
         $.each(row, function(j, e) {
             var event = events.shift();
 
             events_offset++;
-            render = renderEvent(event, e);
 
-            if (render == false) {
+            if (typeof event == 'undefined') {
+                return false;
+                $('#load_more').hide();  
                 return false;
             }
 
+            render = renderEvent(event, e);
             html += render;
         });
 
-        html += '</div>';
+        if (is_mobile == 0) {
+            html += '</div>';
+        }
 
         $('#general_events_list').append(html);
     });
@@ -504,3 +579,60 @@ function submitUserSettings() {
     }
 }
 
+/* 
+==============================================================================
+                                  MOBILE
+==============================================================================
+*/
+
+
+function showPopularTagsWindow() {
+    $.fancybox.open('#popular-tags-window', {
+        'autoScale': true,
+        'autoDimensions': true,
+        'closeBtn': false,
+        'centerOnScroll': true, 
+        'padding': 0, 
+        'helpers': {
+            'overlay': {
+                'css': {
+                    'background': 'rgba(0, 0, 0, 0.3)'
+                }
+            }
+        }
+    });
+}
+
+function showTimeWindow() {
+    $.fancybox.open('#time-window', {
+        'autoScale': true,
+        'autoDimensions': true,
+        'closeBtn': false,
+        'centerOnScroll': true, 
+        'padding': 0, 
+        'helpers': {
+            'overlay': {
+                'css': {
+                    'background': 'rgba(0, 0, 0, 0.3)'
+                }
+            }
+        }
+    });
+}
+
+function showMyTagsWindow() {
+    $.fancybox.open('#my-tags-window', {
+        'autoScale': true,
+        'autoDimensions': true,
+        'closeBtn': false,
+        'centerOnScroll': true, 
+        'padding': 0, 
+        'helpers': {
+            'overlay': {
+                'css': {
+                    'background': 'rgba(0, 0, 0, 0.3)'
+                }
+            }
+        }
+    });
+}

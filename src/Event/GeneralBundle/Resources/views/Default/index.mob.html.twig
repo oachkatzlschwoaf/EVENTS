@@ -1,13 +1,15 @@
-{% extends '::base.html.twig' %}
+{% extends '::base.mob.html.twig' %}
 {% block body %}
 
-{% include 'EventGeneralBundle:Default:top.html.twig' %}
+{% include 'EventGeneralBundle:Default:top.mob.html.twig' %}
 
 {% if not user_id %}
-    {% include 'EventGeneralBundle:Default:index_unlogged.html.twig' %}
+    {% include 'EventGeneralBundle:Default:index_unlogged.mob.html.twig' %}
 {% else %}
-    {% include 'EventGeneralBundle:Default:index_personal.html.twig' %}
+    {% include 'EventGeneralBundle:Default:index_personal.mob.html.twig' %}
 {% endif %}
+
+{% include 'EventGeneralBundle:Default:bottom.mob.html.twig' %}
 
 <script>
     var tags_name_selected = { 
@@ -19,7 +21,5 @@
         {% endif %}
     };
 </script>
-
-{% include 'EventGeneralBundle:Default:bottom.html.twig' %}
 
 {% endblock %}

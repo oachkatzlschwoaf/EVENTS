@@ -8,7 +8,7 @@
 
                 <div id="no-results" class='unit-100 text-centered' style='display: none'>
                     <h3 class='color-gray-light'>Ой, событий не найдено</h3>
-                    <img src="{{ asset('images/sad_ia.jpg') }}">
+                    <img src="{{ asset('images/sad_robot.jpg') }}">
                 </div>
 
                 <div id="first-time" class='unit-100 text-centered' style='display: none'>
@@ -42,14 +42,14 @@
             </nav>
 
             <h4>Мои Тэги</h4>
-            <p id='popular_tags'>
+            <p class='popular_tags'>
                 {% for t, val in my_tags %}
                     <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
                 {% endfor %}
             </p>
 
             <h4>Популярные Тэги</h4>
-            <p id='popular_tags'>
+            <p class='popular_tags'>
                 {% for t_id, t in popular_tags %}
                     <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
                 {% endfor %}

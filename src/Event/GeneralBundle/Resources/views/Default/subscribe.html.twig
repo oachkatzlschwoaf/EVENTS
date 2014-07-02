@@ -58,9 +58,28 @@
                     </div>
 
                     <div class="columns" style="margin-left: 42px; font-size: 15px; overflow: hidden;">
-                        {% for i in 0..1 %}
+                        {% if events_weekend|length > 2 %}
+                            {% for i in 0..1 %}
+                                <div style='display: inline-block; vertical-align: top; width: 262px; margin: 0 10px'>
+                                    {% for e in events_weekend|slice(i * 2, 2) %}
+                                        <div style="width: 231px; margin: 0 15px 15px; padding: 9px 9px 15px; background: #fff; border: 1px solid #ccc; overflow: hidden;">
+                                            <a href="{{ url('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" target="_blank">
+                                                <img style="margin: 0 0 9px; width: 231px; height: 260px;" src="{{ app.request.scheme ~'://' ~ app.request.httpHost ~  asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}">
+                                            </a>
+                                            <div style="font-weight: bold; font-size: 18px; line-height:20px; padding: 0 6px; margin-bottom: 2px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif"><a href="{{ url('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" target="_blank" style="color: #222; text-decoration: none;">{{ e.name }}</a></div>
+                                            <div style="color: #d70a16; font-size: 13px; padding: 0 6px; margin-bottom: 6px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;">
+                                                {% for t in e.getTagsNamesList(0, 25) %}
+                                                    {{ t }}{% if not loop.last %},{% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            <div style="color: #555; font-size: 14px; padding: 0 6px; font-family: 'Georgia', serif;">{{ e.shortStartHuman() }}</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
                             <div style='display: inline-block; vertical-align: top; width: 262px; margin: 0 10px'>
-                                {% for e in events_weekend|slice(i * 2, 2) %}
+                                {% for e in events_weekend|slice(0, 1) %}
                                     <div style="width: 231px; margin: 0 15px 15px; padding: 9px 9px 15px; background: #fff; border: 1px solid #ccc; overflow: hidden;">
                                         <a href="{{ url('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" target="_blank">
                                             <img style="margin: 0 0 9px; width: 231px; height: 260px;" src="{{ app.request.scheme ~'://' ~ app.request.httpHost ~  asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}">
@@ -75,7 +94,23 @@
                                     </div>
                                 {% endfor %}
                             </div>
-                        {% endfor %}
+                            <div style='display: inline-block; vertical-align: top; width: 262px; margin: 0 10px'>
+                                {% for e in events_weekend|slice(1, 1) %}
+                                    <div style="width: 231px; margin: 0 15px 15px; padding: 9px 9px 15px; background: #fff; border: 1px solid #ccc; overflow: hidden;">
+                                        <a href="{{ url('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" target="_blank">
+                                            <img style="margin: 0 0 9px; width: 231px; height: 260px;" src="{{ app.request.scheme ~'://' ~ app.request.httpHost ~  asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}">
+                                        </a>
+                                        <div style="font-weight: bold; font-size: 18px; line-height:20px; padding: 0 6px; margin-bottom: 2px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif"><a href="{{ url('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" target="_blank" style="color: #222; text-decoration: none;">{{ e.name }}</a></div>
+                                        <div style="color: #d70a16; font-size: 13px; padding: 0 6px; margin-bottom: 6px; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;">
+                                            {% for t in e.getTagsNamesList(0, 25) %}
+                                                {{ t }}{% if not loop.last %},{% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <div style="color: #555; font-size: 14px; padding: 0 6px; font-family: 'Georgia', serif;">{{ e.shortStartHuman() }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
 
                     <div style="font-weight: bold; font-size: 16px; line-height:20px; padding: 10px 0 10px; margin: 0px auto; font-family: 'Lucida Sans Unicode', 'Lucida Grande', sans-serif; border-top: 1px solid #ccc; width: 90%; text-align: center;">
@@ -124,7 +159,7 @@
                     <br />
                     Персональная афиша концертов.
                     <br />
-                    Надоела рассылка? <a href="#" style='color: #3570c3;'>Отписаться</a> 
+                    Надоела рассылка? <a href="{{ url('unsubscribe', { 'hash': user.subscribeSecret }) }}" target="_blank" style='color: #3570c3;'>Отписаться</a> 
                 </div>
             </div>
         </div>
