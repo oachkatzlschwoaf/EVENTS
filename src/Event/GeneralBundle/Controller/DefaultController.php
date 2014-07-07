@@ -552,11 +552,13 @@ class DefaultController extends Controller {
 
             $tags = array();
             $next_flag = 1;
+
+            # PENALTY: Tags 
             foreach ($e->getTagsNamesList() as $t) {
                 if (isset($user_tags[$t]) && $t != 'russian') {
                      $tags[$t] = $user_tags[$t];
                 } else {
-                    $weight -= 10;
+                    $weight -= 1;
                 }
 
                 if (count($session_tags) > 0 && isset($session_tags[$t])) {
@@ -569,6 +571,7 @@ class DefaultController extends Controller {
 
             arsort($tags);
 
+            # BONUS: Tags 
             $i = 0;
             foreach ($tags as $t => $w) {
                 $i++;
@@ -577,18 +580,19 @@ class DefaultController extends Controller {
                 }
             }
 
-            # Calculate name weight
+            # BONUS: Artist 
             foreach ($e->getCleanArtistsList() as $a) {
                 if (isset($user_artists[$a]) && $user_artists[$a] > 0) {
-                    $weight *= $user_artists[$a] * 3;
+                    $weight += $user_artists[$a] * 50;
                 }
             }
 
-            # Time penalty
+            # BONUS: Time 
             if (( $e->getStartTimestamp() - time() ) <= 60 * 60 * 24 * 30) {
                 $weight *= 1.5;
             }
 
+            # PENALTY: Time
             if (( $e->getStartTimestamp() - time() ) >= 60 * 60 * 24 * 30 * 3) {
                 $weight /= 3;
             }
@@ -1018,6 +1022,7 @@ class DefaultController extends Controller {
         $similar = $this->getSimilarEventsByTags($tags_list, array(
             'limit' => 6,
             'shuffle' => 0,
+            'exept_id' => $index->getId(),
         ));
 
         // Get like & dislike
@@ -1057,6 +1062,17 @@ class DefaultController extends Controller {
 
         $events = $this->searchEvents($q, $period, $sort);
         $events = array_values($events);
+
+        if ($params['exept_id']) {
+            $clean = array();
+            foreach ($events as $e) {
+                if ($e->getId() != $params['exept_id']) {
+                    array_push($clean, $e);
+                }
+            }
+
+            $events = $clean;
+        }
 
         if ($params['shuffle']) {
             shuffle($events);

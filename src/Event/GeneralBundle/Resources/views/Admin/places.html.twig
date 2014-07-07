@@ -16,6 +16,13 @@
         <tr>
             <td style='width: 3%'>id</td>
             <td style='width: 40%'>name</td>
+            <td style='width: 10%'>address</td>
+            <td style='width: 10%'>metro</td>
+            <td style='width: 10%'>url</td>
+            <td style='width: 10%'>phone</td>
+            <td style='width: 10%'>lat</td>
+            <td style='width: 10%'>lon</td>
+            <td style='width: 10%'>zoom</td>
         </tr>
     </thead>
     <tbody>
@@ -23,6 +30,50 @@
             <tr>
                 <td>{{ p.id }}</td>
                 <td {% if p.status == 0 %}class="notice-pink"{% endif %}><a href="{{ path('place', { "id": p.id }) }}">{{ p.name }}</a></td>
+
+                {% if p.address is not defined or p.address == '' %}
+                    <td style="background: red"></td>
+                {% else %}
+                    <td>+</td>
+                {% endif %}
+
+                {% if p.metro is not defined or p.metro == '' %}
+                    <td style="background: red"></td>
+                {% elseif p.metro == 'Авиамоторная' %}
+                    <td style="background: pink"></td>
+                {% else %}
+                    <td>+</td>
+                {% endif %}
+
+                {% if p.url is not defined or p.url == '' %}
+                    <td style="background: red"></td>
+                {% else %}
+                    <td>+</td>
+                {% endif %}
+
+                {% if p.phone is not defined or p.phone == '' %}
+                    <td style="background: red"></td>
+                {% else %}
+                    <td>+</td>
+                {% endif %}
+
+                {% if p.latitude is not defined or p.latitude == '' %}
+                    <td style="background: red"></td>
+                {% else %}
+                    <td>+</td>
+                {% endif %}
+
+                {% if p.longitude is not defined or p.longitude == '' %}
+                    <td style="background: red"></td>
+                {% else %}
+                    <td>+</td>
+                {% endif %}
+
+                {% if p.zoom is not defined or p.zoom == '' %}
+                    <td style="background: red"></td>
+                {% else %}
+                    <td>+</td>
+                {% endif %}
             </tr>
         {% endfor %}
     </tbody>

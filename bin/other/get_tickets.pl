@@ -12,11 +12,19 @@ use Encode;
 use Data::Dumper;
 use LWP::Simple;
 use HTML::TreeBuilder;
+use List::Util qw( min max );
 use JSON;
 use YAML;
 use DBI;
 
 binmode STDOUT, ':utf8';
+
+sub trim($) {
+    my $string = shift;
+    $string =~ s/^\s+//;
+    $string =~ s/\s+$//;
+    return $string;
+}
 
 sub getParameters{
     return YAML::LoadFile("../app/config/parameters.yml");
@@ -182,33 +190,353 @@ sub grabConcert {
     return $agg;
 }
 
+sub grabPonominalu {
+    my ($e) = @_;
+
+    my $url = 'http://www.ponominalu.ru/event/'.$e->{'provider_id'};
+
+    my $ua = LWP::UserAgent->new();
+    my $r = $ua->get($url);
+    my $c = $r->decoded_content();
+    
+    my $t = HTML::TreeBuilder->new();
+    $t->ignore_unknown(0);
+    $t->parse( $c );
+    $t->eof();
+
+    my $agg = {};
+
+    if ($c =~ /sector\.setPrices\(\[(.*?)\]\)/) {
+
+        my @prices = split(/,/, $1);
+        my $price_min = min @prices;
+        my $price_max = max @prices;
+
+        my @h4 = $t->look_down(_tag => 'h4');
+        my $sector = $h4[0]->as_text();
+
+        $agg->{$sector}{'price_max'} = $price_max;
+        $agg->{$sector}{'price_min'} = $price_min;
+
+    } else {
+        my @trs = $t->look_down(class => 'thleft');
+
+        my @prices = $c =~ m/(.*) &#8399;/g; 
+
+        my $i = 0;
+        foreach my $tr (@trs) {
+            $i++;
+            next if ($i == 1);
+
+            my $sector = $tr->as_text();
+            my $price_min = undef;
+            my $price_max = undef;
+
+            my $price = trim($prices[ $i - 2 ]);
+
+            if ($price =~ /(\d+) - (\d+)/) {
+                $price_min = $1;
+                $price_max = $2;
+            } else {
+                $price_min = $price;
+                $price_max = $price;
+            }
+
+            $agg->{$sector}{'price_max'} = $price_max;
+            $agg->{$sector}{'price_min'} = $price_min;
+        }
+    }
+
+    return $agg;
+}
+
+sub grabParter {
+    my ($e) = @_;
+
+    my $ua = LWP::UserAgent->new();
+    my $url = $e->{'link'};
+
+    my $r = $ua->get($url);
+    my $c = $r->decoded_content();
+
+    my $agg = {};
+
+    my $t = HTML::TreeBuilder->new_from_content( $c );
+
+    my @trs = $t->look_down(class => 'lastDiscountLevelRow');
+
+    my $i = 0;
+    foreach my $tr (@trs) {
+
+        # Sector
+        my @td_sector = $tr->look_down(class => 'single-rowspan priceCategory');
+        my $sector = $td_sector[0]->as_text;
+
+        # Price 
+        my @td_price = $tr->look_down(class => 'single-rowspan price');
+        my $price = $td_price[0]->as_text;
+
+        $price =~ s/руб\.//;
+        $price =~ s/,//g;
+        $price =~ s/\s//g;
+        $price /= 100;
+
+        if (!$agg->{$sector}{'price_min'} || $agg->{$sector}{'price_min'} >= $price) {
+            $agg->{$sector}{'price_min'} = $price;
+        }
+
+        if (!$agg->{$sector}{'price_max'} || $agg->{$sector}{'price_max'} < $price) {
+            $agg->{$sector}{'price_max'} = $price;
+        }
+    }
+
+    return $agg;
+}
+
+sub grabTicketland{
+    my ($e) = @_;
+
+    my $ua = LWP::UserAgent->new();
+    my $url = $e->{'link'};
+
+    my $r = $ua->get($url);
+    my $c = $r->decoded_content();
+
+    my $agg = {};
+
+    my $t = HTML::TreeBuilder->new_from_content( $c );
+
+    my @table = $t->look_down(class => 'perform');
+    my @links = $table[0]->look_down(_tag => 'a');
+
+    my $l = pop @links;
+    my $path = $l->attr('href');
+
+    $url = 'http://www.ticketland.ru/'.$path;
+    $r = $ua->get($url);
+    $c = $r->decoded_content();
+
+    my ($eid, $oid, $sec);
+
+    if ($c =~ /performance = (\d+);/) {
+        $eid = $1;
+    }
+
+    if ($c =~ /objId = (\d+);/) {
+        $oid = $1;
+    }
+
+    if ($c =~ /sections = (.+);/) {
+        $sec = $1;
+    }
+
+    if ($eid && $oid && $sec) { 
+        my $jsec = decode_json($sec);
+
+        if (ref $jsec eq 'ARRAY') {
+            $r = $ua->get('http://www.ticketland.ru/hallview/map/'.$eid.'/?webObjId='.$oid);
+            $c = $r->decoded_content();
+
+            my $t = HTML::TreeBuilder->new();
+            $t->ignore_unknown(0);
+            $t->parse( $c );
+            $t->eof();
+
+            my @ps = $t->look_down(class => 'place free');
+
+            foreach my $p (@ps) {
+                my $sector = $p->attr('data-section-name');
+                my $price = $p->attr('data-price');
+
+                if ($sector && $price && $price > 0) {
+                    if (!$agg->{$sector}{'price_min'} || $agg->{$sector}{'price_min'} >= $price) {
+                        $agg->{$sector}{'price_min'} = $price;
+                    }
+
+                    if (!$agg->{$sector}{'price_max'} || $agg->{$sector}{'price_max'} < $price) {
+                        $agg->{$sector}{'price_max'} = $price;
+                    }
+                }
+            }
+        } elsif (ref $jsec eq 'HASH') {
+            foreach my $key (keys %$jsec) {
+                $r = $ua->get('http://www.ticketland.ru/hallview/map/'.$eid.'/'.$key.'/?webObjId='.$oid);
+                $c = $r->decoded_content();
+
+                my $t = HTML::TreeBuilder->new();
+                $t->ignore_unknown(0);
+                $t->parse( $c );
+                $t->eof();
+
+                my @ps = $t->look_down(class => 'place free');
+
+                foreach my $p (@ps) {
+                    my $sector = $p->attr('data-section-name');
+                    my $price = $p->attr('data-price');
+
+                    if ($sector && $price && $price > 0) {
+                        if (!$agg->{$sector}{'price_min'} || $agg->{$sector}{'price_min'} >= $price) {
+                            $agg->{$sector}{'price_min'} = $price;
+                        }
+
+                        if (!$agg->{$sector}{'price_max'} || $agg->{$sector}{'price_max'} < $price) {
+                            $agg->{$sector}{'price_max'} = $price;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return $agg;
+}
+
+sub grabRedkassa {
+    my ($e) = @_;
+
+    my $ua = LWP::UserAgent->new();
+    my $url = $e->{'link'};
+
+    my $r = $ua->get($url);
+    my $c = $r->decoded_content();
+
+    my $agg = {};
+
+    my $t = HTML::TreeBuilder->new_from_content( $c );
+
+    my @elements = $t->look_down(class => 'tickets');
+    my $table = $elements[0];
+
+    if ($table) {
+        my @trs = $table->look_down(_tag => 'tr');
+
+        my $i = 0;
+        foreach my $tr (@trs) {
+            my $sector;
+            my $price;
+            
+            # Sector
+            my @ss = $tr->look_down(class => 'col2');
+
+            if (scalar(@ss) > 0) {
+                $sector = $ss[0]->as_text;
+            }
+
+            # Price 
+            my @ps = $tr->look_down(class => 'col5');
+
+            if (scalar(@ps) > 0) {
+                $ps[0]->as_text =~ /(\d+)/;
+
+                $price = $1 if ($1);
+            }
+
+            if ($sector && $price) {
+                if (!$agg->{$sector}{'price_max'} || $agg->{$sector}{'price_max'} < $price) {
+                    $agg->{$sector}{'price_max'} = $price;
+                }
+
+                if (!$agg->{$sector}{'price_min'} || $agg->{$sector}{'price_min'} > $price) {
+                    $agg->{$sector}{'price_min'} = $price;
+                }
+            }
+        }
+    }
+
+    return $agg;
+}
+
+
+sub grabBiletmarket {
+    my ($e) = @_;
+
+    my $ua = LWP::UserAgent->new();
+    my $url = $e->{'link'};
+
+    my $r = $ua->get($url);
+    my $c = $r->decoded_content();
+
+    my $agg = {};
+
+    my $t = HTML::TreeBuilder->new_from_content( $c );
+
+    my @elements = $t->look_down(class => 'table');
+    my $table = $elements[0];
+
+    if ($table) {
+        my @trs = $table->look_down(_tag => 'tr');
+
+        my $i = 0;
+        foreach my $tr (@trs) {
+            $i++;
+            next if ($i == 1 || $i == scalar(@trs));
+
+            my $sector;
+            my $price;
+
+            # Sector
+            my @ss = $tr->look_down(_tag => 'th');
+
+            if (scalar(@ss) > 0) {
+                $sector = $ss[0]->as_text;
+            }
+
+            # Price 
+            my @ps = $tr->look_down(_tag => 'td');
+
+            if (scalar(@ps) > 0) {
+                $ps[1]->as_text =~ /(\d+)/;
+                $price = $1 if ($1);
+            }
+
+            if ($sector && $price) {
+                if (!$agg->{$sector}{'price_max'} || $agg->{$sector}{'price_max'} < $price) {
+                    $agg->{$sector}{'price_max'} = $price;
+                }
+
+                if (!$agg->{$sector}{'price_min'} || $agg->{$sector}{'price_min'} > $price) {
+                    $agg->{$sector}{'price_min'} = $price;
+                }
+            }
+        }
+    }
+
+    return $agg;
+}
+
+
 sub getTickets {
     my ($events) = @_;
     
     my $event_tickets = {};
-    my $i = 0;
     foreach my $e_id (keys %$events) {
         my $e = $events->{$e_id};
 
-        print "\nGet tickets for $e_id (".$e->{'provider'}." ".$e->{'link'}.")";
+        next if ($e->{'provider'} != 7); # DEBUG
+
+        print "\n\tGET TICKETS $e_id: ".$e->{'link'};
 
         my $agg_tickets = { };
         if ($e->{'provider'} == 1) {
             $agg_tickets = grabKassir($e);
-            print " found ".scalar(keys %$agg_tickets)." tickets";
-
         } elsif ($e->{'provider'} == 2) {
             $agg_tickets = grabConcert($e);
-
-            print " found ".scalar(keys %$agg_tickets)." tickets";
-
+        } elsif ($e->{'provider'} == 3) {
+            $agg_tickets = grabPonominalu($e);
+        } elsif ($e->{'provider'} == 4) {
+            $agg_tickets = grabParter($e);
+        } elsif ($e->{'provider'} == 5) {
+            $agg_tickets = grabTicketland($e);
+        } elsif ($e->{'provider'} == 6) {
+            $agg_tickets = grabRedkassa($e);
+        } elsif ($e->{'provider'} == 7) {
+            $agg_tickets = grabBiletmarket($e);
         }
+
+        print "\n\tFOUND ".scalar(keys %$agg_tickets)." tickets";
 
         next if (!$agg_tickets || scalar(keys %$agg_tickets) == 0);
         $event_tickets->{ $e_id } = $agg_tickets;
-
-        $i++;
-        #last if ($i > 1); # DEBUG 
     }
 
     return $event_tickets;
@@ -296,11 +624,12 @@ $d->do("SET NAMES 'utf8'");
 # 1. Get all active provider events
 my $provider_events = getProviderEvents($d);
 
-print "\nGet ".scalar(keys %$provider_events)." events";
+print "\nGET ".scalar(keys %$provider_events)." PROVIDER EVENTS";
 
 # 2. Get tickets for them
 my $tickets = getTickets($provider_events);
 
+=pod
 print "\nProcess Tickets";
 
 foreach my $e_id (keys %$provider_events) {

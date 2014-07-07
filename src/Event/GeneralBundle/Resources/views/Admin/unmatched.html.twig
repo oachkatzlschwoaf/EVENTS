@@ -24,9 +24,15 @@
                     <td><a href="{{ path('provider_event', { "id": e.id }) }}">{{ e.name }}</a></td>
                     <td>{{ providers[ e.provider ].getName() }}</td>
                     {% if e.place and e.place != 0 %}
-                        <td>
-                            <a href="{{ path('place', {"id": e.place}) }}">{{ places[ e.place ].getName }}</a>
-                        </td>
+                        {% if places[ e.place ] is defined %}
+                            <td>
+                                <a href="{{ path('place', {"id": e.place}) }}">{{ places[ e.place ].getName }}</a>
+                            </td>
+                        {% else %}
+                            <td class='notice-warning'>
+                                none
+                            </td>
+                        {% endif %}
                     {% else %}
                         <td class='notice-warning'>{{ e.placeText }}</td>
                     {% endif %}

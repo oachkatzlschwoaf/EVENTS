@@ -15,6 +15,7 @@ Event\GeneralBundle\Entity\InternalEvent:
             type: string
             length: 255
             column: url_name 
+            nullable: true
         date:
             type: date
         start:
@@ -38,12 +39,12 @@ Event\GeneralBundle\Entity\InternalEvent:
             nullable: true
         catalogRate:
             type: integer
-            nullable: true
             column: catalog_rate
+            nullable: true
         additionalInfo:
             type: text 
-            nullable: true
             column: additional_info 
+            nullable: true
         style:
             type: integer
             nullable: true
@@ -54,6 +55,7 @@ Event\GeneralBundle\Entity\InternalEvent:
             type: integer
             nullable: true
             column: big_theme 
+            nullable: true
         video:
             type: string
             length: 255

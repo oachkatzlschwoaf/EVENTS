@@ -313,6 +313,11 @@ class User
             return json_decode($this->artistsNormal, 1);
         } else {
             $tags = json_decode($this->artistsNormal, 1);
+
+            if (!$tags) {
+                return array();
+            }
+
             arsort($tags);
 
             return $tags;

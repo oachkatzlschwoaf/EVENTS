@@ -1,9 +1,22 @@
 <div class="container" id="welcome">
     <div class="unit-100 text-centered">
+        {% set what_title = random(4) %}
+        {% if what_title == 0 %}
+            <h1>Без Лепса и Билана!</h1>
+        {% elseif what_title == 1 %}
+            <h1>Без Ай-нэ-нэ-нэ!</h1>
+        {% elseif what_title == 2 %}
+            <h1>Без #kircore!</h1>
+        {% elseif what_title == 3 %}
+            <h1><strike>Без тебя! Бееез тебя!</strike></h1>
+        {% elseif what_title == 4 %}
+            <h1>Без Михаила Стасова!</h1>
+        {% endif %}
         <p>
-            Восемьдесят  три процента всех дней в году начинаются одинаково: звенит будильник. Этот звон вливается в последние сны. 
+            Любите музыку и мечтаете о персональной музыкальной афише без Лепса и Билана?  
+            Eventmate &mdash; афиша концертов, составленная по вашему плейлисту в социальной сети. 
         </p>
-        <a href="#" class="btn btn-green" onclick="showLoginSignupWindow()">Составить афишу</a>
+        <a href="#" class="btn btn-green margin-top-06" onclick="showLoginSignupWindow()">Составить афишу</a>
     </div>
 </div>
 

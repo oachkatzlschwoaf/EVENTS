@@ -32,7 +32,7 @@ sub connectDb {
 }
 
 sub saveProviderEvents {
-    my ($d, $events, $provider) = @_;
+    my ($events, $provider, $d) = @_;
 
     foreach my $e_id (keys %$events) {
         my $event = $events->{$e_id};
@@ -47,8 +47,8 @@ sub saveProviderEvents {
         }
         
         # Save
-        $sql = "insert into `ProviderEvent` (`name`, `provider_id`, `date`, `start`, `duration`, `description`, `status`, `provider`, `link`, `place_text`) 
-            values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "insert into `ProviderEvent` (`name`, `provider_id`, `date`, `start`, `duration`, `status`, `provider`, `link`, `place_text`) 
+            values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $sth = $d->prepare($sql);
 
         $sth->execute(
@@ -57,38 +57,35 @@ sub saveProviderEvents {
             $event->{'start'}->ymd(), 
             $event->{'start'}->ymd().' '.$event->{'start'}->hms(), 
             $event->{'duration'}, 
-            $event->{'description'}, 
             0, # unmatched status
             $provider,
-            'http://www.concert.ru/'.$event->{'link'}, 
+            $event->{'link'},
             $event->{'place'},
         ); 
 
-        print "\n= $e_id. ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
+        print "\n\tSAVE $e_id. ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
     }
 
 }
 
 sub getLastPage {
     my $ua = LWP::UserAgent->new();
-    my $url = 'http://www.concert.ru/Actions.aspx?ActionTypeID=1';
+    my $url = 'http://ponominalu.ru/category/concerts';
 
     my $r = $ua->get($url);
     my $c = $r->decoded_content();
 
     my $t = HTML::TreeBuilder->new_from_content( $c );
-
-    my @elements = $t->look_down(class => 'PagerHyperlinkStyle');
+    my @elements = $t->look_down(class => 'days');
+    @elements = $elements[0]->look_down(_tag => 'a');
 
     my $last_page = 0;
 
     for my $e (@elements) {
-        my $link = $e->attr('href');
+        my $link = $e->attr('data-href');
 
-        next if (!$link);
-        $link =~ /,'(\d+)'\)/;
-
-        $last_page = $1 if ($1 > $last_page);
+        $link =~ /page=(\d+)/;
+        $last_page = $1;
     }
 
     return $last_page;
@@ -98,42 +95,48 @@ sub grabEvents {
     my ($start_page, $last_page) = @_;
 
     my $ua = LWP::UserAgent->new();
-    my $url = 'http://www.concert.ru/Actions.aspx?ActionTypeID=1&__EVENTTARGET=ctl00$MainPage$pager1';
+    my $url = 'http://ponominalu.ru/category/concerts';
     my $events = {};
 
     for (my $i = $start_page; $i <= $last_page; $i++) {  
-        my $r = $ua->get($url.'&__EVENTARGUMENT='.$i);
+        print "\n\tGET ".$url.'?page='.$i;
+        my $r = $ua->get($url.'?page='.$i);
         my $c = $r->decoded_content();
 
-        my $t = HTML::TreeBuilder->new_from_content( $c );
-
-        my @elements = $t->look_down(class => 'actionData');
+        my $t = HTML::TreeBuilder->new();
+        $t->ignore_unknown(0);
+        $t->parse( $c );
+        $t->eof();
+        my @elements = $t->look_down(class => 'ainfo');
 
         for my $e (@elements) {
             my $event = { };
 
-            # Name, Link, Provider Id
-            my @titles = $e->look_down(class => 'actionTitle');
+            # Link, Provider Id
+            my $a = $e->find('a');
+            next if $a->attr('href') !~ m#^/event/(.+)#;
 
-            foreach my $t (@titles) {
-                my $div = $t->find('div');
+            $event->{'provider_id'} = $1;
+            $event->{'link'} = 'http://ponominalu.ru'.$a->attr('href').'?promote=4cd1106f24cc9bc14463507b47cf6ef0';
 
-                $event->{'name'} = $div->as_text();
+            # Name 
+            my @titles = $e->look_down(itemprop => 'name');
+            $event->{'name'} = $titles[0]->as_text(); 
 
-                $event->{'link'} = $t->attr('href');
-                $event->{'link'} =~ m#ActionID=(\d+)#;
-                $event->{'provider_id'} = $1;
-            }
+            # Place 
+            $event->{'place'} = $titles[1]->as_text(); 
 
             # Date
-            my $date = $e->as_text();
+            my $date = $e->find('time');
+            my $start = $date->attr('datetime');
+
             my $dt = DateTime->now();
 
-            if ($date =~ /(\d{2})\.(\d{2})\.(\d{4}) (\d{2})\:(\d{2})/) {
+            if ($start =~ /(\d{4})\-(\d{2})\-(\d{2})T(\d{2})\:(\d{2})/) {
                 my $e_dt = DateTime->new(
-                    year   => $3, 
+                    year   => $1, 
                     month  => $2,
-                    day    => $1,
+                    day    => $3,
                     hour   => $4,
                     minute => $5,
                 );
@@ -143,26 +146,10 @@ sub grabEvents {
                 next;
             }
 
-            # Duration
-            $event->{'duration'} = 3; # TODO! FIXIT!
-
-            # Place
-            my @place = $e->look_down(class => 'ActionExtraData');
-            foreach my $p (@place) {
-                my $span = $p->find('span');
-                if ($span) {
-                    my $pname = $span->as_text();
-                    $event->{'place'} = $pname;
-                } else {
-                    next;
-                }
-            }
-
-            next if (!$event->{'place'});
+            # Duration (TODO: Fixit)
+            $event->{'duration'} = 3;
 
             $events->{ $event->{'provider_id'} } = $event;
-
-            #print "\n* $i. ".$event->{'name'}." ".$event->{'start'}->ymd()." ".$event->{'place'};
         }
     }
 
@@ -170,21 +157,25 @@ sub grabEvents {
 }
 
 # MAIN
-print "\n\n\nGRAB CONCERT EVENTS";
+print "\n\n\nGRAB PONOMINALU EVENTS";
 print "\n**********";
 
 # PARAM
 my $config = getParameters();
 my $params = $config->{'parameters'}; 
 
-print "\nBegin grab Concert events...";
 my $d = connectDb( $params );
 $d->do("SET NAMES 'utf8'");
 
+# Get Last Page
 my $last = getLastPage();
+
+print "\nGRAB EVENTS...";
 my $events = grabEvents(1, $last);
 
-print "\n".scalar(keys %$events)." events found";
-saveProviderEvents($d, $events, 2); # 2 = CONCERT 
+print "\n".scalar(keys %$events)." EVENTS FOUND";
+
+print "\nSAVE EVENTS...";
+saveProviderEvents($events, 3, $d); # 3 = PONOMINALU 
 
 

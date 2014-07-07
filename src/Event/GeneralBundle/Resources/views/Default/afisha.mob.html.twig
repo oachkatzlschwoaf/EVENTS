@@ -10,7 +10,7 @@
 </div>
 <div class="page-head-sub">
     <small><a href="#" onclick="showTimeWindow()">время</a></small>
-    {% if user_id %}<small><a href="#" onclick="showMyTagsWindow()">мои тэги</a></small>{% endif %}
+    {% if user_id and my_tags_short is defined and my_tags_short|length > 0 %}<small><a href="#" onclick="showMyTagsWindow()">мои тэги</a></small>{% endif %}
     <small><a href="#" onclick="showPopularTagsWindow()">популярные тэги</a></small>
 </div>
 

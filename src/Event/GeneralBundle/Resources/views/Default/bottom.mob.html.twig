@@ -23,7 +23,7 @@
     {% if popular_tags is defined %}
         <div id='popular-tags-window' class='text-centered window'>
             <h4>Популярные Тэги</h4>
-            <p id='popular_tags'>
+            <p id='popular-tags'>
                 {% for t_id, t in popular_tags %}
                     <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
                 {% endfor %}
@@ -34,8 +34,8 @@
 
     {% if my_tags_short is defined and my_tags_short|length > 0 %}
         <div id='my-tags-window' class='text-centered window'>
-            <h4>Популярные Тэги</h4>
-            <p id='popular_tags'>
+            <h4>Мои Тэги</h4>
+            <p id='my-tags'>
                 {% for t, val in my_tags_short %}
                     <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
                 {% endfor %}

@@ -315,4 +315,32 @@ class Place
     {
         return $this->longitude;
     }
+    /**
+     * @var string
+     */
+    private $zoom;
+
+
+    /**
+     * Set zoom
+     *
+     * @param string $zoom
+     * @return Place
+     */
+    public function setZoom($zoom)
+    {
+        $this->zoom = $zoom;
+
+        return $this;
+    }
+
+    /**
+     * Get zoom
+     *
+     * @return string 
+     */
+    public function getZoom()
+    {
+        return $this->zoom;
+    }
 }

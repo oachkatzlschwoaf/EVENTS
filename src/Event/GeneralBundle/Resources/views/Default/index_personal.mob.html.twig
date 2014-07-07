@@ -5,7 +5,7 @@
 </div>
 <div class="page-head-sub">
     <small><a href="#" onclick="showTimeWindow()">время</a></small>
-    <small><a href="#" onclick="showMyTagsWindow()">мои тэги</a></small>
+    {% if my_tags_short is defined and my_tags_short|length > 0 %}<small><a href="#" onclick="showMyTagsWindow()">мои тэги</a></small>{% endif %}
     <small><a href="#" onclick="showPopularTagsWindow()">популярные тэги</a></small>
 </div>
 
@@ -15,13 +15,31 @@
 
 <div id="first-time" class='text-centered first-time' style='display: none'>
     <hgroup>
-        <h3 class='color-gray-light'>Роботы слушают музыку!</h3>
+        <h3 class='color-gray-light header'>Роботы слушают музыку!</h3>
         <h3 id="sync-status" class='subheading'>Статус синхронизации</h3>
     </hgroup>
-    <small class='color-gray'>Сейчас мы анализируем ваш плейлист в социальной сети и подбираем лучшие концерты, которые могут вас заинтересовать. <br /><br />Первый раз это может занять несколько минут. Спасибо за ожидание :-)</small>
+    <small class='color-gray '>Сейчас мы анализируем ваш плейлист в социальной сети и подбираем лучшие концерты, которые могут вас заинтересовать. <br /><br />Первый раз это может занять несколько минут. Спасибо за ожидание :-)</small>
 </div>
 
 <div id="general_events_list">
+</div>
+
+<div style='display:none'>
+    <div id='email-window' class='text-centered'>
+            <h3>Спасибо за регистрацию!</h3>
+            <p class='color-gray'>
+                Последний шаг - подтверждение email. 
+                <br />
+                Укажите вашу актуальную почту:
+            </p>
+            <label>
+                <input type="email" id="user-email" name="user-email" class="width-100" style='width:100%' value="{{ user.email }}" />
+            </label>
+            <p>
+                <a href="#" onclick="submitUserEmail(); return false;" class="btn btn-green width-100">Сохранить</a>
+            </p>
+        </div>
+    </div>
 </div>
 
 <script>

@@ -26,6 +26,7 @@ Event\GeneralBundle\Entity\Place:
         metro:
             type: string
             length: 255
+            nullable: true
         phone:
             type: string
             length: 255

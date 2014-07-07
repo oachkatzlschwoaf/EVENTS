@@ -684,4 +684,41 @@ class InternalEvent
         return $this->style;
     }
 
+    /**
+     * @var string
+     */
+    private $video;
+
+
+    /**
+     * Set video
+     *
+     * @param string $video
+     * @return InternalEvent
+     */
+    public function setVideo($video)
+    {
+        $this->video = $video;
+
+        return $this;
+    }
+
+    /**
+     * Get video
+     *
+     * @return string 
+     */
+    public function getVideo()
+    {
+        return $this->video;
+    }
+
+    public function getVideoList()
+    {
+        if (!$this->video) {
+            return array();
+        } else {
+            return explode(',', $this->video);
+        }
+    }
 }

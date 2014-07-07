@@ -708,6 +708,10 @@ h2 {
   color: #fff;
 }
 
+.btn-vk:active {
+  color: #fff;
+}
+
 
 .exit-icon {
     background-image: url('../images/exit.png');
