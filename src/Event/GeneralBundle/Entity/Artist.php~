@@ -124,6 +124,11 @@ class Artist
         return $this->genres;
     }
 
+    public function getGenresList()
+    {
+        return array_filter( explode(',', $this->getGenres() ) );
+    }
+
     /**
      * Set description
      *
@@ -191,5 +196,38 @@ class Artist
     public function getTags()
     {
         return $this->tags;
+    }
+
+    public function getTagsList() {
+        return array_filter( explode(',', $this->tags) );
+    }
+
+    /**
+     * @var string
+     */
+    private $urlName;
+
+
+    /**
+     * Set urlName
+     *
+     * @param string $urlName
+     * @return Artist
+     */
+    public function setUrlName($urlName)
+    {
+        $this->urlName = $urlName;
+
+        return $this;
+    }
+
+    /**
+     * Get urlName
+     *
+     * @return string 
+     */
+    public function getUrlName()
+    {
+        return $this->urlName;
     }
 }

@@ -1,3 +1,11 @@
+body {
+    padding-left: 1em;
+}
+
+h5 {
+    margin-bottom: 0;
+}
+
 .admin_container {
     position: relative; 
     width: 1200px; 
@@ -96,7 +104,23 @@
 
 h1 {
     margin-top: 0px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.head {
+    width: 20%;
+    background-color: green; 
+    color: #d0f86f;
+    padding: .3em .3em .3em 1em;
+    font-size: 14px;
+}
+
+.head_internal {
+    width: 20%;
+    background-color: #ffab00;
+    color: #fff;
+    padding: .3em .3em .3em 1em;
+    font-size: 14px;
 }
 
 .settings {
@@ -140,8 +164,12 @@ h1 {
 }
 
 .top_menu {
-    margin-bottom: 20px;
-    font-size: 12px;
+    margin: 10px 0 20px 0;
+    font-size: 10px;
+}
+
+.top_menu h5 {
+    font-size: 1em;
 }
 
 .top_menu td {
@@ -152,4 +180,25 @@ h1 {
 
 .top_menu .selected {
     background: #ccc;
+}
+
+.top_menu .separator {
+    background-color: #ffdf40;
+}
+
+
+.tooltip {
+    width: 100%;
+    border: 1px solid black;
+    margin-bottom: 20px;
+    background-color: #d0f86f;
+}
+
+.tooltip thead {
+    font-weight: bold;
+    background-color: #8db42d;
+}
+
+.crp {
+    margin-bottom: 1em;
 }

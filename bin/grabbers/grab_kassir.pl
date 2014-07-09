@@ -79,7 +79,7 @@ sub saveProviderEvents {
             $event->{'place'},
         ); 
 
-        print "\n= $e_id. ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
+        print "\n\tEVENT $e_id SAVE: ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
     }
 
 }
@@ -191,8 +191,8 @@ sub grabEvents {
 }
 
 # MAIN
-print "\n\n\nGRAB KASSIR EVENTS";
-print "\n**********";
+print "\nGRAB KASSIR";
+print "\n************************************";
 
 # PARAM
 my $config = getParameters();
@@ -204,10 +204,9 @@ $d->do("SET NAMES 'utf8'");
 # Get Last Page
 my $last = getLastPage();
 
-print "\nBegin grab Kassir events...";
 my $events = grabEvents(1, $last);
 
-print "\n".scalar(keys %$events)." events found";
+print "\nGOT ".scalar(keys %$events)." EVENTS";
 saveProviderEvents($events, 1, $d); # 1 = KASSIR
 
 

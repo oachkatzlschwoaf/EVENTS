@@ -43,7 +43,7 @@ sub connectDb {
 sub getProviderEvents {
     my ($d) = @_;
 
-    my $sql = "select `id`, `name`, `date`, `start`, `place_text`, `place`, `provider`, `provider_id`, `link` from `ProviderEvent` where status = '1'";
+    my $sql = "select `id`, `name`, `date`, `start`, `place_text`, `place`, `provider`, `provider_id`, `link` from `ProviderEvent` where status not in (2, 5)";
     my $sth = $d->prepare($sql);
     $sth->execute();
 
@@ -293,7 +293,7 @@ sub grabParter {
     return $agg;
 }
 
-sub grabTicketland{
+sub grabTicketland {
     my ($e) = @_;
 
     my $ua = LWP::UserAgent->new();
@@ -307,6 +307,9 @@ sub grabTicketland{
     my $t = HTML::TreeBuilder->new_from_content( $c );
 
     my @table = $t->look_down(class => 'perform');
+    
+    return $agg if (scalar(@table) == 0);
+
     my @links = $table[0]->look_down(_tag => 'a');
 
     my $l = pop @links;
@@ -512,9 +515,7 @@ sub getTickets {
     foreach my $e_id (keys %$events) {
         my $e = $events->{$e_id};
 
-        next if ($e->{'provider'} != 7); # DEBUG
-
-        print "\n\tGET TICKETS $e_id: ".$e->{'link'};
+        print "\n\tGRAB TICKETS $e_id: ".$e->{'link'};
 
         my $agg_tickets = { };
         if ($e->{'provider'} == 1) {
@@ -531,6 +532,8 @@ sub getTickets {
             $agg_tickets = grabRedkassa($e);
         } elsif ($e->{'provider'} == 7) {
             $agg_tickets = grabBiletmarket($e);
+        } else {
+            next;
         }
 
         print "\n\tFOUND ".scalar(keys %$agg_tickets)." tickets";
@@ -557,7 +560,7 @@ sub saveTicket {
         1 # status
     ); 
 
-    print " -> new ticket saved...";
+    print "\n\t\tNEW TICKET ($sector, $min, $max)";
 }
 
 sub updateTicket {
@@ -574,7 +577,7 @@ sub updateTicket {
         $sector
     ); 
 
-    print " -> ticket updated...";
+    print "\n\t\tUPDATE TICKET ($sector, $min, $max)";
 }
 
 sub switchOffTicket {
@@ -589,7 +592,7 @@ sub switchOffTicket {
         $sector
     ); 
 
-    print " -> ticket switched off...";
+    print "\n\t\tSWITCH TICKET OFF ($sector)";
 }
 
 sub getExistsTicket {
@@ -615,6 +618,9 @@ sub getExistsTicket {
 }
 
 # MAIN
+print "\nGET TICKETS FOR PROVIDER EVENTS";
+print "\n************************************";
+
 my $config = getParameters();
 my $params = $config->{'parameters'}; 
 
@@ -629,11 +635,10 @@ print "\nGET ".scalar(keys %$provider_events)." PROVIDER EVENTS";
 # 2. Get tickets for them
 my $tickets = getTickets($provider_events);
 
-=pod
-print "\nProcess Tickets";
+print "\n\nPROCESS TICKETS";
 
 foreach my $e_id (keys %$provider_events) {
-    print "\nEvent $e_id";
+    print "\n\tEVENT $e_id";
     
     my $ex_tickets = getExistsTicket($d, $e_id);
 
@@ -641,15 +646,17 @@ foreach my $e_id (keys %$provider_events) {
     my $new_tickets = $tickets->{$e_id};
 
     foreach my $sector (keys %$new_tickets) {
+        $sector = trim($sector);
+
         my $min = $new_tickets->{$sector}{'price_min'};
         my $max = $new_tickets->{$sector}{'price_max'};
 
+        next if (!$sector || !$min || !$max);
+
         if (defined($ex_tickets->{$sector}) && scalar( keys %{ $ex_tickets->{$sector} } ) > 0) {
-            print "\n\t'$sector' update ticket"; 
             updateTicket($d, $e_id, $sector, $min, $max);
             delete( $ex_tickets->{$sector} );
         } else {
-            print "\n\t'$sector' save new ticket"; 
             saveTicket($d, $e_id, $sector, $min, $max);
             delete( $ex_tickets->{$sector} );
         }
@@ -657,7 +664,6 @@ foreach my $e_id (keys %$provider_events) {
 
     # Switch off non existed tickets
     foreach my $sector (keys %$ex_tickets) {
-        print "\n\t'$sector' switch off";
         switchOffTicket($d, $e_id, $sector);
     }
 }

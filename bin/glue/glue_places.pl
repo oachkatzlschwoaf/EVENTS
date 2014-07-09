@@ -123,7 +123,7 @@ sub gluePlaces {
         $e_place = lc($e_place);
         $e_place =~ s/[\"\'\(\)]//g;
 
-        print "\n$e_id. '$e_place' glue place...";
+        print "\n\tEVENT $e_id ('$e_place') ";
 
         my $best_result = 100;
         my $res_place   = 0;
@@ -149,7 +149,6 @@ sub gluePlaces {
                 my $dist_p = abs( int( $dist * 100 / length($e_place) ) );
 
                 if ($dist_p < 10 && $dist_p < $best_result) {
-                    #print "\n\t$e_place  => $kw = ".$dist." ".$dist_p."% ($best_result)";
                     if ($dist_p < $best_result) {
                         $best_result = $dist_p;
                         $res_place   = $p_id;
@@ -160,7 +159,7 @@ sub gluePlaces {
         }
 
         if ($best_result < 100 && $res_place != 0) {
-            print "\n\tmatch to '$kw_matched' ($res_place) $best_result%";
+            print "MATCH TO '$kw_matched'";
 
             # Save Place in Provider Event
             $e->{'place'} = $res_place;
@@ -168,9 +167,16 @@ sub gluePlaces {
             my $sth = $d->prepare($sql);
             $sth->execute(); 
 
+            if ($places->{$res_place}{'status'} == 0) {
+                print " AND CANCEL";
+                my $sql = "update `ProviderEvent` set status = '2' where id = '$e_id'";
+                my $sth = $d->prepare($sql);
+                $sth->execute(); 
+            }
+
         } else {
             # Mark ProviderEvent as 'without place' and delete from hash
-            print " not found place";
+            print " NOT FOUND PLACE";
 
             my $sql = "update `ProviderEvent` set status = '3' where id = '$e_id'";
             my $sth = $d->prepare($sql);
@@ -184,8 +190,8 @@ sub gluePlaces {
 }
 
 # MAIN
-print "\n\n\nGLUE PLACES";
-print "\n**********";
+print "\nGLUE PROVIDER EVENTS TO PLACES";
+print "\n************************************";
 
 my $config = getParameters();
 my $params = $config->{'parameters'}; 
@@ -195,10 +201,10 @@ $d->do("SET NAMES 'utf8'");
 
 # 1. Get all unmatched events
 my $events = getUnmatchedEvents($d);
-print "\nGet ".scalar(keys %$events)." events to glue...";
+print "\nGOT ".scalar(keys %$events)." EVENTS TO GLUE"; 
 
 # 2. Try to glue places
 my $places = getPlaces($d);
-print "\nGet ".scalar(keys %$places)." places to glue...";
+print "\nGOT ".scalar(keys %$places)." PLACES";
 
 gluePlaces($d, $events, $places);

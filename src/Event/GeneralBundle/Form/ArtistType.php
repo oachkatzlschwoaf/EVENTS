@@ -17,7 +17,6 @@ class ArtistType extends AbstractType
         $builder
             ->add('name')
             ->add('keywords')
-            ->add('genres')
             ->add('description')
             ->add('mbid')
             ->add('tags', 'hidden')

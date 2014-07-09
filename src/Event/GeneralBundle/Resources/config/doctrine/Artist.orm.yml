@@ -14,19 +14,18 @@ Event\GeneralBundle\Entity\Artist:
         keywords:
             type: text
             nullable: true
-        genres:
-            type: string
-            length: 255
         description:
             type: text
+            nullable: true
         mbid:
             type: string
             length: 255
+            nullable: true
         tags:
             type: text
-            nullable: true
         urlName:
             type: string
             length: 255
             column: url_name 
+            nullable: true
     lifecycleCallbacks: {  }

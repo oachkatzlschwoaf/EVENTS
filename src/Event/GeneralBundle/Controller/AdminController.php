@@ -257,7 +257,7 @@ class AdminController extends Controller {
                     $dist = levenshtein($event->getCleanPlaceText(), $k); 
                     $dist_p = abs( round( $dist * 100 / mb_strlen($event->getCleanPlaceText(), 'utf8') ) );
 
-                    if ($dist_p < 30) {
+                    if ($dist_p < 50) {
                         $tips_place[ $p->getId() ]['dist'] = $dist_p;
                         $tips_place[ $p->getId() ]['name'] = $p->getName();
                     }
@@ -294,9 +294,6 @@ class AdminController extends Controller {
         $p_id = $r->get('provider_event'); 
         $format = $r->get('format'); 
         
-        $rep = $this->getDoctrine()
-            ->getRepository('EventGeneralBundle:ProviderEvent');
-
         $em = $this->getDoctrine()->getManager();
         $check_link = $em->createQuery("select p from EventGeneralBundle:InternalProvider p where p.providerId = :id")
             ->setParameter('id', $p_id) 
@@ -311,9 +308,24 @@ class AdminController extends Controller {
             } 
         }
 
+        # Update Provider Event status
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:ProviderEvent');
+
         $pe = $rep->find($p_id);
         $pe->setStatus( 1 ); # matched
 
+        # Check place status
+        $internal_status = 0;
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:Place');
+        $place = $rep->find( $pe->getPlace() );
+
+        if ($place->getStatus() == 0) {
+            $internal_status = 2;
+        }
+
+        # Create Internal event
         $ie = new InternalEvent();
         $ie->setName( $pe->getName() );
         $ie->setDate( $pe->getDate() );
@@ -321,12 +333,14 @@ class AdminController extends Controller {
         $ie->setDuration( $pe->getDuration() );
         $ie->setDescription( $pe->getDescription() );
         $ie->setPlace( $pe->getPlace() );
-        $ie->setStatus( 0 ); # wait for approve
+        $ie->setCatalogRate( 1 );
+        $ie->setStatus( $internal_status ); # wait for approve
 
         $em->persist($ie);
         $em->persist($pe);
         $em->flush();
 
+        # Create Internal Provider Link
         $ip = new InternalProvider();
         $ip->setStatus( 1 ); # approved
         $ip->setInternalId( $ie->getId() );
@@ -397,6 +411,13 @@ class AdminController extends Controller {
             $tickets[ $m->getProviderId() ] = $ts;
         }
 
+        # Tooltip for match
+        $tooltip_events = $em->createQuery("select p from EventGeneralBundle:ProviderEvent p where p.status = :status and p.start = :start and p.place = :place")
+            ->setParameter('status', 4) 
+            ->setParameter('start', $event->getStart()) 
+            ->setParameter('place', $event->getPlace()) 
+            ->getResult();
+
         # Artists
         $artists = $this->getArtists();
         $counters  = $this->getCounters();
@@ -416,6 +437,7 @@ class AdminController extends Controller {
             'places' => $places,
             'artists' => $artists,
             'tags' => $tags,
+            'tooltip_events' => $tooltip_events,
             'counters' => $counters,
         ));
     }
@@ -549,6 +571,7 @@ class AdminController extends Controller {
     public function matchEventAction(Request $r) {
         $p_id = $r->get('id');
         $i_id = $r->get('internal_id');
+        $return_to_internal = $r->get('return_to_internal');
         $status = $r->get('status');
         $provider_event_status = $r->get('provider_event_status');
         $format = $r->get('format');
@@ -609,6 +632,10 @@ class AdminController extends Controller {
         if ($format == 'json') {
             $answer = array( 'done' => 'matched', 'match_id' => $ip->getId() );
             return new Response(json_encode($answer));
+
+        } elseif ($return_to_internal) {
+            return $this->redirect($this->generateUrl('internal_event', array('id' => $i_id)));
+
         } else {
             return $this->redirect($this->generateUrl('provider_event', array('id' => $p_id)));
         }
@@ -901,9 +928,15 @@ class AdminController extends Controller {
 
         $place->setName( $p->getPlaceText() );
         $place->setStatus( 1 ); # work
+        $place->setZoom( 14 );
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($place);
+        $em->flush();
+
+        $p->setPlace( $place->getId() );
+        $p->setStatus( 4 );
+        $em->persist($p);
         $em->flush();
 
         return $this->redirect($this->generateUrl('place', array('id' => $place->getId())));
@@ -911,7 +944,7 @@ class AdminController extends Controller {
 
     public function changeProviderEventPlaceAction(Request $r) {
         $p_id = $r->get('id');
-        $place = $r->get('place');
+        $place_id = $r->get('place');
 
         $rep = $this->getDoctrine()
             ->getRepository('EventGeneralBundle:ProviderEvent');
@@ -921,7 +954,17 @@ class AdminController extends Controller {
             return $this->redirect($this->generateUrl('provider_event', array('id' => $p_id)));
         }
 
-        $pe->setPlace( $place ); 
+        # Check keywords
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:Place');
+        $place = $rep->find( $place_id );
+
+        if (!$place->isExistKeyword( $pe->getPlaceText() )) {
+            $place->addKeyword( $pe->getPlaceText() );
+        }
+        
+        # Set place and save
+        $pe->setPlace( $place_id ); 
 
         if ($pe->getStatus() == 3 || $pe->getStatus() == 0) {
             $pe->setStatus(4);
@@ -929,9 +972,32 @@ class AdminController extends Controller {
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($pe);
+        $em->persist($place);
         $em->flush();
 
         return $this->redirect($this->generateUrl('provider_event', array('id' => $p_id)));
+    }
+
+    public function changeInternalEventPlaceAction(Request $r) {
+        $i_id = $r->get('id');
+        $place_id = $r->get('place');
+
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:InternalEvent');
+        $ie = $rep->find( $i_id );
+
+        if (!$ie) {
+            return $this->redirect($this->generateUrl('internal_event', array('id' => $i_id)));
+        }
+
+        # Set place and save
+        $ie->setPlace( $place_id ); 
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($ie);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('internal_event', array('id' => $i_id)));
     }
 
     public function matchesAction(Request $r) {
@@ -1232,15 +1298,23 @@ class AdminController extends Controller {
 
     public function suggestMbidAction(Request $r) {
         $id = $r->get('id');
+        $artist_name = $r->get('name');
 
-        $rep = $this->getDoctrine()
-            ->getRepository('EventGeneralBundle:Artist');
-        $artist = $rep->find( $id );
+        $artist = null;
+        if ($id) {
+            $rep = $this->getDoctrine()
+                ->getRepository('EventGeneralBundle:Artist');
+            $artist = $rep->find( $id );
+        }
 
         $url = '';
 
         if( $curl = curl_init() ) {
-            $url = 'http://musicbrainz.org/ws/2/artist?query="'.urlencode($artist->getName()).'"';
+            if ($artist) {
+                $artist_name = $artist->getName();
+            }
+
+            $url = 'http://musicbrainz.org/ws/2/artist?query="'.urlencode($artist_name).'"';
 
             curl_setopt($curl, CURLOPT_URL, $url);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -1272,10 +1346,14 @@ class AdminController extends Controller {
 
     public function suggestTagsAction(Request $r) {
         $id = $r->get('id');
+        $artist_name = $r->get('name');
 
-        $rep = $this->getDoctrine()
-            ->getRepository('EventGeneralBundle:Artist');
-        $artist = $rep->find( $id );
+        $artist = null;
+        if ($id) {
+            $rep = $this->getDoctrine()
+                ->getRepository('EventGeneralBundle:Artist');
+            $artist = $rep->find( $id );
+        }
 
         $url = '';
 
@@ -1286,10 +1364,14 @@ class AdminController extends Controller {
                 $this->container->getParameter('lastfm_api_key').
                 '&format=json';
 
-            if ($artist->getMbid()) {
-                $url .= '&mbid='.$artist->getMbid();
+            if ($artist) {
+                if ($artist->getMbid()) {
+                    $url .= '&mbid='.$artist->getMbid();
+                } else {
+                    $url .= '&artist='.urlencode($artist->getName());
+                }
             } else {
-                $url .= '&artist='.urlencode($artist->getName());
+                $url .= '&artist='.urlencode($artist_name);
             }
 
             curl_setopt($curl, CURLOPT_URL, $url);

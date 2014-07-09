@@ -77,8 +77,12 @@ unmatch_provider_event:
     defaults: { _controller: EventGeneralBundle:Admin:unmatchProviderEvent }
 
 change_provider_event_place:
-    pattern:  /admin/place/{id}/place/change
+    pattern:  /admin/events/provider/{id}/place/change
     defaults: { _controller: EventGeneralBundle:Admin:changeProviderEventPlace }
+
+change_internal_event_place:
+    pattern:  /admin/events/internal/{id}/place/change
+    defaults: { _controller: EventGeneralBundle:Admin:changeInternalEventPlace }
 
 cancel_internal_event:
     pattern:  /admin/events/internal/{id}/cancel
@@ -170,12 +174,16 @@ match_event:
     defaults: { _controller: EventGeneralBundle:Admin:matchEvent }
 
 suggest_mbid:
-    pattern:  /api/artist/{id}/mbid/suggest
+    pattern:  /api/artist/mbid/suggest
     defaults: { _controller: EventGeneralBundle:Admin:suggestMbid }
 
 suggest_tags:
-    pattern:  /api/artist/{id}/tags/suggest
+    pattern:  /api/artist/tags/suggest
     defaults: { _controller: EventGeneralBundle:Admin:suggestTags }
+
+create_internal:
+    pattern:  /api/events/internal/create
+    defaults: { _controller: EventGeneralBundle:Admin:createInternalEvent }
 
 # API PUBLIC
 personal_afisha:

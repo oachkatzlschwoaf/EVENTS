@@ -1,15 +1,44 @@
 {% extends '::base.html.twig' %}
 {% block body %}
 
-<div class='admin_container'>
-
 {% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
 
-<h1 style='color: orange'>
+<h4 class='head_internal'>Внешнее событие</h4>
+<h1>
     {{ event.id }}. {{ event.name }}
     <br />
     ({{ event.getHumanDate }})
 </h1>
+
+<div style="width: 700px">
+    {% if tooltip_events|length > 0 %}
+        <table class='tooltip'>
+            <thead>
+                <tr>
+                    <td colspan="6">Подсказки событий провайдеров</td>
+                </tr>
+            </thead>
+            <tbody style='font-size: 12px;'>
+                {% for pe in tooltip_events %}
+                    {% if pe.place == event.place %}
+                        <tr>                        
+                            <td>{{ pe.id }}</td>
+                            <td>
+                                <a href="{{ path('provider_event', { 'id': pe.id }) }}">{{ pe.name }}</a>
+                            </td>
+                            <td>{{ places[ pe.place ].name }}</td>
+                            <td>{{ pe.getHumanStart() }}</td>
+                            <td><a target="_blank" href="{{ pe.link }}">{{ providers[ pe.provider ].name }}</a></td>
+                            <td>
+                                [ <a href="{{ path('match_event', { 'id': pe.id }) }}?internal_id={{ event.id }}&return_to_internal={{ event.id }}">склеить</a> ]
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
 
 <div style='width: 700px; margin-right: 20px; float: left;'>
 
@@ -18,20 +47,20 @@
     <table class='settings'>
         <thead>
             <td colspan="2">
-                Settings
+                <h5>Параметры внутреннего события</h5>
             </td>
         </thead>
         <tbody>
             <tr>
-                <td><b>Name</b></td>
+                <td><b>Название</b></td>
                 <td>{{ form_widget(form.name) }}</td>
             </tr>
             <tr>
-                <td {% if not event.urlName %}class='notice-warning'{% endif %}><b>URL Name</b></td>
+                <td {% if not event.urlName %}class='notice-warning'{% endif %}><b>Название в URL</b></td>
                 <td>{{ form_widget(form.urlName) }}</td>
             </tr>
             <tr>
-                <td style='width: 20%'><b>Status</b></td>
+                <td style='width: 20%'><b>Статус</b></td>
                 <td style='width: 60%'
                     {% if event.getStatus() == 0 %}
                         class='notice-yellow'
@@ -46,19 +75,19 @@
                 </td>
             </tr>
             <tr>
-                <td style='width: 20%'><b>Place</b></td>
+                <td style='width: 20%'><b>Место</b></td>
                 <td style='width: 60%'><a href="{{ path('place', { 'id': event.place }) }}">{{ places[ event.place ].name }}</a></td>
             </tr>
             <tr>
-                <td><b>Date</b></td>
+                <td><b>Дата</b></td>
                 <td>{{ form_widget(form.date) }}</td>
             </tr>
             <tr>
-                <td><b>Start</b></td>
+                <td><b>Время и дата</b></td>
                 <td>{{ form_widget(form.start) }}</td>
             </tr>
             <tr>
-                <td><b>Duration</b></td>
+                <td><b>Продолжительность</b></td>
                 <td>{{ form_widget(form.duration) }}</td>
             </tr>
             <tr>
@@ -66,23 +95,27 @@
                 <td>{{ form_widget(form.catalogRate) }}</td>
             </tr>
             <tr>
-                <td><b>Style</b></td>
+                <td><b>Стиль оформления</b></td>
                 <td>{{ form_widget(form.style) }}</td>
             </tr>
             <tr>
-                <td><b>Medium Theme</b></td>
+                <td><b>Medium оформление</b></td>
                 <td>{{ form_widget(form.theme) }}</td>
             </tr>
             <tr>
-                <td><b>Big Theme</b></td>
+                <td><b>Big оформление</b></td>
                 <td>{{ form_widget(form.bigTheme) }}</td>
             </tr>
             <tr>
-                <td {% if not event.video  %}class='notice-warning'{% endif %}><b>Videos</b> (comma sep: xxx,yyy)</td>
+                <td {% if not event.video  %}class='notice-warning'{% endif %}>
+                    <b>Видео</b>
+                    <br />
+                    <small>(url разделенные запятой: xxx,yyy)</small>
+                </td>
                 <td>{{ form_widget(form.video) }}</td>
             </tr>
             <tr>
-                <td {% if event.getTagsList()|length == 0  %}class='notice-warning'{% endif %}><b>Tags</b></td>
+                <td {% if event.getTagsList()|length == 0  %}class='notice-warning'{% endif %}><b>Тэги</b></td>
                 <td class='small_textarea'>
                     <ul id="tags" class='tagit'>
                         {% for t in event.getTagsList() %}
@@ -98,7 +131,7 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="2" {% if not event.description or event.description|length < 100 %}class='notice-warning'{% endif %}><b>Description</b></td>
+                <td colspan="2" {% if not event.description or event.description|length < 100 %}class='notice-warning'{% endif %}><b>Описание</b></td>
             </tr>
             <tr>
                 <td colspan="2">{{ form_widget(form.description) }}</td>
@@ -106,7 +139,7 @@
             <tr>
                 <td colspan="2" style="text-align: center">
                     {{ form_rest(form) }}
-                    <input type="button" onclick="preSubmit()" value="Save" />
+                    <input type="button" onclick="preSubmit()" class="btn width-100" value="Сохранить" />
                 </td>
             </tr>
         </tbody>
@@ -116,32 +149,7 @@
 
     <table class='settings'>
         <thead>
-            <td colspan="2" style='background-color: #ffc866'>Actions</td>
-        </thead>
-        <tbody>
-            {% if event.status != 0 %}
-                <tr>
-                    <td><a href="{{ path('wait_internal_event', { 'id': id }) }}">To Wait</a></td>
-                </tr>
-            {% endif %}
-
-            {% if event.status != 1 %}
-                <tr>
-                    <td><a href="{{ path('work_internal_event', { 'id': id }) }}">To Work</a></td>
-                </tr>
-            {% endif %}
-
-            {% if event.status != 2 %}
-                <tr>
-                    <td><a href="{{ path('cancel_internal_event', { 'id': id }) }}">Cancel event</a></td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
-
-    <table class='settings'>
-        <thead>
-            <td colspan="2">Images</td>
+            <td colspan="2">Картинки</td>
         </thead>
         <tbody>
             <form action="{{ path('crop_image') }}" method="post" enctype='multipart/form-data'>
@@ -168,10 +176,9 @@
                 </tr>
                 <tr>
                     <td colspan="2">
+                        <input type="submit" class="btn width-100 crp" value="CROP" />
                         <img src="" id="small_target" />
                         <img src="{{ asset('uploads/catalog/small_' ~ event.id ~ '.jpg') }}" id="small_preview" style="border: 1px solid black; width: 231px; height: 260px"/>
-                        <br />
-                        <input type="submit" value="CROP" />
                     </td>
                 </tr>
             </form>
@@ -200,10 +207,9 @@
                 </tr>
                 <tr>
                     <td colspan="2">
+                        <input type="submit" class="btn width-100 crp" value="CROP" />
                         <img src="" id="medium_target" />
                         <img src="{{ asset('uploads/catalog/medium_' ~ event.id ~ '.jpg') }}" id="medium_preview" style="border: 1px solid black; width: 474px; height: 260px"/>
-                        <br />
-                        <input type="submit" value="CROP" />
                     </td>
                 </tr>
             </form>
@@ -232,10 +238,9 @@
                 </tr>
                 <tr>
                     <td colspan="2">
+                        <input type="submit" class="btn width-100 crp" value="CROP" />
                         <img src="" id="medium2_target" />
                         <img src="{{ asset('uploads/event/medium_' ~ event.id ~ '.jpg') }}" id="medium2_preview" style="border: 1px solid black; width: 636px; height: 450px"/>
-                        <br />
-                        <input type="submit" value="CROP" />
                     </td>
                 </tr>
             </form>
@@ -265,10 +270,9 @@
                 </tr>
                 <tr>
                     <td colspan="2">
+                        <input type="submit" class="btn width-100 crp" value="CROP" />
                         <img src="" id="big_target" />
                         <img src="{{ asset('uploads/event/big_' ~ event.id ~ '.jpg') }}" id="big_preview" style="border: 1px solid black; width: 636px; height: 600px"/>
-                        <br />
-                        <input type="submit" value="CROP" />
                     </td>
                 </tr>
             </form>
@@ -279,8 +283,53 @@
 <div style='width: 450px; float: left;'>
     <table class='settings'>
         <thead>
+            <td colspan="2"><h5>Действия</h5></td>
+        </thead>
+        <tbody>
             <tr>
-                <td colspan="3">Artists</td>
+                <td>
+                    <b>Изменить место</b>
+                    <form action="{{ path('change_internal_event_place', { 'id': id }) }}" method="post" novalidate>
+                        <select name="place">
+                            {% for p in places %}
+                                {% if p.status == 1 %}
+                                    <option value="{{ p.id }}">{{ p.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <input type="submit" value="Изменить" />
+                    </form>
+                </td>
+            </tr>
+
+            {% if event.status != 0 %}
+                <tr>
+                    <td><a href="{{ path('wait_internal_event', { 'id': id }) }}">В ожидание</a></td>
+                </tr>
+            {% endif %}
+
+            {% if event.status != 1 %}
+                <tr>
+                    <td><a href="{{ path('work_internal_event', { 'id': id }) }}">В работу</a></td>
+                </tr>
+            {% endif %}
+
+            {% if event.status != 2 %}
+                <tr>
+                    <td><a href="{{ path('cancel_internal_event', { 'id': id }) }}">Отменить событие</a></td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <table class='settings'>
+        <thead>
+            <tr>
+                {% if event.getArtistsList()|length > 0 %}
+                    <td colspan="3"><h5>Артисты</h5></td>
+                {% else %}
+                    <td colspan="3" class='warning'><h5>Артисты</h5></td>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -288,7 +337,7 @@
                 <td colspan="3">
                     <form action="{{ path('add_artist_to_internal', { 'id': id }) }}" method="post" novalidate>
                         <input type="text" style='width: 200px;' id="artist" name="artist">
-                        <input type="submit" value="add">
+                        <input type="submit" value="Добавить" class="btn">
                     </form>
                 </td>
             </tr>
@@ -313,6 +362,11 @@
                     </td>
                 </tr>
             {% endfor %}
+            <tr>
+                <td colspan="3">
+                    [ <a href="{{ path('add_artist') }}">Создать нового артиста</a> ]
+                </td>
+            </tr>
         </tbody>
     </table>
 
@@ -320,14 +374,14 @@
         <table class='settings' style='font-size: 12px;'>
             <thead>
                 <tr>
-                    <td colspan="5">Matches</td>
+                    <td colspan="5"><h5>События провайдеров</h5></td>
                 </tr>
                 <tr>
-                    <td style='width: 5%'>status</td>
-                    <td style='width: 40%'>name</td>
-                    <td style='width: 10%'>provider</td>
-                    <td style='width: 20%'>provider status</td>
-                    <td style='width: 20%'>actions</td>
+                    <td style='width: 5%'>состояние</td>
+                    <td style='width: 40%'>название</td>
+                    <td style='width: 10%'>провайдер</td>
+                    <td style='width: 20%'>статус</td>
+                    <td style='width: 20%'>действия</td>
                 </tr>
             </thead>
             <tbody>
@@ -364,12 +418,12 @@
                             {{ matched_events[m.getProviderId].getStatusName() }} 
                         </td>
                         <td>
-                            [ <a href="{{ path('unmatch_provider_event', { 'id': m.getProviderId }) }}?return_to_internal={{ event.getId() }}">unmatch</a> ]
+                            [ <a href="{{ path('unmatch_provider_event', { 'id': m.getProviderId }) }}?return_to_internal={{ event.getId() }}">отклеить</a> ]
                             <br />
                             {% if m.status == 0 %}
-                                [ <a href="{{ path('change_match_status', { 'id': m.id, 'status': 1 }) }}">approve</a> ]
+                                [ <a href="{{ path('change_match_status', { 'id': m.id, 'status': 1 }) }}">одобрить</a> ]
                             {% elseif m.status == 1 %}
-                                [ <a href="{{ path('change_match_status', { 'id': m.id, 'status': 0 }) }}">hide</a> ]
+                                [ <a href="{{ path('change_match_status', { 'id': m.id, 'status': 0 }) }}">скрыть</a> ]
                             {% endif %}
                         </td>
                     </tr>
@@ -381,15 +435,15 @@
     <table class='settings'>
         <thead>
             <tr>
-                <td colspan="6">Tickets</td>
+                <td colspan="6"><h5>Билеты</h5></td>
             </tr>
             <tr>
                 <td style='width: 3%'>id</td>
-                <td style='width: 5%'>provider</td>
-                <td style='width: 40%'>sector</td>
+                <td style='width: 5%'>провайдер</td>
+                <td style='width: 40%'>сектор</td>
                 <td style='width: 5%'>min</td>
                 <td style='width: 5%'>max</td>
-                <td style='width: 20%'>action</td>
+                <td style='width: 20%'>действия</td>
             </tr>
         </thead>
         <tbody style='font-size: 12px;'>
@@ -417,8 +471,6 @@
             {% endfor %}
         </tbody>
     </table>
-<div>
-
 <div>
 
 <script>

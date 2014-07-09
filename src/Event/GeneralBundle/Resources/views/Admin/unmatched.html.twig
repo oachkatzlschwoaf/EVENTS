@@ -6,37 +6,37 @@
 <table class='events'>
     <thead>
         <tr>
-            <td style='width: 7%'>id (pid)</td>
-            <td style='width: 40%'>name</td>
-            <td style='width: 10%'>provider</td>
-            <td style='width: 20%'>place</td>
-            <td style='width: 10%'>date</td>
+            <td style='width: 7%'>id</td>
+            <td style='width: 40%'>название</td>
+            <td style='width: 7%'>провайдер</td>
+            <td style='width: 20%'>место</td>
+            <td style='width: 7%'>время</td>
         </tr>
     </thead>
     <tbody>
         {% for dt, e_id in agg_events %}
-            <tr class='date'>
-                <td colspan="5">{{ dt }}</td>
+            <tr>
+                <td colspan="5" class='date'><h5>{{ dt }}</h5></td>
             </tr>
             {% for e in agg_events[dt] %}
                 <tr>
                     <td>{{ e.id }}</td>
-                    <td><a href="{{ path('provider_event', { "id": e.id }) }}">{{ e.name }}</a></td>
-                    <td>{{ providers[ e.provider ].getName() }}</td>
+                    <td><a target="_blank" href="{{ path('provider_event', { "id": e.id }) }}">{{ e.name }}</a></td>
+                    <td><a target="_blank" href="{{ e.link }}">{{ providers[ e.provider ].getName() }}</a></td>
                     {% if e.place and e.place != 0 %}
                         {% if places[ e.place ] is defined %}
-                            <td>
+                            <td {% if places[ e.place ].status == 0 %}class="notice-pink"{% endif %}>
                                 <a href="{{ path('place', {"id": e.place}) }}">{{ places[ e.place ].getName }}</a>
                             </td>
                         {% else %}
                             <td class='notice-warning'>
-                                none
+                                -
                             </td>
                         {% endif %}
                     {% else %}
                         <td class='notice-warning'>{{ e.placeText }}</td>
                     {% endif %}
-                    <td>{{ e.getHumanStart() }}</td>
+                    <td class="text-centered">{{ e.getHumanStartTime() }}</td>
                 </tr>
             {% endfor %}
         {% endfor %}

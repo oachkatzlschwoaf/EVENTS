@@ -142,6 +142,28 @@ class Place
         return $this->keywords;
     }
 
+    public function isExistKeyword($k)
+    {
+        $kw = explode(",", $this->keywords );
+
+        foreach ($kw as $w) {
+            if (trim($w) == $k) {
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+
+    public function addKeyword($k) {
+        $kw = explode(",", $this->keywords );
+        array_push($kw, $k);
+        
+        $this->keywords = implode(", ", $kw);
+        
+        return $this->keywords;
+    }
+
     /**
      * Set status
      *

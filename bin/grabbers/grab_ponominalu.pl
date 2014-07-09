@@ -63,7 +63,7 @@ sub saveProviderEvents {
             $event->{'place'},
         ); 
 
-        print "\n\tSAVE $e_id. ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
+        print "\n\tEVENT $e_id SAVE: ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
     }
 
 }
@@ -99,7 +99,7 @@ sub grabEvents {
     my $events = {};
 
     for (my $i = $start_page; $i <= $last_page; $i++) {  
-        print "\n\tGET ".$url.'?page='.$i;
+        #print "\n\tGET ".$url.'?page='.$i;
         my $r = $ua->get($url.'?page='.$i);
         my $c = $r->decoded_content();
 
@@ -157,8 +157,8 @@ sub grabEvents {
 }
 
 # MAIN
-print "\n\n\nGRAB PONOMINALU EVENTS";
-print "\n**********";
+print "\nGRAB PONOMINALU";
+print "\n************************************";
 
 # PARAM
 my $config = getParameters();
@@ -170,12 +170,10 @@ $d->do("SET NAMES 'utf8'");
 # Get Last Page
 my $last = getLastPage();
 
-print "\nGRAB EVENTS...";
 my $events = grabEvents(1, $last);
 
-print "\n".scalar(keys %$events)." EVENTS FOUND";
+print "\nGOT ".scalar(keys %$events)." EVENTS";
 
-print "\nSAVE EVENTS...";
 saveProviderEvents($events, 3, $d); # 3 = PONOMINALU 
 
 

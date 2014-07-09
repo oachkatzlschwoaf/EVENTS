@@ -3,23 +3,23 @@
 
 {% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
 
-<h1>Add artist</h1>
+<h1>Редактировать артиста</h1>
 
 <div style='width: 700px; margin-right: 20px; float: left;'>
 <table class='settings'>
 <form id="general_form" action="{{ path('artist', { 'id': id }) }}" method="post" {{ form_enctype(form) }} novalidate>
     <thead>
         <td colspan="2">
-            Artst add 
+            <h5>Параметры артиста</h5>
         </td>
     </thead>
     <tbody>
         <tr>
-            <td><b>Name</b></td>
+            <td><b>Название</b></td>
             <td>{{ form_widget(form.name) }}</td>
         </tr>
         <tr>
-            <td><b>URL Name</b></td>
+            <td><b>Название в URL</b></td>
             <td>{{ form_widget(form.urlName) }}</td>
         </tr>
         <tr>
@@ -31,11 +31,7 @@
             <td class='small_textarea'>{{ form_widget(form.keywords ) }}</td>
         </tr>
         <tr>
-            <td><b>Genres</b></td>
-            <td>{{ form_widget(form.genres) }}</td>
-        </tr>
-        <tr>
-            <td><b>Tags</b></td>
+            <td><b>Тэги</b></td>
             <td class='small_textarea'>
                 <ul id="artist_tags" class='tagit'>
                     {% for t in artist.getTagsList() %}
@@ -45,7 +41,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2"><b>Description</b></td>
+            <td colspan="2"><b>Описание</b></td>
         </tr>
         <tr>
             <td colspan="2">{{ form_widget(form.description) }}</td>
@@ -53,7 +49,7 @@
         <tr>
             <td colspan="2" style="text-align: center">
                 {{ form_rest(form) }}
-                <input type="button" onclick="preSubmit()" value="Save" />
+                <input type="button" onclick="preSubmit()" class='btn width-100' value="Сохранить" />
             </td>
         </tr>
     </tbody>
@@ -96,16 +92,6 @@
 
 <script>
 $(document).ready(function () {
-    // Genres
-    $("#event_generalbundle_artist_genres").tokenInput("{{ path('genres') }}", {
-        prePopulate: [
-            {% for g_id, g_name in artist_genres %}
-                { id: '{{ g_id }}', name: '{{ g_name }}' }
-                {% if not loop.last %},{% endif %} 
-            {% endfor %}
-        ]
-    });
-
     // Tags
     $('#artist_tags').tagit({
         singleField: 1,

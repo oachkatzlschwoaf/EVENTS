@@ -3,23 +3,23 @@
 
 {% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
 
-<h1>Add artist</h1>
+<h1>Добавить артиста</h1>
 
 <div style='width: 700px; margin-right: 20px; float: left;'>
 <table class='settings'>
 <form id="general_form" action="{{ path('add_artist') }}" method="post" {{ form_enctype(form) }} novalidate>
     <thead>
         <td colspan="2">
-            Artst add 
+            <h5>Параметры артиста</h5>
         </td>
     </thead>
     <tbody>
         <tr>
-            <td><b>Name</b></td>
+            <td class='warning'><b>Имя</b></td>
             <td>{{ form_widget(form.name) }}</td>
         </tr>
         <tr>
-            <td><b>URL Name</b></td>
+            <td><b>Название в URL</b></td>
             <td>{{ form_widget(form.urlName) }}</td>
         </tr>
         <tr>
@@ -30,12 +30,8 @@
             <td><b>Keywords</b></td>
             <td class='small_textarea'>{{ form_widget(form.keywords ) }}</td>
         </tr>
-        <tr>
-            <td><b>Genres</b></td>
-            <td>{{ form_widget(form.genres) }}</td>
-        </tr>
-        <tr>
-            <td><b>Tags</b></td>
+        <tr class='warning'>
+            <td><b>Тэги</b></td>
             <td class='small_textarea'>
 
                 <ul id="artist_tags" class='tagit'>
@@ -44,7 +40,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2"><b>Description</b></td>
+            <td colspan="2"><b>Описание</b></td>
         </tr>
         <tr>
             <td colspan="2">{{ form_widget(form.description) }}</td>
@@ -52,17 +48,49 @@
         <tr>
             <td colspan="2" style="text-align: center">
                 {{ form_rest(form) }}
-                <input type="button" onclick="preSubmit()" value="Save" />
+                <input type="button" onclick="preSubmit()" class='btn width-100' value="Сохранить" />
             </td>
         </tr>
     </tbody>
 </table>
 </div>
 
+<div style='width: 450px; float: left;'>
+    <table class='settings'>
+        <thead>
+            <tr>
+                <td colspan="2">MBID Suggest</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <input onclick='suggestMbid()' type="button" value="Suggest" />
+                    <div id='mbid_suggested'></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class='settings'>
+        <thead>
+            <tr>
+                <td colspan="2">Tags Suggest</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <input onclick='suggestTags()' type="button" value="Suggest" />
+                    <div id='tags_suggested'></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
 <script>
 $(document).ready(function () {
-    $("#event_generalbundle_artist_genres").tokenInput("{{ path('genres') }}");
-
     // Tags
     $('#artist_tags').tagit({
         singleField: 1,
@@ -70,6 +98,36 @@ $(document).ready(function () {
         fieldName: 'tags',
     });
 });
+
+function suggestMbid() {
+    name = $('#event_generalbundle_artist_name').val();
+
+    $.getJSON("{{ path('suggest_mbid') }}", {'name': name}, function(data) {
+        if (data.mbid) {
+            $('#mbid_suggested').text(
+                data.name + ' (' + data.country + ') ' + data.mbid
+            );
+
+            $('#event_generalbundle_artist_mbid').val(data.mbid);
+        }
+    });
+}
+
+function suggestTags() {
+    name = $('#event_generalbundle_artist_name').val();
+
+    $.getJSON("{{ path('suggest_tags') }}", {'name': name}, function(data) {
+        if (typeof data.error == 'undefined') {
+            $.each(data, function(i, e) {
+                $('#tags_suggested').text(
+                    $('#tags_suggested').text() + ' "' + e + '"'
+                );
+
+                $("#artist_tags").tagit("createTag", e);
+            });
+        }
+    });
+}
 
 function preSubmit() {
     $("#event_generalbundle_artist_tags").val( $("[name='tags']").val() );

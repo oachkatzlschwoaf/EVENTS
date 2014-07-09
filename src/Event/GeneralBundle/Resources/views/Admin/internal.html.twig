@@ -21,72 +21,89 @@
     <thead>
         <tr>
             <td style='width: 3%'>id</td>
-            <td style='width: 3%'>start</td>
-            <td style='width: 20%'>name</td>
-            <td style='width: 10%'>place</td>
-            <td style='width: 10%'>genres</td>
-            <td style='width: 3%'>mat. ok</td>
-            <td style='width: 3%'>mat. total</td>
-            <td style='width: 3%'>artists</td>
-            <td style='width: 3%'>images</td>
-            <td style='width: 3%'>rate</td>
+            <td style='width: 20%'>название</td>
+
+            <td style='width: 2%' class='text-centered'>событий</td>
+            <td style='width: 2%' class='text-centered'>тэги</td>
+            <td style='width: 2%' class='text-centered'>артисты</td>
+            <td style='width: 2%' class='text-centered'>URL</td>
+            <td style='width: 2%' class='text-centered'>опис.</td>
+            <td style='width: 2%' class='text-centered'>картин.</td>
+
+            <td style='width: 2%' class='text-centered'>рейтинг</td>
+
+            <td style='width: 10%'>место</td>
+            <td style='width: 5%'>время</td>
         </tr>
     </thead>
         <tbody>
             {% for dt, e_id in agg_events %}
-                <tr class='date'>
-                    <td colspan="10">{{ dt }}</td>
+                <tr>
+                    <td colspan="11" class='date'><h5>{{ dt }}</h5></td>
                 </tr>
                 {% for e in agg_events[dt] %}
                     <tr>
                         <td>{{ e.id }}</td>
 
-                        <td>{{ e.getHumanStartTime() }}</td>
-
-                        <td><a href="{{ path('internal_event', { "id": e.id }) }}">{{ e.name }}</a></td>
-
-                        <td {% if places[ e.place ].status == 0 %}class='notice-pink'{% endif %}>
-                            {{ places[ e.place ].name }}
-                        </td>
-
-                        <td>
-                            {% for t in e.getTagsList() %}
-                                {{ tags[ t ].name }}{% if not loop.last %},{% endif %}
-                            {% endfor %}
-                        </td>
-
+                        <td><a target="_blank" href="{{ path('internal_event', { "id": e.id }) }}">{{ e.name }}</a></td>
 
                         {% if matches_count[ e.id ] is defined and matches_count[ e.id ] > 0 %}
-                            <td>{{ matches_count[e.id] }}</td>
+                            <td class='text-centered'>{{ matches_count[e.id] }}</td>
                         {% else %}
-                            <td class='warning'>0</td>
+                            <td class='warning text-centered'>0</td>
                         {% endif %}
 
-                        {% if agg_ipevents_total[ e.id ] is defined and agg_ipevents_total[ e.id ] > 0 %}
-                            <td>{{ agg_ipevents_total[e.id] }}</td>
+                        {% if e.getTagsList()|length == 0 %}
+                            <td class="warning text-centered">-</td>
                         {% else %}
-                            <td class='warning'>0</td>
+                            <td class="text-centered">+</td>
                         {% endif %}
 
-                        <td {% if e.getArtistsCount() == 0 %}class='notice-pink'{% endif %}>
-                            {{ e.getArtistsCount() }}
-                        </td>
+                        {% if e.getArtistsCount == 0 %}
+                            <td class="warning text-centered">-</td>
+                        {% else %}
+                            <td class="text-centered">{{ e.getArtistsCount }}</td>
+                        {% endif %}
+
+                        {% if e.urlName == '' %}
+                            <td class="warning text-centered">-</td>
+                        {% else %}
+                            <td class="text-centered">+</td>
+                        {% endif %}
+
+                        {% if e.description == '' %}
+                            <td class="warning text-centered">-</td>
+                        {% else %}
+                            <td class="text-centered">+</td>
+                        {% endif %}
 
                         <td {% if not e.getAddParam('catalog-image-small') or
                             not e.getAddParam('catalog-image-medium') %}
-                            class='notice-pink'
-                        {% endif %}>
+                            class='warning text-centered'
+                            {% else %}
+                            class='text-centered'
+                            {% endif %}>
                             {% if e.getAddParam('catalog-image-small') %}
                                 <b>S</b>
                             {% endif %}
                             {% if e.getAddParam('catalog-image-medium') %}
                                 <b>M</b>
                             {% endif %}
+                            {% if not e.getAddParam('catalog-image-small') or
+                            not e.getAddParam('catalog-image-medium') %}
+                                -
+                            {% endif %}
                         </td>
 
-                        <td {% if not e.catalogRate or e.catalogRate == 0 %}class='notice-pink'{% endif %}>
+                        <td>
                             {{ e.catalogRate }}
                         </td>
+
+                        <td {% if places[ e.place ].status == 0 %}class='warning'{% endif %}>
+                            {{ places[ e.place ].name }}
+                        </td>
+
+                        <td class="text-centered">{{ e.getHumanStartTime() }}</td>
                     </tr>
                 {% endfor %}
             {% endfor %}

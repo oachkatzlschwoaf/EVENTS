@@ -199,6 +199,9 @@ sub getCurrentIndex {
 }
 
 # MAIN
+print "\nMAKE INTERNAL INDEX";
+print "\n************************************";
+
 my $config = getParameters();
 my $params = $config->{'parameters'}; 
 
@@ -222,7 +225,7 @@ foreach my $id (keys $curr_index) {
             $id
         ); 
 
-        print "DELETE $id EVENT";
+        print "\nDELETE $id EVENT";
     }
 }
 
@@ -298,8 +301,8 @@ foreach my $id (keys %$internal_events) {
 
     } elsif ($curr_index->{$id} ne $check_str) {
         print "\nUPDATE $id EVENT";
-        print "\n\tIDX STR: ".$curr_index->{$id};
-        print "\n\tCHK STR: $check_str";
+        #print "\n\tIDX STR: ".$curr_index->{$id};
+        #print "\n\tCHK STR: $check_str";
 
         # Update in index
         my $sql = "update `ActualInternalIndex` 

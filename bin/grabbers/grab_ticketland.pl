@@ -63,7 +63,7 @@ sub saveProviderEvents {
             $event->{'place'},
         ); 
 
-        print "\n\tSAVE $e_id. ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
+        print "\n\tEVENT $e_id SAVE: ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
     }
 
 }
@@ -94,7 +94,7 @@ sub grabEvents {
     my $events = {};
 
     for (my $i = $start_page; $i <= $last_page; $i++) {  
-        print "\n\tGET ".$url.$i.'/';
+        #print "\n\tGET ".$url.$i.'/';
         my $r = $ua->get($url.$i.'/');
         my $c = $r->decoded_content();
 
@@ -156,8 +156,8 @@ sub grabEvents {
 }
 
 # MAIN
-print "\n\n\nGRAB TICKETLAND EVENTS";
-print "\n**********";
+print "\nGRAB TICKETLAND";
+print "\n************************************";
 
 # PARAM
 my $config = getParameters();
@@ -169,12 +169,10 @@ $d->do("SET NAMES 'utf8'");
 # Get Last Page
 my $last = getLastPage();
 
-print "\nGRAB EVENTS...";
 my $events = grabEvents(1, $last);
 
-print "\n".scalar(keys %$events)." EVENTS FOUND";
+print "\nGOT ".scalar(keys %$events)." EVENTS";
 
-print "\nSAVE EVENTS...";
 saveProviderEvents($events, 5, $d); # 5 = TICKETLAND 
 
 

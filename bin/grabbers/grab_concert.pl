@@ -64,7 +64,7 @@ sub saveProviderEvents {
             $event->{'place'},
         ); 
 
-        print "\n= $e_id. ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
+        print "\n\tEVENT $e_id SAVE: ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
     }
 
 }
@@ -170,21 +170,20 @@ sub grabEvents {
 }
 
 # MAIN
-print "\n\n\nGRAB CONCERT EVENTS";
-print "\n**********";
+print "\nGRAB CONCERT";
+print "\n************************************";
 
 # PARAM
 my $config = getParameters();
 my $params = $config->{'parameters'}; 
 
-print "\nBegin grab Concert events...";
 my $d = connectDb( $params );
 $d->do("SET NAMES 'utf8'");
 
 my $last = getLastPage();
 my $events = grabEvents(1, $last);
 
-print "\n".scalar(keys %$events)." events found";
+print "\nGOT ".scalar(keys %$events)." EVENTS";
 saveProviderEvents($d, $events, 2); # 2 = CONCERT 
 
 

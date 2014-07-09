@@ -157,6 +157,11 @@ class ProviderEvent
         return $this->start->format('d.m.Y H:i');
     }
 
+    public function getHumanStartTime()
+    {
+        return $this->start->format('H:i');
+    }
+
     /**
      * Set start
      *

@@ -109,8 +109,8 @@ sub outdateInternalEvent {
 }
 
 # MAIN
-print "\n\n\nCHECK EVENTS HEALTH";
-print "\n**********";
+print "\nCHECK EXPIRED EVENTS";
+print "\n************************************";
 
 my $config = getParameters();
 my $params = $config->{'parameters'}; 
@@ -123,12 +123,10 @@ $d->do("SET NAMES 'utf8'");
 
 # Provider Events Outdate
 my $provider_events = getProviderEvents($d);
-print "\nGet ".scalar(keys %$provider_events)." provider events to check...";
+print "\nGOT ".scalar(keys %$provider_events)." PROVIDER EVENTS TO CHECK";
 
 foreach my $e_id (keys %$provider_events) {
     my $e = $provider_events->{$e_id};
-
-    isActive($d, $e);
 
     $e->{'date'} =~ /(\d{4})-(\d{2})-(\d{2})/;
     my $dt = DateTime->new(
@@ -138,12 +136,13 @@ foreach my $e_id (keys %$provider_events) {
     );
 
     if ($dt_now > $dt) {
-        print "\nprovider $e_id. (".$dt->ymd().") -> outdate ";
+        print "\nPROVIDER EVENT $e_id EXPIRED (".$dt->ymd().")";
         outdateProviderEvent($d, $e_id)
     }
 }
 
 my $internal_events = getInternalEvents($d);
+print "\n\nGOT ".scalar(keys %$provider_events)." INTERNAL EVENTS TO CHECK";
 
 foreach my $e_id (keys %$internal_events) {
     my $e = $internal_events->{$e_id};
@@ -156,7 +155,7 @@ foreach my $e_id (keys %$internal_events) {
     );
 
     if ($dt_now > $dt) {
-        print "\ninternal $e_id. (".$dt->ymd().") -> outdate ";
+        print "\nINTERNAL EVENT $e_id EXPIRED (".$dt->ymd().")";
         outdateInternalEvent($d, $e_id)
     }
 }

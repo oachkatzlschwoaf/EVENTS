@@ -1,72 +1,90 @@
 <table class='top_menu'>
     <tr>
+        <td colspan="6" class="separator"><h5>События провайдеров</h5></td>
+    </tr>
+    <tr>
 
         <td {% if provider_status is defined and provider_status == 0 %}class='selected'{% endif %}
             {% if counters['provider_unmatched'] > 0 %}class='notice-pink'{% endif %} >
-            <a href="{{ path('provider_events') }}?status=0">Provider Unmatched</a>
+            <a href="{{ path('provider_events') }}?status=0">Новые</a>
             {% if counters['provider_unmatched'] > 0 %}<b style='color: red'>({{ counters['provider_unmatched'] }})</b>{% endif %}
         </td>
 
         <td {% if provider_status is defined and provider_status == 1 %}class='selected'{% endif %}>
-            <a href="{{ path('provider_events') }}?status=1">Provider Matched</a>
+            <a href="{{ path('provider_events') }}?status=1">В работе</a>
         </td>
 
         <td {% if provider_status is defined and provider_status == 3 %}class='selected'{% endif %}
             {% if counters['provider_wo_place'] > 0 %}class='notice-pink'{% endif %} >
-            <a href="{{ path('provider_events') }}?status=3">Provider W/O Place</a>
+            <a href="{{ path('provider_events') }}?status=3">Без места</a>
             {% if counters['provider_wo_place'] > 0 %}<b style='color: red'>({{ counters['provider_wo_place'] }})</b>{% endif %}
         </td>
 
         <td {% if provider_status is defined and provider_status == 4 %}class='selected'{% endif %}
             {% if counters['provider_wo_internal'] > 0 %}class='notice-pink'{% endif %} >
-            <a href="{{ path('provider_events') }}?status=4">Provider W/O Internal</a>
+            <a href="{{ path('provider_events') }}?status=4">Без внутреннего события</a>
             {% if counters['provider_wo_internal'] > 0 %}<b style='color: red'>({{ counters['provider_wo_internal'] }})</b>{% endif %}
         </td>
 
         <td {% if provider_status is defined and provider_status == 2 %}class='selected'{% endif %}>
-            <a href="{{ path('provider_events') }}?status=2">Provider Cancelled</a>
+            <a href="{{ path('provider_events') }}?status=2">Отмененные</a>
         </td>
 
         <td {% if provider_status is defined and provider_status == 5 %}class='selected'{% endif %}>
-            <a href="{{ path('provider_events') }}?status=5">Provider Outdated</a>
+            <a href="{{ path('provider_events') }}?status=5">Просроченные</a>
         </td>
+    </tr>
+
+    <tr>
+        <td colspan="6" class="separator"><h5>Внутренние события</h5></td>
     </tr>
 
     <tr>
         <td {% if internal_status is defined and internal_status == 0 %}class='selected'{% endif %}
             {% if counters['internal_wait'] > 0 %}class='notice-pink'{% endif %} >
-            <a href="{{ path('internal_events') }}?status=0">Internal Wait</a>
+            <a href="{{ path('internal_events') }}?status=0">Ожидают</a>
             {% if counters['internal_wait'] > 0 %}<b style='color: red'>({{ counters['internal_wait'] }})</b>{% endif %}
 
         </td>
-        <td {% if internal_status is defined and internal_status == 1 %}class='selected'{% endif %}><a href="{{ path('internal_events') }}?status=1">Internal Work</a>
+        <td {% if internal_status is defined and internal_status == 1 %}class='selected'{% endif %}><a href="{{ path('internal_events') }}?status=1">В работе</a>
         </td>
-        <td {% if internal_status is defined and internal_status == 2 %}class='selected'{% endif %}><a href="{{ path('internal_events') }}?status=2">Internal Cancelled</a>
+        <td {% if internal_status is defined and internal_status == 2 %}class='selected'{% endif %}><a href="{{ path('internal_events') }}?status=2">Отменены</a>
         </td>
-        <td {% if internal_status is defined and internal_status == 3 %}class='selected'{% endif %}><a href="{{ path('internal_events') }}?status=3">Internal Outdated</a>
+        <td {% if internal_status is defined and internal_status == 3 %}class='selected'{% endif %}><a href="{{ path('internal_events') }}?status=3">Просрочены</a>
         </td>
+        <td></td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td colspan="6" class="separator"><h5>Места и Артисты</h5></td>
     </tr>
 
     <tr>
         <td {% if places_selected is defined %}class='selected'{% endif %}>
-            <a href="{{ path('places') }}">Places</a>
+            <a href="{{ path('places') }}">Места</a>
         </td>
-        <td {% if matches_selected is defined %}class='selected'{% endif %}
-            {% if counters['matches_wait'] > 0 %}class='notice-pink'{% endif %} >
-            <a href="{{ path('matches') }}">Matches</a>
-            {% if counters['matches_wait'] > 0 %}<b style='color: red'>({{ counters['matches_wait'] }})</b>{% endif %}
+        <td {% if artists_selected is defined %}class='selected'{% endif %}>
+            <a href="{{ path('artists') }}">Артисты</a>
         </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
     </tr>
 
     <tr>
-        <td {% if artists_selected is defined %}class='selected'{% endif %}>
-            <a href="{{ path('artists') }}">Artists</a>
-        </td>
+        <td colspan="6" class="separator"><h5>Прочее</h5></td>
     </tr>
 
     <tr>
         <td {% if subscribe_selected is defined %}class='selected'{% endif %}>
             <a href="{{ path('admin_subscribe') }}">Subscribe</a>
+        </td>
+        <td {% if matches_selected is defined %}class='selected'{% endif %}
+            {% if counters['matches_wait'] > 0 %}class='notice-pink'{% endif %} >
+            <a href="{{ path('matches') }}">Matches</a>
+            {% if counters['matches_wait'] > 0 %}<b style='color: red'>({{ counters['matches_wait'] }})</b>{% endif %}
         </td>
     </tr>
 

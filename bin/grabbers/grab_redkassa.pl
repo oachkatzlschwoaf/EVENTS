@@ -87,7 +87,7 @@ sub saveProviderEvents {
             $event->{'place'},
         ); 
 
-        print "\n\tSAVE $e_id. ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
+        print "\n\tEVENT $e_id SAVE: ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
     }
 
 }
@@ -146,7 +146,7 @@ sub grabEvents {
             next;
         }
 
-        print "\n\tGET ".$event->{'link'};
+        #print "\n\tGET ".$event->{'link'};
 
         my $re = $ua->get($event->{'link'});
         my $ce = $re->decoded_content();
@@ -174,8 +174,6 @@ sub grabEvents {
         # Duration (TODO: Fixit)
         $event->{'duration'} = 3;
 
-        print " -> ok!";
-
         $events->{ $event->{'provider_id'} } = $event;
     }
 
@@ -183,8 +181,8 @@ sub grabEvents {
 }
 
 # MAIN
-print "\n\n\nGRAB REDKASSA EVENTS";
-print "\n**********";
+print "\nGRAB REDKASSA";
+print "\n************************************";
 
 # PARAM
 my $config = getParameters();
@@ -194,11 +192,9 @@ my $d = connectDb( $params );
 $d->do("SET NAMES 'utf8'");
 
 # Get Last Page
-print "\nGRAB EVENTS...";
 my $events = grabEvents();
 
-print "\n".scalar(keys %$events)." EVENTS FOUND";
+print "\nGOT ".scalar(keys %$events)." EVENTS";
 
-print "\nSAVE EVENTS...";
 saveProviderEvents($events, 6, $d); # 6 = REDKASSA 
 

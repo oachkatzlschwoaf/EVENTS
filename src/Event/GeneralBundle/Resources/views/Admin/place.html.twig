@@ -51,7 +51,11 @@
             </tr>
             <tr>
                 <td><b>Address</b></td>
-                <td>{{ form_widget(form.address) }}</td>
+                <td>
+                    {{ form_widget(form.address) }}
+                    <br />
+                    <input type="button" onclick="suggestCoord()" value="Suggest coordinates" />
+                </td>
             </tr>
             <tr>
                 <td><b>Metro</b></td>
@@ -84,7 +88,7 @@
             <tr>
                 <td colspan="2" style="text-align: center">
                     {{ form_rest(form) }}
-                    <input type="submit" value="Save" />
+                    <input type="submit" class="btn width-100" value="Сохранить" />
                 </td>
             </tr>
             <tr>
@@ -139,5 +143,20 @@
         </tbody>
     </table>
 </div>
+
+<script>
+    function suggestCoord() {
+        var address = 'Москва ' + $('#event_generalbundle_place_address').val();
+
+        $.getJSON('http://geocode-maps.yandex.ru/1.x/?origin=jsapi2searchcontrol&format=json&rspn=0&results=1&skip=0&lang=ru_RU&sco=latlong', { 'geocode': address }, function(data) {
+            var coord_str = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos;
+
+            var coord = coord_str.split(' ');
+
+            $('#event_generalbundle_place_latitude').val( coord[1] );
+            $('#event_generalbundle_place_longitude').val( coord[0] );
+        });
+    }
+</script>
 
 {% endblock %}

@@ -16,11 +16,11 @@ $|++;
 binmode STDOUT, ':utf8';
 
 sub getConfig {
-    return YAML::LoadFile("../../app/config/config.yml");
+    return YAML::LoadFile("../app/config/config.yml");
 }
 
 sub getParameters {
-    return YAML::LoadFile("../../app/config/parameters.yml");
+    return YAML::LoadFile("../app/config/parameters.yml");
 }
 
 sub connectDb {

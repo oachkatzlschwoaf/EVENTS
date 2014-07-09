@@ -85,7 +85,7 @@ sub saveProviderEvents {
             $event->{'place'},
         ); 
 
-        print "\n\tSAVE $e_id. ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
+        print "\n\tEVENT $e_id SAVE: ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
     }
 }
 
@@ -104,7 +104,7 @@ sub grabEvents {
 
         my $url = "http://www.afisha.ru/msk/schedule_concert/sortbydate/$monday/reset/";
 
-        print "\n\tGET ".$url;
+        #print "\n\tGET ".$url;
         my $r = $ua->get($url);
         my $c = $r->decoded_content();
 
@@ -173,8 +173,8 @@ sub grabEvents {
 }
 
 # MAIN
-print "\n\n\nGRAB AFISHA EVENTS";
-print "\n**********";
+print "\nGRAB AFISHA";
+print "\n************************************";
 
 # PARAM
 my $config = getParameters();
@@ -183,12 +183,10 @@ my $params = $config->{'parameters'};
 my $d = connectDb( $params );
 $d->do("SET NAMES 'utf8'");
 
-print "\nGRAB EVENTS...";
 my $events = grabEvents();
 
-print "\n".scalar(keys %$events)." EVENTS FOUND";
+print "\nGOT ".scalar(keys %$events)." EVENTS";
 
-print "\nSAVE EVENTS...";
 saveProviderEvents($events, 8, $d); # 8 = AFISHA 
 
 
