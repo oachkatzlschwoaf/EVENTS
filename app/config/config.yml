@@ -35,6 +35,7 @@ twig:
         vk_app_id:   "%networks.vkontakte.app_id%"
         vk_scope:    "%networks.vkontakte.scope%"
         vk_redirect: "%networks.vkontakte.redirect%"
+        yandex_key:  "%yandex_key%"
 
 # Assetic Configuration
 assetic:
@@ -122,3 +123,5 @@ parameters:
     smtpport: '2525'
     smtpuser: 'roman.olegovich.novikov@gmail.com'
     smtppassword: 'cMBkfMAMfDeii3'
+
+    yandex_key: 'AME2kFMBAAAAMMHkEAQAVovssaAYV6aFSto2g9L6Kagy2NgAAAAAAAAAAAB8UPHO67gswIN8ly1G9A_ZWEb9XQ=='

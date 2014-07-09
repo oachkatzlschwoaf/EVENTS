@@ -86,20 +86,24 @@ sub getInternalEvents {
     
     while ( my ($id, $name, $url_name, $artists, $tags, $catalog_rate, $place, $start) = $sth->fetchrow_array() ) {
         $events->{$id}{'name'} = $name;
-        $events->{$id}{'url_name'} = $url_name;
+        $events->{$id}{'url_name'} = $url_name ? $url_name : '';
         $events->{$id}{'tags'} = $tags ? $tags : '';
         $events->{$id}{'catalog_rate'} = $catalog_rate ? $catalog_rate : 0;
         $events->{$id}{'start'} = $start;
 
         # Fetch artists
-        $sql = "select `id`, `name`, `tags` from `Artist` where id in ($artists)";
-        my $sth2 = $d->prepare($sql);
-        $sth2->execute();
+        my $sth2;
 
-        while ( my @artist = $sth2->fetchrow_array() ) {
-            my $aid = $artist[0];
-            $events->{$id}{'artists'}{$aid}{'name'} = $artist[1];
-            $events->{$id}{'artists'}{$aid}{'tags'} = $artist[2];
+        if ($artists) {
+            $sql = "select `id`, `name`, `tags` from `Artist` where id in ($artists)";
+            $sth2 = $d->prepare($sql);
+            $sth2->execute();
+
+            while ( my @artist = $sth2->fetchrow_array() ) {
+                my $aid = $artist[0];
+                $events->{$id}{'artists'}{$aid}{'name'} = $artist[1];
+                $events->{$id}{'artists'}{$aid}{'tags'} = $artist[2];
+            }
         }
 
         # Fetch palace
@@ -243,14 +247,16 @@ foreach my $id (keys %$internal_events) {
     my $artists_arr  = [ ];
     my $artists_tags = { };
 
-    foreach my $aid (keys $internal_events->{$id}{'artists'}) {
-        my $artist_name = $internal_events->{$id}{'artists'}{$aid}{'name'};
-        push($artists_arr, $artist_name); 
+    if ($internal_events->{$id}{'artists'}) {
+        foreach my $aid (keys $internal_events->{$id}{'artists'}) {
+            my $artist_name = $internal_events->{$id}{'artists'}{$aid}{'name'};
+            push($artists_arr, $artist_name); 
 
-        my @artist_tags = split(',', $internal_events->{$id}{'artists'}{$aid}{'tags'});
+            my @artist_tags = split(',', $internal_events->{$id}{'artists'}{$aid}{'tags'});
 
-        foreach (@artist_tags) {
-            $artists_tags->{$_}++;
+            foreach (@artist_tags) {
+                $artists_tags->{$_}++;
+            }
         }
     }
 

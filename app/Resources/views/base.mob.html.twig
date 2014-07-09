@@ -19,7 +19,7 @@
             <script src="{{ asset('js/fancybox/jquery.fancybox.pack.js') }}?v=2.1.5" type="text/javascript"></script>
 
             {% if top is defined and top == 'event' %} 
-                <script src="//api-maps.yandex.ru/2.1/?lang=ru_RU&load=Map,Placemark&key=AME2kFMBAAAAMMHkEAQAVovssaAYV6aFSto2g9L6Kagy2NgAAAAAAAAAAAB8UPHO67gswIN8ly1G9A_ZWEb9XQ==" type="text/javascript"></script>
+                <script src="//api-maps.yandex.ru/2.1/?lang=ru_RU&load=Map,Placemark&key={{ yandex_key }}" type="text/javascript"></script>
             {% endif %}
         {% endblock %}
 
