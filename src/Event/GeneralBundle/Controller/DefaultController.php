@@ -290,7 +290,7 @@ class DefaultController extends Controller {
         if ($sync_list && isset($sync_list[0])) {
             $sync = $sync_list[0];
 
-            if ($sync->getStatus() == 1 && !$sync->isLastSyncActual()) {
+            if (!$sync->isLastSyncActual()) {
                 $sync->setAuthInfo( json_encode( array( 'access_token' => $session->get('access_token') ) ) );
                 $sync->setStatus(0);
                 $sync->setLastSync();
