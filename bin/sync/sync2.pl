@@ -4,16 +4,16 @@ use strict;
 use warnings;
 
 use URI;
+use Parallel::ForkManager;
 use Data::Dumper;
-use LWP::Simple;
-use LWP::UserAgent;
-use JSON;
 use YAML;
 use DBI;
+use JSON;
 
 $|++;
 
 binmode STDOUT, ':utf8';
+my $MAX_PROCESSES = 1000;
 
 sub getConfig {
     return YAML::LoadFile("../../app/config/config.yml");
@@ -30,14 +30,13 @@ sub connectDb {
         'dbi:mysql:'.$c->{'database_name'}.':'.$c->{'database_host'}.':'.$c->{'database_port'}, 
         $c->{'database_user'}, 
         $c->{'database_password'},
-        { 'RaiseError' => 1, 'AutoCommit' => 0 }
     );
 }
 
 sub whatSync {
     my ($d) = @_;
 
-    my $sql = "select `id`, `user_id`, `network`, `network_id`, `auth_info`, `status`, `last_sync` from `Sync` where status = 0 for update";
+    my $sql = "select `id`, `user_id`, `network`, `network_id`, `auth_info`, `status`, `last_sync` from `Sync` where status = 0 limit $MAX_PROCESSES";
     my $sth = $d->prepare($sql);
     $sth->execute();
 
@@ -68,62 +67,41 @@ my $config = getConfig();
 $config = $config->{'parameters'}; 
 
 while (42) {
-    my @childs;
-
     my $d = connectDb( $params );
     $d->do("SET NAMES 'utf8'");
     $d->{'mysql_enable_utf8'} = 1;
 
-    eval {
-        my $sync_list = whatSync($d);
+    my $sync_list = whatSync($d);
 
-        if ( scalar(@$sync_list) > 0 ) {
-            print "\nSYNC: ".scalar(@$sync_list)." user ready to sync";
+    if ( scalar(@$sync_list) > 0 ) {
+        print "\nSYNC: ".scalar(@$sync_list)." user ready to sync";
+        my $pm = Parallel::ForkManager->new($MAX_PROCESSES);
 
-            foreach my $s (@$sync_list) {
-                my $id = $s->{'id'};
-                print "\n\tSYNC: $id sync...";
+        foreach my $s (@$sync_list) {
+        print "\nSYNC $sync_id: START";
+        my $user_id = $to_sync->{'user_id'};
 
-                my $pid = fork();
-                if ($pid) {
-                    # parent
-                    #print "pid is $pid, parent $$\n";
-                    push(@childs, $pid);
-                } elsif ($pid == 0) {
-                    # child
-                    my $x = int( rand(10) );
+            my $id = $s->{'id'};
+            print "\n\tSYNC: $id sync...";
+            my $pid = $pm->start and next;
 
-                    sub1($x);
-                    exit 0;
-                } else {
-                    die "couldnt fork: $!\n";
-                }
-            }
-
-        } else {
-            print "\nnothing to do...";
+            my $x = int( rand(10) );
+            sub1($x);
         }
-    };
 
-    if ($@) {
-        print "\nERROR: $@";
-        $d->rollback();
+    } else {
+        print "\nnothing to do...";
     }
 
     $d->disconnect();
-
-    foreach (@childs) {
-        my $tmp = waitpid($_, 0);
-        print "done with pid $tmp\n";
-    }
 
     sleep(2);
 }
 
 sub sub1 {
     my $num = shift;
-    print "started child process for $num\n";
+    print "\n\tstarted child process for $num\n";
     sleep $num;
-    print "done with child process for $num\n";
+    print "\n\tdone with child process for $num\n";
     return $num;
 }

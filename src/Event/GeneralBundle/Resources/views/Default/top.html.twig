@@ -1,20 +1,19 @@
 <div class="container" >
     <header id="logo-box">
         <div class="units-row">
-            <div class="unit-40">
+            <div class="unit-50">
                 <a href="{{ path('index') }}" id="logo"></a>
                 <nav class="navbar" style='float: left;'>
                     <ul>
                         <li {% if top is defined and top == 'index' %}class='selected'{% endif %}><a href="{{ path('index') }}">Главная</a></li>
-                        <li {% if top is defined and top == 'afisha' %}class='selected'{% endif %}><a href="{{ path('afisha') }}">Афиша</a></li>
+                        <li style="margin-right: none" {% if top is defined and top == 'afisha' %}class='selected'{% endif %}><a href="{{ path('afisha') }}">Афиша</a></li>
                     </ul>
                 </nav>
             </div>
-            <div class="unit-60">
+            <div class="unit-50">
                 <div class='right'>
                     <form action="{{ path('search') }}" id="search_form" class="left">
                         <input name="query" id='top-search' type="text" class="input-search" placeholder="Искать концерты" value="{% if query is defined %}{{ query }}{% endif %}" />
-                        <a class="btn btn-outline" href="#" onclick="$('#search_form').submit();">Искать</a>
                     </form>
 
 
