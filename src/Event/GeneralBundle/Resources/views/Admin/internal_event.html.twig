@@ -149,7 +149,7 @@
 
     <table class='settings'>
         <thead>
-            <td colspan="2">Картинки</td>
+            <td>Картинки</td>
         </thead>
         <tbody>
             <form action="{{ path('crop_image') }}" method="post" enctype='multipart/form-data'>
@@ -169,13 +169,15 @@
                 <input type="hidden" value="small" name="type" />
 
                 <tr>
-                    <td {% if not event.getAdditional('catalog-image-small') %}class='notice-warning'{% endif %}><b>Image Catalog Small</b> (231 x 260)</td>
+                    <td {% if not event.getAdditional('catalog-image-small') %}class='notice-warning'{% else %}class='notice-green'{% endif %}><b>Image Catalog Small</b> (231 x 260)</td>
+                </tr>
+                <tr>
                     <td>
                         <input type="file" name="image" id="image_small">
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td>
                         <input type="submit" class="btn width-100 crp" value="CROP" />
                         <img src="" id="small_target" />
                         <img src="{{ asset('uploads/catalog/small_' ~ event.id ~ '.jpg') }}" id="small_preview" style="border: 1px solid black; width: 231px; height: 260px"/>
@@ -200,13 +202,15 @@
                 <input type="hidden" value="medium" name="type" />
 
                 <tr>
-                    <td {% if not event.getAdditional('catalog-image-medium') %}class='notice-warning'{% endif %}><b>Image Catalog Medium</b> (474 x 260)</td>
+                    <td {% if not event.getAdditional('catalog-image-medium') %}class='notice-warning'{% else %}class='notice-green'{% endif %}><b>Image Catalog Medium</b> (474 x 260)</td>
+                </td>
+                <tr>
                     <td>
                         <input type="file" name="image" id="image_medium">
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td>
                         <input type="submit" class="btn width-100 crp" value="CROP" />
                         <img src="" id="medium_target" />
                         <img src="{{ asset('uploads/catalog/medium_' ~ event.id ~ '.jpg') }}" id="medium_preview" style="border: 1px solid black; width: 474px; height: 260px"/>
@@ -231,13 +235,15 @@
                 <input type="hidden" value="medium" name="type" />
 
                 <tr>
-                    <td {% if not event.getAdditional('event-image-medium') %}class='notice-warning'{% endif %}><b>Image Event Medium</b> (636 x 450)</td>
+                    <td {% if not event.getAdditional('event-image-medium') %}class='notice-warning'{% else %}class='notice-greeen'{% endif %}><b>Image Event Medium</b> (636 x 450)</td>
+                </tr>
+                <tr>
                     <td>
                         <input type="file" name="image" id="image_medium2">
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td>
                         <input type="submit" class="btn width-100 crp" value="CROP" />
                         <img src="" id="medium2_target" />
                         <img src="{{ asset('uploads/event/medium_' ~ event.id ~ '.jpg') }}" id="medium2_preview" style="border: 1px solid black; width: 636px; height: 450px"/>
@@ -263,13 +269,15 @@
                 <input type="hidden" value="big" name="type" />
 
                 <tr>
-                    <td {% if not event.getAdditional('event-image-big') %}class='notice-warning'{% endif %}><b>Image Event Big</b> (636 x 600)</td>
+                    <td {% if not event.getAdditional('event-image-big') %}class='notice-warning'{% else %}class='notice-green'{% endif %}><b>Image Event Big</b> (636 x 600)</td>
+                </tr>
+                <tr>
                     <td>
                         <input type="file" name="image" id="image_big">
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td>
                         <input type="submit" class="btn width-100 crp" value="CROP" />
                         <img src="" id="big_target" />
                         <img src="{{ asset('uploads/event/big_' ~ event.id ~ '.jpg') }}" id="big_preview" style="border: 1px solid black; width: 636px; height: 600px"/>

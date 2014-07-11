@@ -955,12 +955,14 @@ class AdminController extends Controller {
         }
 
         # Check keywords
-        $rep = $this->getDoctrine()
-            ->getRepository('EventGeneralBundle:Place');
-        $place = $rep->find( $place_id );
+        if ($pe->getStatus() == 3) {
+            $rep = $this->getDoctrine()
+                ->getRepository('EventGeneralBundle:Place');
+            $place = $rep->find( $place_id );
 
-        if (!$place->isExistKeyword( $pe->getPlaceText() )) {
-            $place->addKeyword( $pe->getPlaceText() );
+            if (!$place->isExistKeyword( $pe->getPlaceText() )) {
+                $place->addKeyword( $pe->getPlaceText() );
+            }
         }
         
         # Set place and save
