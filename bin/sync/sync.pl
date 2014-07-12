@@ -9,14 +9,16 @@ use Encode;
 use Parallel::ForkManager;
 use Proc::Daemon;
 use LWP::UserAgent;
+use Getopt::Long;
 use YAML;
 use DBI;
 use JSON;
+use DateTime;
 
 $|++;
 
 binmode STDOUT, ':utf8';
-my $MAX_PROCESSES = 1000;
+my $MAX_PROCESSES = 50;
 
 sub getConfig {
     return YAML::LoadFile("../app/config/config.yml");
@@ -616,38 +618,98 @@ $params = $params->{'parameters'};
 my $config = getConfig();
 $config = $config->{'parameters'}; 
 
-Proc::Daemon::Init;
+my $pf = '/var/run/emsync/run.pid';
+my $wd = '/var/run/emsync';
+my $ld = '/tmp/emsync.log';
+my $daemon = Proc::Daemon->new(
+    pid_file => $pf,
+    work_dir => $wd 
+);
 
-my $continue = 1;
-$SIG{TERM} = sub { $continue = 0 };
+my $last_check_time = 0;
 
-while ($continue) {
-    my $d = connectDb( $params );
+my $pid = $daemon->Status($pf);
+my $daemonize = 1;
 
-    my $sync_list = whatSync($d);
-    $d->disconnect();
+GetOptions(
+    'daemon!' => \$daemonize,
+    "start" => \&run,
+    "status" => \&status,
+    "stop" => \&stop
+);
 
-    if ( scalar(@$sync_list) > 0 ) {
-        print "\nSYNC: ".scalar(@$sync_list)." user ready to sync";
-        my $pm = Parallel::ForkManager->new($MAX_PROCESSES);
+sub stop {
+    if ($pid) {
+        print "Stopping pid $pid...\n";
+        if ($daemon->Kill_Daemon($pf)) {
+            print "Successfully stopped.\n";
+        } else {
+            print "Could not find $pid.  Was it running?\n";
+        }
+    } else {
+        print "Not running, nothing to stop.\n";
+    }
+}
 
-        foreach my $s (@$sync_list) {
-            my $sync_id = $s->{'id'};
-            print "\nSYNC $sync_id: START";
+sub status {
+    if ($pid) {
+        print "Running with pid $pid.\n";
+    } else {
+        print "Not running.\n";
+    }
+}
 
-            my $pid = $pm->start and next;
+sub run {
+    if (!$pid) {
+        print "Starting...\n";
+        if ($daemonize) {
+            $daemon->Init;
+        }
 
-            my $dc = connectDb( $params );
-            sync($dc, $config, $s);
+        while (42) {
+            my $d = connectDb( $params );
 
-            $dc->disconnect();
+            my $sync_list = whatSync($d);
+            $d->disconnect();
 
-            print "\nSYNC $sync_id: DONE";
+            open(my $FH, '>>', $ld);
+
+            if ( scalar(@$sync_list) > 0 ) {
+                print "\nSYNC: ".scalar(@$sync_list)." user ready to sync";
+                my $pm = Parallel::ForkManager->new($MAX_PROCESSES);
+
+                foreach my $s (@$sync_list) {
+                    my $sync_id = $s->{'id'};
+                    print $FH "\nSYNC $sync_id: START";
+
+                    my $pid = $pm->start and next;
+
+                    my $dc = connectDb( $params );
+                    sync($dc, $config, $s);
+
+                    $dc->disconnect();
+
+                    print $FH "\nSYNC $sync_id: DONE";
+                }
+
+                 $pm->finish; 
+
+            } else {
+                if (time() > ($last_check_time + 60)) {
+                    my $dt = DateTime->now();
+                    print $FH "\n".$dt->ymd()." ".$dt->hms()." i'm alive!";
+                    $last_check_time = time();
+                }
+            }
+
+            close $FH;
+
+            sleep(1);
         }
 
     } else {
-        print "\nnothing to do...";
+        print "Already Running with pid $pid\n";
     }
-
-    sleep(1);
 }
+
+
