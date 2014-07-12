@@ -8,7 +8,7 @@
 
                 <div id="no-results" class='unit-100 text-centered' style='display: none'>
                     <h3 class='color-gray-light'>Ой, событий не найдено</h3>
-                    <img src="{{ asset('images/sad_robot.jpg') }}">
+                    <img src="{{ asset('images/sad_robot.png') }}">
                 </div>
 
                 <div id="first-time" class='unit-100 text-centered' style='display: none'>
@@ -16,7 +16,7 @@
                         <h3 class='color-gray-light'>Роботы слушают вашу музыку!</h3>
                         <h3 id="sync-status" class='subheading'>Статус синхронизации</h3>
                     </hgroup>
-                    <img src="http://media-cache-ec0.pinimg.com/236x/2e/2e/01/2e2e01246062c9e04286ced7b59d3080.jpg">
+                    <img src="{{ asset('images/happy_robot.png') }}">
                     <div class='desc'>
                         <small class='color-gray'>Сейчас мы анализируем ваш плейлист в социальной сети и подбираем лучшие концерты, которые могут вас заинтересовать. Первый раз это может занять несколько минут. <br />Спасибо за ожидание :-)</small>
                     </div>
@@ -82,6 +82,7 @@
 <script>
     var check_status_timer = { };
     var sync_status = {{ sync.status }};
+    var is_sync_now = {% if sync.status == 1 %}0{% else %}1{% endif %};
     var processing = false;
     var time_interval = "all";
 

@@ -362,6 +362,12 @@ function getPersonalAfisha(clean) {
 }
 
 function showPersonalAfisha(set_interval) {
+    console.log(is_sync_now);
+
+    if (is_sync_now == 1) {
+        return;
+    }
+
     events_offset = 0; 
 
     $('#no-results').hide();
@@ -390,10 +396,10 @@ function checkSyncStatus() {
             var add = data.additional;
 
             if (sync_status == 1) {
+                is_sync_now = 0;
                 $('#sync-status').text('Синхронизация завершена!');
                 clearTimeout(check_status_timer);
                 showPersonalAfisha();
-                //$('#sync-status').delay(1000).fadeOut('fast');
 
             } else if (sync_status == -1) {
                 $('#sync-status').text('Ошибка синхронизации! Попробуйте позднее');
