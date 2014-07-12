@@ -14,6 +14,7 @@ use Event\GeneralBundle\Entity\Artist;
 use Event\GeneralBundle\Entity\User;
 use Event\GeneralBundle\Entity\Tag;
 use Event\GeneralBundle\Entity\Subscribe;
+use Event\GeneralBundle\Entity\AdminAction;
 
 # Forms
 use Event\GeneralBundle\Form\ProviderEventType; 
@@ -936,7 +937,17 @@ class AdminController extends Controller {
 
         $p->setPlace( $place->getId() );
         $p->setStatus( 4 );
+
         $em->persist($p);
+        $em->flush();
+
+        # Save admin action
+        $log = array('place_id' => $p->getId(), 'placeName' => $p->getName()); 
+
+        $aa = new AdminAction;
+        $aa->setType(1); // Action: add place
+        $aa->setInfo( json_encode($log) );
+        $em->persist($aa);
         $em->flush();
 
         return $this->redirect($this->generateUrl('place', array('id' => $place->getId())));

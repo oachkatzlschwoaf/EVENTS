@@ -1,0 +1,21 @@
+Event\GeneralBundle\Entity\AdminAction:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        type:
+            type: integer
+        info:
+            type: text
+        createdAt:
+            type: datetime
+            column: created_at
+    lifecycleCallbacks: 
+        prePersist: [ processPrePersist ]
+        postPersist: [ processPostPersist ]
+        postUpdate: [ processPostUpdate ]
