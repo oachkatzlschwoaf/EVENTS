@@ -86,6 +86,9 @@
             <a href="{{ path('matches') }}">Matches</a>
             {% if counters['matches_wait'] > 0 %}<b style='color: red'>({{ counters['matches_wait'] }})</b>{% endif %}
         </td>
+        <td {% if admin_log is defined %}class='selected'{% endif %}>
+            <a href="{{ path('admin_log') }}">Admin Log</a>
+        </td>
     </tr>
 
 </table>

@@ -168,6 +168,10 @@ change_subscribe_status:
     pattern:  /admin/subscribe/status
     defaults: { _controller: EventGeneralBundle:Admin:changeSubscribeStatus }
 
+admin_log:
+    pattern:  /admin/log
+    defaults: { _controller: EventGeneralBundle:Admin:adminLog }
+
 # API ADMIN
 match_event:
     pattern:  /api/events/provider/{id}/match

@@ -1,0 +1,52 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+<div class='admin_container'>
+
+{% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
+
+<table class='events'>
+    <thead>
+        <tr>
+            <td style='width: 10%'>время</td>
+            <td style='width: 20%'>действие</td>
+            <td style='width: 70%'>описание</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for l in log %}
+            <tr 
+                    {% if l.type == 1 %}
+                        style='background-color: #ffefa7'
+                    {% elseif l.type == 2 %}
+                        style='background-color: #ffcfa7'
+                    {% elseif l.type == 3 %}
+                        style='background-color: #ecffa7'
+                    {% endif %}
+            
+            >
+                <td style='border: none'>{{ l.getHumanDate() }}</td>
+                <td style='border: none'>
+                    {% if l.type == 1 %}
+                        create place
+                    {% elseif l.type == 2 %}
+                        create artist
+                    {% elseif l.type == 3 %}
+                        approve event
+                    {% endif %}
+                </td>
+                <td style='border: none'>
+                    {% if l.type == 1 %}
+                        Created place: <a href="{{ path('place', { id: l.getInfoVal('place_id') }) }}">{{ l.getInfoVal('place_name') }}</a>
+                    {% elseif l.type == 2 %}
+                        Created artist: <a href="{{ path('artist', { id: l.getInfoVal('artist_id') }) }}">{{ l.getInfoVal('artist_name') }}</a>
+                    {% elseif l.type == 3 %}
+                        Created event: <a href="{{ path('internal_event', { id: l.getInfoVal('event_id') }) }}">{{ l.getInfoVal('event_name') }}</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</div>
+
+{% endblock %}

@@ -780,6 +780,15 @@ class AdminController extends Controller {
         $em->persist($ie);
         $em->flush();
 
+        # Save admin action
+        $log = array('event_id' => $ie->getId(), 'event_name' => $ie->getName()); 
+
+        $aa = new AdminAction;
+        $aa->setType(3); // Action: event to work 
+        $aa->setInfo( json_encode($log) );
+        $em->persist($aa);
+        $em->flush();
+
         return $this->redirect($this->generateUrl('internal_event', array('id' => $i_id)));
     }
 
@@ -942,7 +951,7 @@ class AdminController extends Controller {
         $em->flush();
 
         # Save admin action
-        $log = array('place_id' => $p->getId(), 'placeName' => $p->getName()); 
+        $log = array('place_id' => $place->getId(), 'place_name' => $place->getName()); 
 
         $aa = new AdminAction;
         $aa->setType(1); // Action: add place
@@ -1150,6 +1159,15 @@ class AdminController extends Controller {
 
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($artist);
+                $em->flush();
+
+                # Save admin action
+                $log = array('artist_id' => $artist->getId(), 'artist_name' => $artist->getName()); 
+
+                $aa = new AdminAction;
+                $aa->setType(2); // Action: add artist 
+                $aa->setInfo( json_encode($log) );
+                $em->persist($aa);
                 $em->flush();
 
                 return $this->redirect($this->generateUrl('artist', array('id' => $artist->getId())));
@@ -1556,5 +1574,21 @@ class AdminController extends Controller {
         }
 
         return $this->redirect($this->generateUrl('admin_subscribe'));
+    }
+
+    public function adminLogAction(Request $r) {
+        $em = $this->getDoctrine()->getManager();
+        
+        # Get Provider events
+        $log = $em->createQuery("select p from EventGeneralBundle:AdminAction p order by p.createdAt DESC")
+            ->getResult();
+
+        $counters  = $this->getCounters();
+
+        return $this->render('EventGeneralBundle:Admin:admin_log.html.twig', array(
+            'admin_log' => 1,
+            'log' => $log,
+            'counters' => $counters,
+        ));
     }
 }

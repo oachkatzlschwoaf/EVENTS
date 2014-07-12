@@ -92,7 +92,7 @@ class AdminAction
      * @param \DateTime $createdAt
      * @return AdminAction
      */
-    public function setCreatedAt($createdAt) {
+    public function setCreatedAt() {
         $this->createdAt = new \DateTime;
 
         return $this;
@@ -106,6 +106,11 @@ class AdminAction
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    public function getHumanDate()
+    {
+        return $this->createdAt->format('d.m.Y H:i');
     }
 
     /**
@@ -130,5 +135,15 @@ class AdminAction
     public function processPostUpdate()
     {
         // Add your code here
+    }
+
+    public function getInfoVal($param) {
+        $json = json_decode($this->info, 1);
+
+        if (!isset($json[$param])) {
+            return;
+        }
+
+        return $json[$param];
     }
 }
