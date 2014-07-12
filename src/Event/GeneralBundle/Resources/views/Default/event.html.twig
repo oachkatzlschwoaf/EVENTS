@@ -10,7 +10,7 @@
     <div class="section group">
         <div class="col span_8_of_12 event-content">
             {% if event.style == 2 %}
-                <div id="event-title" style="background-image: url('{{ asset('uploads/event/big_' ~ event.id ~ '.jpg') }}')" class='text-centered
+                <div style="background-image: url('{{ asset('uploads/event/big_' ~ event.id ~ '.jpg') }}')" class='event-title text-centered
                     {% if event.bigTheme == 1 %}
                         event-big-white
                     {% endif %}
@@ -30,7 +30,7 @@
                     </div>
                 </div>
             {% elseif event.style == 1 %}
-                <div id="event-title-medium" style="background-image: url('{{ asset('uploads/event/medium_' ~ event.id ~ '.jpg') }}')" class='text-centered
+                <div style="background-image: url('{{ asset('uploads/event/medium_' ~ event.id ~ '.jpg') }}')" class='event-title-medium text-centered
                     {% if event.theme == 1 %}
                         event-white
                     {% endif %}

@@ -721,4 +721,12 @@ class InternalEvent
             return explode(',', $this->video);
         }
     }
+
+    public function shortName($sym_count) {
+        if (mb_strlen($this->name) > $sym_count) {
+            return $this->tokenTruncate($this->name, $sym_count)."..."; 
+        } else {
+            return $this->name;
+        }
+    }
 }
