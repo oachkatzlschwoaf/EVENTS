@@ -1,0 +1,25 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+<table>
+    <thead>
+        <tr>
+            <td>id</td>
+            <td>date</td>
+            <td>name</td>
+            <td>url</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ie in internal_events %}
+            <tr>
+                <td>{{ ie.id }}</td>
+                <td>{{ ie.getHumanStart() }}</td>
+                <td>{{ ie.name }}</td>
+                <td>{{ provider_events[ ie.id ].link }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
