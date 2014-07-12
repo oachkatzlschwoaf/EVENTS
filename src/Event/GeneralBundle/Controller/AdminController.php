@@ -1627,4 +1627,34 @@ class AdminController extends Controller {
 
         return $this->redirect($this->generateUrl('internal_event', array( 'id' => $to_id )));
     }
+
+    public function internalProviderAction(Request $r) {
+        $em = $this->getDoctrine()->getManager();
+        
+        # Get Provider events
+        $internal_events = $em->createQuery("select p from EventGeneralBundle:InternalEvent p where p.status = :status order by p.date")
+            ->setParameter('status', 0) 
+            ->getResult();
+
+        $provider_events = array();
+        foreach ($internal_events as $ie) {
+            $links = $em->createQuery("select p from EventGeneralBundle:InternalProvider p where p.internalId = :id")
+                ->setParameter('id', $ie->getId()) 
+                ->getResult();
+            
+            foreach ($links as $l) {
+                $rep = $this->getDoctrine()
+                    ->getRepository('EventGeneralBundle:ProviderEvent');
+
+                $event = $rep->find($l->getProviderId());
+
+                $provider_events[ $l->getInternalId() ] = $event;
+            }
+        }
+
+        return $this->render('EventGeneralBundle:Admin:internal_provider.html.twig', array(
+            'internal_events' => $internal_events,
+            'provider_events' => $provider_events,
+        ));
+    }
 }

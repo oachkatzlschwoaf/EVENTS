@@ -176,6 +176,10 @@ move_event:
     pattern:  /admin/events/internal/{id}/move
     defaults: { _controller: EventGeneralBundle:Admin:moveInternal }
 
+internal_provider:
+    pattern:  /admin/internal/provider
+    defaults: { _controller: EventGeneralBundle:Admin:internalProvider }
+
 # API ADMIN
 match_event:
     pattern:  /api/events/provider/{id}/match
