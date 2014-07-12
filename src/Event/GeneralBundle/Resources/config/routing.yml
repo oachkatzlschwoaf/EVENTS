@@ -172,6 +172,10 @@ admin_log:
     pattern:  /admin/log
     defaults: { _controller: EventGeneralBundle:Admin:adminLog }
 
+move_event:
+    pattern:  /admin/events/internal/{id}/move
+    defaults: { _controller: EventGeneralBundle:Admin:moveInternal }
+
 # API ADMIN
 match_event:
     pattern:  /api/events/provider/{id}/match

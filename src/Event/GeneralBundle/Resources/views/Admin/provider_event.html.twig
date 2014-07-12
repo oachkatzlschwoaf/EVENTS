@@ -196,20 +196,20 @@
                             <a href="{{ path('matched_provider_event', { 'id': id }) }}">Отклеить событие</a>
                         </td>   
                     </tr>
-            {% elseif event.status == 4 %}
-                <tr>
-                    <td>
-                        <b>Склеить с внутренним событием</b>
-                        <p>
-                            <small>введите идентификатор внутреннего события</small>
-                        </p>
-                        <form action="{{ path('match_event', { 'id': id }) }}" method="post" novalidate>
-                            <input name="internal_id" type="text" /> 
-                            <input type="submit" value="Склеить" />
-                        </form>
-                    </td>
-                </tr>
             {% endif %}
+
+            <tr>
+                <td>
+                    <b>Склеить с внутренним событием</b>
+                    <p>
+                        <small>введите идентификатор внутреннего события</small>
+                    </p>
+                    <form action="{{ path('match_event', { 'id': id }) }}" method="post" novalidate>
+                        <input name="internal_id" type="text" /> 
+                        <input type="submit" value="Склеить" />
+                    </form>
+                </td>
+            </tr>
 
             {% if event.status != 2 %}
                 <tr>

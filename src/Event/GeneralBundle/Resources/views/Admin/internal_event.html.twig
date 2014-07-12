@@ -450,6 +450,27 @@
         </tbody>
     </table>
 
+    <table class='settings' style='font-size: 12px;'>
+        <thead>
+            <tr>
+                <td colspan="5"><h5>Перенести в другое событие</h5></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <p>
+                        <small>введите идентификатор внутреннего события</small>
+                    </p>
+                    <form action="{{ path('move_event', { 'id': event.id }) }}" method="post" novalidate>
+                        <input name="to_id" type="text" /> 
+                        <input type="submit" value="Склеить" />
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
     {% if matched|length > 0 %}
         <table class='settings' style='font-size: 12px;'>
             <thead>

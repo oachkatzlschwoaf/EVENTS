@@ -1591,4 +1591,40 @@ class AdminController extends Controller {
             'counters' => $counters,
         ));
     }
+
+    public function moveInternalAction(Request $r) {
+        $id = $r->get('id');
+        $to_id = $r->get('to_id');
+        
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:InternalEvent');
+        $event = $rep->find( $id );
+
+        if (!$event) {
+            return $this->redirect($this->generateUrl('internal_events'));
+        }
+
+        $to_event = $rep->find( $to_id );
+
+        if (!$to_event) {
+            return $this->redirect($this->generateUrl('internal_event', array( 'id' => $id )));
+        }
+
+        # Change InternalProvider 
+        $em = $this->getDoctrine()->getManager();
+        $links = $em->createQuery("select p from EventGeneralBundle:InternalProvider p where p.internalId = :id")
+            ->setParameter('id', $id) 
+            ->getResult();
+
+        foreach ($links as $l) {
+            $l->setInternalId($to_id);
+            $em->persist($l);
+        }
+
+        # Remove Internal Event
+        $em->remove($event);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('internal_event', array( 'id' => $to_id )));
+    }
 }
