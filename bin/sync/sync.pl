@@ -96,9 +96,9 @@ sub requestVkApi {
 }
 
 sub getAudioList {
-    my ($uid, $sk, $c) = @_;
+    my ($uid, $sk, $c, $FH) = @_;
 
-    print "\n\tUID $uid: GET PLAYLIST... ";
+    print $FH "\n\tUID $uid: GET PLAYLIST... ";
 
     my $params = {
         'access_token' => $sk,
@@ -110,7 +110,6 @@ sub getAudioList {
     if ($data->{'error'}) {
         return;
     } else {
-        print "DONE!";
         return $data->{'response'};
     }
 }
@@ -160,9 +159,9 @@ sub getTopTags {
 }
 
 sub analyzeTags {
-    my ($d, $user_id, $c, $list) = @_;
+    my ($d, $user_id, $c, $list, $FH) = @_;
 
-    print "\n\tUID $user_id: ANALYZE TAGS";
+    print $FH "\n\tUID $user_id: ANALYZE TAGS";
 
     my $untagged = 0;
     foreach my $id (keys %$list) {
@@ -204,9 +203,9 @@ sub analyzeTags {
 }
 
 sub syncAudioDb {
-    my ($d, $user_id, $network_list) = @_;
+    my ($d, $user_id, $network_list, $FH) = @_;
 
-    print "\n\tUID $user_id: SYNC DB PLAYLIST";
+    print $FH "\n\tUID $user_id: SYNC DB PLAYLIST";
 
     # Make hash
     my $network_hash = { };
@@ -255,7 +254,7 @@ sub syncAudioDb {
                 $t->{'title'}, 
             ); 
 
-            print "\n\t\tUID $user_id: ADD AUDIO '$k'";
+            print $FH "\n\t\tUID $user_id: ADD AUDIO '$k'";
         }
     }
 
@@ -270,15 +269,15 @@ sub syncAudioDb {
 
             $sth->execute( ); 
 
-            print "\n\t\tUID $user_id: DELETE AUDIO '$k'";
+            print $FH "\n\t\tUID $user_id: DELETE AUDIO '$k'";
         }
     }
 }
 
 sub syncArtistDb {
-    my ($d, $user_id, $list) = @_;
+    my ($d, $user_id, $list, $FH) = @_;
 
-    print "\n\tUID $user_id: SYNC ARTISTS";
+    print $FH "\n\tUID $user_id: SYNC ARTISTS";
 
     my $artists = { };
     foreach my $aid (keys %$list) {
@@ -310,7 +309,7 @@ sub syncArtistDb {
                 $user_id, 
             ); 
 
-            print "\n\tUID $user_id: DELETE ARTIST '$clean_artist'";
+            print $FH "\n\tUID $user_id: DELETE ARTIST '$clean_artist'";
 
         } elsif ($db_artists->{$clean_artist} != $artists->{$clean_artist}{'count'}) {
             my $artist = $artists->{$clean_artist}{'artist'};
@@ -326,7 +325,7 @@ sub syncArtistDb {
                 $user_id, 
             ); 
 
-            print "\n\tUID $user_id: UPDATE ARTIST '$clean_artist' ($count)";
+            print $FH "\n\tUID $user_id: UPDATE ARTIST '$clean_artist' ($count)";
         }
     }
 
@@ -346,7 +345,7 @@ sub syncArtistDb {
                 $count, 
             ); 
 
-            print "\n\t\tUID $user_id: ADD ARTIST '$artist'";
+            print $FH "\n\t\tUID $user_id: ADD ARTIST '$artist'";
         }
     }
 }
@@ -369,15 +368,13 @@ sub getUserAudio {
         };
     }
 
-    print "DONE!";
-
     return $audio;
 }
 
 sub getUserAudioArtist {
-    my ($d, $user_id) = @_;
+    my ($d, $user_id, $FH) = @_;
 
-    print "\n\tUID $user_id: GET ARTISTS... ";
+    print $FH "\n\tUID $user_id: GET ARTISTS... ";
 
     my $sql = "select `id`, `artist`, `clean_artist`, `tags`, `count` from `UserAudioArtist` where user_id = '$user_id'";
     my $sth = $d->prepare($sql);
@@ -393,7 +390,7 @@ sub getUserAudioArtist {
         };
     }
 
-    print "DONE!";
+    print $FH "DONE!";
 
     return $audio;
 }
@@ -436,9 +433,9 @@ sub updateAdditional {
 }
 
 sub saveTags {
-    my ($d, $user_id, $list) = @_;
+    my ($d, $user_id, $list, $FH) = @_;
 
-    print "\n\tUID $user_id: SAVE TAGS... ";
+    print $FH "\n\tUID $user_id: SAVE TAGS... ";
 
     my $stat      = {};
     my $art_stat  = {};
@@ -521,8 +518,6 @@ sub saveTags {
         $art_norm_str,
         $user_id
     ); 
-
-    print "DONE!";
 }
 
 sub addTags {
@@ -549,61 +544,39 @@ sub deleteTags {
     return $tags;
 }
 
-sub getUserTags {
-    my ($d, $user_id) = @_;
-
-    print "\n\tUID $user_id: GET TAGS... ";
-
-    my $sql = "select `tags` from `User` where id = ?";
-    my $sth = $d->prepare($sql);
-
-    $sth->execute(
-        $user_id, 
-    ); 
-
-    my @row = $sth->fetchrow_array();
-
-    print "DONE!";
-
-    if (!$row[0]) {
-        return { };
-    } else {
-        return decode_json($row[0]);
-    }
-}
-
 sub sync {
-    my ($d, $config, $to_sync) = @_;
+    my ($d, $config, $FH, $to_sync) = @_;
 
     my $sync_id = $to_sync->{'id'};
     my $user_id = $to_sync->{'user_id'};
 
     # Get Network Audio List
     updateSyncStatus($d, $user_id, 2); # sync audio list
-    my $audio_list = getAudioList($user_id, $to_sync->{'access_token'}, $config);
+    my $audio_list = getAudioList($user_id, $to_sync->{'access_token'}, $config, $FH);
 
     if (!$audio_list) {
         updateSyncStatus($d, $user_id, -1); # sync error 
-        die "\nSYNC $sync_id: ERROR (cannot get audio list)";
+        print $FH "\nSYNC $sync_id: ERROR (cannot get audio list)";
+        die;
     }
 
     # Sync DB
     updateSyncStatus($d, $user_id, 3); # sync audio & artists 
-    syncAudioDb($d, $to_sync->{'user_id'}, $audio_list);
+    syncAudioDb($d, $to_sync->{'user_id'}, $audio_list, $FH);
 
     my $actual_audio_list = getUserAudio($d, $user_id);
 
-    syncArtistDb($d, $user_id, $actual_audio_list);
+    syncArtistDb($d, $user_id, $actual_audio_list, $FH);
 
-    my $actual_artist_list = getUserAudioArtist($d, $user_id);
+    my $actual_artist_list = getUserAudioArtist($d, $user_id, $FH);
 
     # Sync tags 
     updateSyncStatus($d, $user_id, 4); # sync tags 
-    analyzeTags($d, $user_id, $config, $actual_artist_list);
+    analyzeTags($d, $user_id, $config, $actual_artist_list, $FH);
 
-    $actual_artist_list = getUserAudioArtist($d, $user_id);
+    $actual_artist_list = getUserAudioArtist($d, $user_id, $FH);
 
-    saveTags($d, $user_id, $actual_artist_list);
+    saveTags($d, $user_id, $actual_artist_list, $FH);
 
     updateSyncStatus($d, $to_sync->{'user_id'}, 1); # sync done 
 
@@ -675,7 +648,7 @@ sub run {
             open(my $FH, '>>', $ld);
 
             if ( scalar(@$sync_list) > 0 ) {
-                print "\nSYNC: ".scalar(@$sync_list)." user ready to sync";
+                print $FH "\nSYNC: ".scalar(@$sync_list)." user ready to sync";
                 my $pm = Parallel::ForkManager->new($MAX_PROCESSES);
 
                 foreach my $s (@$sync_list) {
@@ -685,7 +658,7 @@ sub run {
                     my $pid = $pm->start and next;
 
                     my $dc = connectDb( $params );
-                    sync($dc, $config, $s);
+                    sync($dc, $config, $FH, $s);
 
                     $dc->disconnect();
 
