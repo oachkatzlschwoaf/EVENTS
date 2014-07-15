@@ -286,6 +286,20 @@ class InternalEvent
     public function getArtistsCount() {
         return count( array_filter( explode(',', $this->artists) ) );
     }
+
+    public function dropArtist($id) {
+        $artist_arr = array_diff( explode(',', $this->artists), array($id) );
+        $this->artists = implode(',', $artist_arr);
+    }
+
+    public function addArtist($id) {
+        $artist_arr = explode(',', $this->artists);
+        array_push($artist_arr, $id );
+        $artist_arr = array_unique($artist_arr);
+        $this->artists = implode(',', $artist_arr);
+    }
+
+
     /**
      * @var string
      */

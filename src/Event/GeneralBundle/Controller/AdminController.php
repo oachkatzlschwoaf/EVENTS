@@ -1657,4 +1657,47 @@ class AdminController extends Controller {
             'provider_events' => $provider_events,
         ));
     }
+
+    public function moveArtistAction(Request $r) {
+        $id = $r->get('id');
+        $to_id = $r->get('to_id');
+        
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:Artist');
+        $artist = $rep->find( $id );
+
+        if (!$artist) {
+            return $this->redirect($this->generateUrl('artists'));
+        }
+
+        $to_artist = $rep->find( $to_id );
+
+        if (!$to_artist) {
+            return $this->redirect($this->generateUrl('artist', array( 'id' => $id )));
+        }
+
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:InternalEvent');
+
+        $internal_events = $rep->findAll();
+
+        $em = $this->getDoctrine()->getManager();
+        foreach ($internal_events as $ie) {
+            foreach ($ie->getArtistsList() as $a) {
+                if ($a == $id) {
+                    $ie->dropArtist($id);
+                    $ie->addArtist($to_id);
+
+                    $em->persist($ie);
+                    $em->flush();
+                }
+            }
+        }
+
+        # Remove Internal Event
+        $em->remove($artist);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('artist', array( 'id' => $to_id )));
+    }
 }

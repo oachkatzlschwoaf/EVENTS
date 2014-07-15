@@ -53,6 +53,7 @@
             </td>
         </tr>
     </tbody>
+</form>
 </table>
 </div>
 
@@ -84,6 +85,27 @@
                 <td>
                     <input onclick='suggestTags()' type="button" value="Suggest" />
                     <div id='tags_suggested'></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class='settings' style='font-size: 12px;'>
+        <thead>
+            <tr>
+                <td colspan="5"><h5>Перенести в другого артиста</h5></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <p>
+                        <small>введите идентификатор артиста</small>
+                    </p>
+                    <form action="{{ path('move_artist', { 'id': artist.id }) }}" method="post" novalidate>
+                        <input name="to_id" type="text" /> 
+                        <input type="submit" value="Склеить" />
+                    </form>
                 </td>
             </tr>
         </tbody>
