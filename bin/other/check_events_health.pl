@@ -41,11 +41,39 @@ sub isActive {
         print "\n\nEVENT ".$e->{'id'}." (".$e->{'link'}.")";
         print "\nRESPONSE ERROR: code ".$response->code;
 
+        # Save Report as Admin Action
+        my $save_stat = { 'error' => "response code: ".$response->code, 'event' => $e->{'id'}, 'link' => $e->{'link'} };
+        my $dt = DateTime->now();
+
+        my $sql = "insert into `AdminAction` (`type`, `info`, `created_at`) 
+            values(?, ?, ?)";
+        my $sth = $d->prepare($sql);
+        $sth->execute(
+            6, # ACTION: ERROR 
+            JSON::encode_json($save_stat),
+            $dt->ymd().' '.$dt->hms()
+        );
+
     } elsif (($e->{'provider'} != 1 && $e->{'provider'} != 3) && 
         $response->is_success and $response->previous ) {
         print "\n\nEVENT ".$e->{'id'}." (".$e->{'link'}.")";
         print "\nERROR: redirect ";
 
+        # Save Report as Admin Action
+        my $save_stat = { 'error' => "redirect", 'event' => $e->{'id'}, 'link' => $e->{'link'} };
+        my $dt = DateTime->now();
+
+        my $sql = "insert into `AdminAction` (`type`, `info`, `created_at`) 
+            values(?, ?, ?)";
+        my $sth = $d->prepare($sql);
+        $sth->execute(
+            6, # ACTION: ERROR 
+            JSON::encode_json($save_stat),
+            $dt->ymd().' '.$dt->hms()
+        );
+
+    } else {
+        # TODO: Check event actual
     }
 }
 

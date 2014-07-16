@@ -118,7 +118,7 @@
                 <td {% if event.getTagsList()|length == 0  %}class='notice-warning'{% endif %}><b>Тэги</b></td>
                 <td class='small_textarea'>
                     <ul id="tags" class='tagit'>
-                        {% for t in event.getTagsList() %}
+                        {% for t in event.getTagsList()|slice(0,3) %}
                             <li>{{ tags[t].name }}</li>
                         {% endfor %}
                     </ul>
@@ -428,7 +428,7 @@
                     </td>
                     {% if artists[ a ].getTags %}
                         <td>
-                            {% for t in artists[ a ].getTagsList %}
+                            {% for t in artists[ a ].getTagsList|slice(0,3) %}
                                 {{ tags[ t ].name }}{% if not loop.last %},{% endif %}
                             {% endfor %}
                         </td>

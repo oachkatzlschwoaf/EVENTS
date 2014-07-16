@@ -637,8 +637,12 @@ my $tickets = getTickets($provider_events);
 
 print "\n\nPROCESS TICKETS";
 
+my $save_stat = { };
+
 foreach my $e_id (keys %$provider_events) {
     print "\n\tEVENT $e_id";
+
+    my $event = $provider_events->{$e_id};
     
     my $ex_tickets = getExistsTicket($d, $e_id);
 
@@ -654,9 +658,11 @@ foreach my $e_id (keys %$provider_events) {
         next if (!$sector || !$min || !$max);
 
         if (defined($ex_tickets->{$sector}) && scalar( keys %{ $ex_tickets->{$sector} } ) > 0) {
+            $save_stat->{'update'}{ $event->{'provider'} }++;
             updateTicket($d, $e_id, $sector, $min, $max);
             delete( $ex_tickets->{$sector} );
         } else {
+            $save_stat->{'save'}{ $event->{'provider'} }++;
             saveTicket($d, $e_id, $sector, $min, $max);
             delete( $ex_tickets->{$sector} );
         }
@@ -664,7 +670,19 @@ foreach my $e_id (keys %$provider_events) {
 
     # Switch off non existed tickets
     foreach my $sector (keys %$ex_tickets) {
+        $save_stat->{'off'}{ $event->{'provider'} }++;
         switchOffTicket($d, $e_id, $sector);
     }
 }
 
+# Save Report as Admin Action
+my $dt = DateTime->now();
+
+my $sql = "insert into `AdminAction` (`type`, `info`, `created_at`) 
+    values(?, ?, ?)";
+my $sth = $d->prepare($sql);
+$sth->execute(
+    5, # ACTION: TICKETS 
+    JSON::encode_json($save_stat),
+    $dt->ymd().' '.$dt->hms()
+);
