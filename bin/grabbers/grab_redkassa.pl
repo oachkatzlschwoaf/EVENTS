@@ -58,6 +58,8 @@ sub connectDb {
 sub saveProviderEvents {
     my ($events, $provider, $d) = @_;
 
+    my $save_stat = { };
+
     foreach my $e_id (keys %$events) {
         my $event = $events->{$e_id};
 
@@ -67,6 +69,7 @@ sub saveProviderEvents {
         $sth->execute();
 
         if ( my @row = $sth->fetchrow_array() ) {
+            $save_stat->{'exists'}++;
             next;
         }
         
@@ -87,9 +90,23 @@ sub saveProviderEvents {
             $event->{'place'},
         ); 
 
+        $save_stat->{'new'}++;
+
         print "\n\tEVENT $e_id SAVE: ".$event->{'name'}." (".$event->{'start'}->ymd().")"; 
     }
 
+    # Save Report as Admin Action
+    $save_stat->{'provider'} = $provider;
+    my $dt = DateTime->now();
+
+    my $sql = "insert into `AdminAction` (`type`, `info`, `created_at`) 
+        values(?, ?, ?)";
+    my $sth = $d->prepare($sql);
+    $sth->execute(
+        4, # ACTION: GRAB
+        JSON::encode_json($save_stat),
+        $dt->ymd().' '.$dt->hms()
+    );
 }
 
 sub grabEvents {
