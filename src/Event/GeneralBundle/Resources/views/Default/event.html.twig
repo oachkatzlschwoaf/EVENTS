@@ -57,42 +57,42 @@
 
     <div class="section group">
         <div class="col span_8_of_12 event-content">
+            {% if index.getTagsNamesList()|length > 0 %}
+                <div class='event-tags' style='margin: 0 0 10px 0'>
+                    {% for tag in index.getTagsNamesList() %}
+                        <a href="{{ path('search') }}?query=(@tags_names+{{ tag }})&sort=date">{{ tag }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             {% if event.description %}
                 <div class="event-desc">
                     {{ event.description|raw }}
                 </div>
             {% endif %}
+
+            <div class='likes'>
+                <div class='button-container'>
+                    <a href="#" onclick='like({{ index.id }}); return false;' class='like icon-40 left 
+                        {% if not like or (like and like.type == 2) %}like-icon{% else %}like-active-icon{% endif %} 
+                        '>
+                        <small>нравится событие</small>    
+                    </a>
+                </div>
+                <div class='button-container'>
+                    <a href="#" onclick='dislike({{ index.id }}); return false;' class='dislike icon-40 left
+                        {% if not like or (like and like.type == 1) %}dislike-icon{% else %}dislike-active-icon{% endif %} 
+                        '>
+                        <small>не нравится событие</small>    
+                    </a>
+                </div>
+            </div>
+
             <div class='like-buttons'>
                 <div id="vk_like" class='left'></div>
                 <div class="fb-like left" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
             </div>
 
-            <div class='tags-like'>
-                {% if index.getTagsNamesList()|length > 0 %}
-                    <div class='event-tags'>
-                        {% for tag in index.getTagsNamesList() %}
-                            <a href="{{ path('search') }}?query=(@tags_names+{{ tag }})&sort=date">{{ tag }}</a>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                <div class='likes'>
-                    <div class='button-container'>
-                        <a href="#" onclick='like({{ index.id }}); return false;' class='like icon-40 left 
-                            {% if not like or (like and like.type == 2) %}like-icon{% else %}like-active-icon{% endif %} 
-                            '>
-                            <small>нравится событие</small>    
-                        </a>
-                    </div>
-                    <div class='button-container'>
-                        <a href="#" onclick='dislike({{ index.id }}); return false;' class='dislike icon-40 left
-                            {% if not like or (like and like.type == 1) %}dislike-icon{% else %}dislike-active-icon{% endif %} 
-                            '>
-                            <small>не нравится событие</small>    
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 

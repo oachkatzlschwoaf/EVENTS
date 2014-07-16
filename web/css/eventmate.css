@@ -485,19 +485,16 @@ h2 {
     font-size: 16px;
 }
 
-.tags-like {
-    clear: both; 
-}
-
 .likes {
-    float: left;
-    width: 150px;
+    background: #eee;
+    padding: .6em 0 .4em .8em;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
 }
 
 .likes .button-container {
-    clear: both;
-    margin-bottom: 10px;
-    overflow: hidden;
+    display: inline-block;
+    width: 130px;
 }
 
 .likes small {
@@ -763,7 +760,6 @@ h2 {
 .like-buttons {
     min-height: 34px;
     overflow: hidden;
-    clear: both;
-    display: block;
+    margin-top: 1.2em;
 }
 
