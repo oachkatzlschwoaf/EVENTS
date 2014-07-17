@@ -9,6 +9,16 @@
                 <div id="no-results" class='unit-100 text-centered' style='display: none'>
                     <h3 class='color-gray-light'>Ой, событий не найдено</h3>
                     <img src="{{ asset('images/sad_robot.png') }}">
+
+                    <div class='desc'>
+                        <small class='color-gray-light'>
+                            К сожалению, мы не нашли таких концертов! 
+                            <br />
+                            Попробуйте выбрать другое время или
+                            <br />
+                            <a href="#" id="unset-tags">отменить фильтр тегов</a>.
+                        </small>
+                    </div>
                 </div>
 
                 <div id="first-time" class='unit-100 text-centered' style='display: none'>
@@ -18,7 +28,7 @@
                     </hgroup>
                     <img src="{{ asset('images/happy_robot.png') }}">
                     <div class='desc'>
-                        <small class='color-gray'>Сейчас мы анализируем ваш плейлист в социальной сети и подбираем лучшие концерты, которые могут вас заинтересовать. Первый раз это может занять несколько минут. <br />Спасибо за ожидание :-)</small>
+                        <small class='color-gray'>Сейчас мы анализируем ваш плейлист<br />и подбираем для вас самые интересные концерты.<br />Первый раз это может занять несколько минут. <br />Спасибо за ожидание :-)</small>
                     </div>
                 </div>
 
@@ -46,6 +56,7 @@
                 {% for t, val in my_tags %}
                     <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
                 {% endfor %}
+                <a href="#" class='music-tag unset-tag'>Отменить тэги</a>
             </p>
 
             <h4>Популярные Тэги</h4>
@@ -53,6 +64,7 @@
                 {% for t_id, t in popular_tags %}
                     <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
                 {% endfor %}
+                <a href="#" class='music-tag unset-tag'>Отменить тэги</a>
             </p>
         </div>
     </div>
@@ -130,11 +142,29 @@
     });
 
     $('.music-tag').click(function(e) {
-        setTag(this).done(function() {
+        $('#no-results').hide();
+
+        if ($(this).hasClass('unset-tag')) {
+            unsetTags().done(function() {
+                showPersonalAfisha();
+            });
+
+        } else {
+            setTag(this).done(function() {
+                showPersonalAfisha();
+            });
+        }
+
+        e.preventDefault();
+    });
+
+    $('#unset-tags').click(function(e) {
+        $('#no-results').hide();
+
+        unsetTags().done(function() {
             showPersonalAfisha();
         });
 
         e.preventDefault();
     });
-
 </script>

@@ -243,6 +243,21 @@ class DefaultController extends Controller {
         return new Response(json_encode($answer));
     }
 
+    public function unsetTagsAction(Request $r) {
+        # Get tags
+        $session = $r->getSession();
+        $tags = $this->getSessionTags($session);
+
+        $tags = array();
+
+        $tags_str = json_encode($tags, 1);
+
+        $session->set('set_tags', $tags_str);
+
+        $answer = array( 'done' => 1 );
+        return new Response(json_encode($answer));
+    }
+
     private function fetchUserById($id) {
         $em = $this->getDoctrine()->getManager();
         $users = $em->createQuery("select p from EventGeneralBundle:User p where p.id = :id")

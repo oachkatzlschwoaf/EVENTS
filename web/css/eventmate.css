@@ -254,7 +254,7 @@ h2 {
 
 .popular_tags {
     font-family: 'Charis';
-    margin: 1em 0 1em 0;
+    margin: .2em 0 1em 0;
 }
 
 .music-tag {
@@ -265,6 +265,13 @@ h2 {
 
 .music-tag:hover {
     text-decoration: underline;
+}
+
+.unset-tag {
+    border-top: 1px solid #eee;
+    margin-top: 5px;
+    display: block;
+    padding-top: 5px;
 }
 
 .filters {
@@ -338,7 +345,22 @@ h2 {
 }
 
 #no-results {
-    margin-top: 2em;
+    margin-top: 1em;
+}
+
+#no-results h3 {
+    margin-bottom: 0;
+}
+
+#no-results .desc {
+    font-size: 14px;
+    width: 520px;
+    margin: 0px auto;
+}
+
+#no-results small {
+    font-size: 1.2em;
+    font-weight: normal;
 }
 
 .event-title {
@@ -747,6 +769,11 @@ h2 {
     font-size: 14px;
     width: 520px;
     margin: 0px auto;
+}
+
+#first-time small {
+    font-size: 1.2em;
+    font-weight: normal;
 }
 
 #sad-full {

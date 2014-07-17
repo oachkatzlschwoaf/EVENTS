@@ -204,6 +204,21 @@ function setTag(e) {
     return dfd.promise();
 }
 
+function unsetTags() {
+    dfd = $.Deferred();
+    $.getJSON(util.api.unset_tags, function(data) {
+        tags_name_selected = { };
+        
+        $('.music-tag').each(function() {
+            $(this).removeClass('selected');
+        });
+
+        dfd.resolve();
+    });
+
+    return dfd.promise();
+}
+
 function updatePeriod() {
     $(".time-interval").each(function(i, el) {
         $(el).removeClass('selected');

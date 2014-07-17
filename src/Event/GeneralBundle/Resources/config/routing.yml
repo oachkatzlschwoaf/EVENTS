@@ -214,6 +214,10 @@ set_tag:
     pattern:  /api/user/tag/set
     defaults: { _controller: EventGeneralBundle:Default:setTag }
 
+unset_tags:
+    pattern:  /api/user/tags/unset
+    defaults: { _controller: EventGeneralBundle:Default:unsetTags }
+
 get_general_events:
     pattern:  /api/events/general
     defaults: { _controller: EventGeneralBundle:Default:getGeneralEvents }
