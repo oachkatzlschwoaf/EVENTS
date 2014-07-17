@@ -46,66 +46,6 @@ sub connectDb {
     );
 }
 
-sub saveProviderEvents {
-    my ($events, $provider, $d) = @_;
-
-    foreach my $e_id (keys %$events) {
-        my $event = $events->{$e_id};
-
-        # Check is exist or not
-        my $sql = "select * from `ProviderEvent` where provider_id = '$e_id'";
-        my $sth = $d->prepare($sql);
-        $sth->execute();
-
-        if ( my @row = $sth->fetchrow_array() ) {
-            next;
-        }
-        
-        # Save
-        $sql = "insert into `ProviderEvent` (`name`, `provider_id`, `date`, `start`, `duration`, `description`, `status`, `provider`, `link`) 
-            values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $sth = $d->prepare($sql);
-
-        $sth->execute(
-            $event->{'name'}, 
-            $event->{'provider_id'}, 
-            $event->{'start'}->ymd(), 
-            $event->{'start'}->ymd().' '.$event->{'start'}->hms(), 
-            $event->{'duration'}, 
-            $event->{'description'}, 
-            0, # unmatched status
-            $provider,
-            'http://www.kassir.ru'.$event->{'link'}, 
-        ); 
-
-        print "\n$e_id saved..."; 
-    }
-
-}
-
-sub getLastPage {
-    my $ua = LWP::UserAgent->new();
-    my $kassir_url = 'https://www.kassir.ru/kassir/search/index?categories=c1409';
-
-    my $r = $ua->get($kassir_url);
-    my $c = $r->decoded_content();
-
-    my $t = HTML::TreeBuilder->new_from_content( $c );
-    my @elements = $t->look_down(class => 'last');
-
-    my $last_page = 0;
-
-    for my $e (@elements) {
-        my $a = $e->find('a');
-        my $link = $a->attr('href');
-        $link =~ /page=(\d+)/;
-
-        $last_page = $1;
-    }
-
-    return $last_page;
-}
-
 sub grabPlaces {
     my ($start_page, $last_page) = @_;
 

@@ -152,6 +152,16 @@ class ProviderEvent
         return $this->date->format('d.m.Y');
     }
 
+    public function getHumanStart()
+    {
+        return $this->start->format('d.m.Y H:i');
+    }
+
+    public function getHumanStartTime()
+    {
+        return $this->start->format('H:i');
+    }
+
     /**
      * Set start
      *
@@ -262,6 +272,12 @@ class ProviderEvent
             return "matched";
         } else if ($this->status == 2) {
             return "cancelled";
+        } else if ($this->status == 3) {
+            return "w/o place";
+        } else if ($this->status == 4) {
+            return "w/o internal";
+        } else if ($this->status == 5) {
+            return "outdated";
         } else {
             return "error";
         }
@@ -293,5 +309,70 @@ class ProviderEvent
     public function getLink()
     {
         return $this->link;
+    }
+    /**
+     * @var string
+     */
+    private $placeText;
+
+    /**
+     * @var integer
+     */
+    private $place;
+
+
+    /**
+     * Set placeText
+     *
+     * @param string $placeText
+     * @return ProviderEvent
+     */
+    public function setPlaceText($placeText)
+    {
+        $this->placeText = $placeText;
+
+        return $this;
+    }
+
+    /**
+     * Get placeText
+     *
+     * @return string 
+     */
+    public function getPlaceText()
+    {
+        return $this->placeText;
+    }
+
+    public function getCleanPlaceText()
+    {
+        $pt = $this->placeText;
+        $pt = mb_strtolower( $pt, 'utf8' );
+        $pt = preg_replace('/[\"\'\(\)]/', '', $pt);
+
+        return $pt;
+    }
+
+    /**
+     * Set place
+     *
+     * @param integer $place
+     * @return ProviderEvent
+     */
+    public function setPlace($place)
+    {
+        $this->place = $place;
+
+        return $this;
+    }
+
+    /**
+     * Get place
+     *
+     * @return integer 
+     */
+    public function getPlace()
+    {
+        return $this->place;
     }
 }

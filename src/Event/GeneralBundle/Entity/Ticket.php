@@ -164,4 +164,62 @@ class Ticket
     {
         return $this->status;
     }
+    /**
+     * @var \DateTime
+     */
+    private $createdAt;
+
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     * @return Ticket
+     */
+    public function setCreatedAt() {
+        $this->createdAt = new \DateTime;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime 
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+    /**
+     * @ORM\PrePersist
+     */
+    public function processPrePersist()
+    {
+        // Add your code here
+    }
+
+    /**
+     * @ORM\PostPersist
+     */
+    public function processPostPersist()
+    {
+        $this->setCreatedAt();
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function processPreUpdate()
+    {
+        // Add your code here
+    }
+
+    /**
+     * @ORM\PostUpdate
+     */
+    public function processPostUpdate()
+    {
+        // Add your code here
+    }
 }

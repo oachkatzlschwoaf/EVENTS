@@ -37,4 +37,11 @@ Event\GeneralBundle\Entity\ProviderEvent:
             column: place_text
         place:
             type: integer
-    lifecycleCallbacks: {  }
+        createdAt:
+            type: datetime
+            column: created_at
+    lifecycleCallbacks: 
+        prePersist: [ processPrePersist ]
+        postPersist: [ processPostPersist ]
+        preUpdate: [ processPreUpdate ]
+        postUpdate: [ processPostUpdate ]

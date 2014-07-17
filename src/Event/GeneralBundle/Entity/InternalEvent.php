@@ -403,8 +403,8 @@ class InternalEvent
     /**
      * @ORM\PrePersist
      */
-    public function processPrePersist()
-    {
+    public function processPrePersist() {
+        $this->setCreatedAt();
     }
 
     /**
@@ -758,4 +758,31 @@ class InternalEvent
         return implode(array_slice($parts, 0, $last_part));
     }
 
+    /**
+     * @var \DateTime
+     */
+    private $createdAt;
+
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     * @return InternalEvent
+     */
+    public function setCreatedAt() {
+        $this->createdAt = new \DateTime;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime 
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
 }

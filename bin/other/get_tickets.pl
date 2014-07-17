@@ -515,7 +515,7 @@ sub getTickets {
     foreach my $e_id (keys %$events) {
         my $e = $events->{$e_id};
 
-        print "\n\tGRAB TICKETS $e_id: ".$e->{'link'};
+        print "\n\tGRAB TICKETS $e_id (PROVIDER: ".$e->{'provider'}."): ".$e->{'link'};
 
         my $agg_tickets = { };
         if ($e->{'provider'} == 1) {
@@ -548,8 +548,10 @@ sub getTickets {
 sub saveTicket {
     my ($d, $event_id, $sector, $min, $max) = @_;
 
-    my $sql = "insert into `Ticket` (`provider_event`, `sector`, `price_min`, `price_max`, `status`) 
-        values(?, ?, ?, ?, ?)";
+    my $dt = DateTime->now();
+
+    my $sql = "insert into `Ticket` (`provider_event`, `sector`, `price_min`, `price_max`, `status`, `created_at`) 
+        values(?, ?, ?, ?, ?, ?)";
     my $sth = $d->prepare($sql);
 
     $sth->execute(
@@ -557,7 +559,8 @@ sub saveTicket {
         $sector,
         $min,
         $max,
-        1 # status
+        1, 
+        $dt->ymd().' '.$dt->hms(),
     ); 
 
     print "\n\t\tNEW TICKET ($sector, $min, $max)";

@@ -22,4 +22,11 @@ Event\GeneralBundle\Entity\Ticket:
             column: price_max
         status:
             type: integer
-    lifecycleCallbacks: {  }
+        createdAt:
+            type: datetime
+            column: created_at
+    lifecycleCallbacks: 
+        prePersist: [ processPrePersist ]
+        postPersist: [ processPostPersist ]
+        preUpdate: [ processPreUpdate ]
+        postUpdate: [ processPostUpdate ]

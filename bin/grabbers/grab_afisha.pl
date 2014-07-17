@@ -57,6 +57,7 @@ sub saveProviderEvents {
     my ($events, $provider, $d) = @_;
 
     my $save_stat = { };
+    my $dt = DateTime->now();
 
     foreach my $e_id (keys %$events) {
         my $event = $events->{$e_id};
@@ -72,8 +73,7 @@ sub saveProviderEvents {
         }
         
         # Save
-        $sql = "insert into `ProviderEvent` (`name`, `provider_id`, `date`, `start`, `duration`, `status`, `provider`, `link`, `place_text`) 
-            values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "insert into `ProviderEvent` (`name`, `provider_id`, `date`, `start`, `duration`, `status`, `provider`, `link`, `place_text`, `created_at`) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $sth = $d->prepare($sql);
 
         $sth->execute(
@@ -86,6 +86,7 @@ sub saveProviderEvents {
             $provider,
             $event->{'link'},
             $event->{'place'},
+            $dt->ymd().' '.$dt->hms(),
         ); 
 
         $save_stat->{'new'}++;
@@ -95,7 +96,6 @@ sub saveProviderEvents {
 
     # Save Report as Admin Action
     $save_stat->{'provider'} = $provider;
-    my $dt = DateTime->now();
 
     my $sql = "insert into `AdminAction` (`type`, `info`, `created_at`) 
         values(?, ?, ?)";

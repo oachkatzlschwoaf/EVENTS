@@ -286,6 +286,20 @@ class InternalEvent
     public function getArtistsCount() {
         return count( array_filter( explode(',', $this->artists) ) );
     }
+
+    public function dropArtist($id) {
+        $artist_arr = array_diff( explode(',', $this->artists), array($id) );
+        $this->artists = implode(',', $artist_arr);
+    }
+
+    public function addArtist($id) {
+        $artist_arr = explode(',', $this->artists);
+        array_push($artist_arr, $id );
+        $artist_arr = array_unique($artist_arr);
+        $this->artists = implode(',', $artist_arr);
+    }
+
+
     /**
      * @var string
      */
@@ -721,4 +735,27 @@ class InternalEvent
             return explode(',', $this->video);
         }
     }
+
+    public function shortName($sym_count) {
+        if (mb_strlen($this->name) > $sym_count) {
+            return $this->tokenTruncate($this->name, $sym_count)."..."; 
+        } else {
+            return $this->name;
+        }
+    }
+
+    private function tokenTruncate($string, $your_desired_width) {
+        $parts = preg_split('/([\s\n\r]+)/u', $string, null, PREG_SPLIT_DELIM_CAPTURE);
+        $parts_count = count($parts);
+
+        $length = 0;
+        $last_part = 0;
+        for (; $last_part < $parts_count; ++$last_part) {
+            $length += mb_strlen($parts[$last_part]);
+            if ($length > $your_desired_width) { break; }
+        }
+
+        return implode(array_slice($parts, 0, $last_part));
+    }
+
 }

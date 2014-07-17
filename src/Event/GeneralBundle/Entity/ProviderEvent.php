@@ -375,4 +375,62 @@ class ProviderEvent
     {
         return $this->place;
     }
+    /**
+     * @var \DateTime
+     */
+    private $createdAt;
+
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     * @return ProviderEvent
+     */
+    public function setCreatedAt() {
+        $this->createdAt = new \DateTime;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime 
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+    /**
+     * @ORM\PrePersist
+     */
+    public function processPrePersist()
+    {
+        $this->setCreatedAt();
+    }
+
+    /**
+     * @ORM\PostPersist
+     */
+    public function processPostPersist()
+    {
+        // Add your code here
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function processPreUpdate()
+    {
+        // Add your code here
+    }
+
+    /**
+     * @ORM\PostUpdate
+     */
+    public function processPostUpdate()
+    {
+        // Add your code here
+    }
 }

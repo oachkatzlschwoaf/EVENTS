@@ -60,6 +60,9 @@ Event\GeneralBundle\Entity\InternalEvent:
             type: string
             length: 255
             nullable: true
+        createdAt:
+            type: datetime
+            column: created_at
     lifecycleCallbacks: 
         prePersist: [ processPrePersist ]
         postPersist: [ processPostPersist ]
