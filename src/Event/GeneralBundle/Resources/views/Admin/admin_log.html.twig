@@ -9,42 +9,78 @@
     <thead>
         <tr>
             <td style='width: 10%'>время</td>
-            <td style='width: 20%'>действие</td>
+            <td style='width: 12%'>действие</td>
             <td style='width: 70%'>описание</td>
         </tr>
     </thead>
     <tbody>
-        {% for l in log %}
-            <tr 
-                    {% if l.type == 1 %}
-                        style='background-color: #ffefa7'
-                    {% elseif l.type == 2 %}
-                        style='background-color: #ffcfa7'
-                    {% elseif l.type == 3 %}
-                        style='background-color: #ecffa7'
-                    {% endif %}
-            
-            >
-                <td style='border: none'>{{ l.getHumanDate() }}</td>
-                <td style='border: none'>
-                    {% if l.type == 1 %}
-                        create place
-                    {% elseif l.type == 2 %}
-                        create artist
-                    {% elseif l.type == 3 %}
-                        approve event
-                    {% endif %}
-                </td>
-                <td style='border: none'>
-                    {% if l.type == 1 %}
-                        Created place: <a href="{{ path('place', { id: l.getInfoVal('place_id') }) }}">{{ l.getInfoVal('place_name') }}</a>
-                    {% elseif l.type == 2 %}
-                        Created artist: <a href="{{ path('artist', { id: l.getInfoVal('artist_id') }) }}">{{ l.getInfoVal('artist_name') }}</a>
-                    {% elseif l.type == 3 %}
-                        Created event: <a href="{{ path('internal_event', { id: l.getInfoVal('event_id') }) }}">{{ l.getInfoVal('event_name') }}</a>
-                    {% endif %}
-                </td>
+        {% for dt, e_id in agg_log %}
+            <tr>
+                <td colspan="11" class='date'><h5>{{ dt }}</h5></td>
             </tr>
+ 
+            {% for l in agg_log[dt] %}
+                <tr 
+                        {% if l.type == 1 %}
+                            style='background-color: #ffefa7'
+                        {% elseif l.type == 2 %}
+                            style='background-color: #ffcfa7'
+                        {% elseif l.type == 3 %}
+                            style='background-color: #ecffa7'
+                        {% endif %}
+                
+                >
+                    <td style='border: none'>{{ l.getHumanDateTime() }}</td>
+                    <td style='border: none'>
+                        {% if l.type == 1 %}
+                            create place
+                        {% elseif l.type == 2 %}
+                            create artist
+                        {% elseif l.type == 3 %}
+                            approve event
+                        {% elseif l.type == 4 %}
+                            grab report 
+                        {% elseif l.type == 5 %}
+                            tickets report 
+                        {% elseif l.type == 6 %}
+                            error report 
+                        {% endif %}
+                    </td>
+                    <td style='border: none'>
+                        {% if l.type == 1 %}
+                            Created place: <a href="{{ path('place', { id: l.getInfoVal('place_id') }) }}">{{ l.getInfoVal('place_name') }}</a>
+                        {% elseif l.type == 2 %}
+                            Created artist: <a href="{{ path('artist', { id: l.getInfoVal('artist_id') }) }}">{{ l.getInfoVal('artist_name') }}</a>
+                        {% elseif l.type == 3 %}
+                            Approve event: <a href="{{ path('internal_event', { id: l.getInfoVal('event_id') }) }}">{{ l.getInfoVal('event_name') }}</a>
+                        {% elseif l.type == 4 %}
+                            Provider: <b>{{ providers[ l.getInfoVal('provider') ].name }}</b>
+                            <li>New: <b>{{ l.getInfoVal('new') }}</b></li>
+                            <li>Exists: {{ l.getInfoVal('exists') }}</li>
+                        {% elseif l.type == 5 %}
+                            <div class='ticket-report'>
+                                <b>Update</b> 
+                                {% for p_id, val in l.getInfoVal('update')|sort %}
+                                    <li>{{ providers[ p_id ].name }}: {{ val }}</li>
+                                {% endfor %}
+                            </div>
+                            <div class='ticket-report'>
+                                <b>New</b> 
+                                {% for p_id, val in l.getInfoVal('save')|sort %}
+                                    <li>{{ providers[ p_id ].name }}: {{ val }}</li>
+                                {% endfor %}
+                            </div>
+                            <div class='ticket-report'>
+                                <b>Off</b> 
+                                {% for p_id, val in l.getInfoVal('off')|sort %}
+                                    <li>{{ providers[ p_id ].name }}: {{ val }}</li>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+
         {% endfor %}
     </tbody>
 </div>

@@ -108,9 +108,14 @@ class AdminAction
         return $this->createdAt;
     }
 
-    public function getHumanDate()
+    public function getHumanDateTime()
     {
         return $this->createdAt->format('d.m.Y H:i');
+    }
+
+    public function getHumanDate()
+    {
+        return $this->createdAt->format('d.m.Y');
     }
 
     /**

@@ -202,3 +202,9 @@ h1 {
 .crp {
     margin-bottom: 1em;
 }
+
+.ticket-report {
+    display: inline-block;
+    margin-right: 2em;
+    width: 200px;
+}

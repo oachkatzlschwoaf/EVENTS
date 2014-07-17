@@ -1583,11 +1583,30 @@ class AdminController extends Controller {
         $log = $em->createQuery("select p from EventGeneralBundle:AdminAction p order by p.createdAt DESC")
             ->getResult();
 
-        $counters  = $this->getCounters();
+        $agg_log = array();
+        foreach ($log as $e) {
+            $agg_log[ $e->getHumanDate() ][ $e->getId() ] = $e;
+        }
+
+        foreach ($agg_log as $dt => $arr) {
+            uasort($arr, function($a, $b) {
+                if ($a->getCreatedAt() == $b->getCreatedAt()) {
+                    return 0;
+                }
+                return ($a->getCreatedAt() < $b->getCreatedAt()) ? -1 : 1;
+            });
+
+            $agg_log[$dt] = $arr;
+        }
+
+        $providers = $this->getProviders();
+        $counters = $this->getCounters();
 
         return $this->render('EventGeneralBundle:Admin:admin_log.html.twig', array(
             'admin_log' => 1,
             'log' => $log,
+            'agg_log' => $agg_log,
+            'providers' => $providers,
             'counters' => $counters,
         ));
     }
