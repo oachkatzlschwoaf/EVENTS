@@ -193,7 +193,7 @@
                                             {{ event.shortStartHuman() }}
                                         </div>
                                         <ul class='tags right'>
-                                            {% for t in event.getTagsList()|slice(0,3) %}
+                                            {% for t in event.getTagsList()|slice(0,2) %}
                                                 <li>{{ tags[t].name }}</li>
                                             {% endfor %}
                                         </ul>
