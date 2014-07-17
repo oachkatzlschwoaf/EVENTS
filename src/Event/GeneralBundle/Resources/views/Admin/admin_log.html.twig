@@ -71,9 +71,13 @@
                                 {% endfor %}
                             </div>
                             <div class='ticket-report'>
-                                <a href="{{ l.getInfoVal('link') }}">{{ l.getInfoVal('link') }}</a> : {{ l.getInfoVal('error') }}
+                                <b>Off</b> 
+                                {% for p_id, val in l.getInfoVal('off')|sort %}
+                                    <li>{{ providers[ p_id ].name }}: {{ val }}</li>
+                                {% endfor %}
                             </div>
                         {% elseif l.type == 6 %}
+                                <a href="{{ l.getInfoVal('link') }}">{{ l.getInfoVal('link') }}</a> : {{ l.getInfoVal('error') }}
                         {% endif %}
                     </td>
                 </tr>

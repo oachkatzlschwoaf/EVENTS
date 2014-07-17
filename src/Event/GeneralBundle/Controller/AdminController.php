@@ -1593,7 +1593,7 @@ class AdminController extends Controller {
                 if ($a->getCreatedAt() == $b->getCreatedAt()) {
                     return 0;
                 }
-                return ($a->getCreatedAt() < $b->getCreatedAt()) ? -1 : 1;
+                return ($a->getCreatedAt() > $b->getCreatedAt()) ? -1 : 1;
             });
 
             $agg_log[$dt] = $arr;
