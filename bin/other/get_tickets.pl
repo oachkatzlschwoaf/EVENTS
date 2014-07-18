@@ -16,6 +16,7 @@ use List::Util qw( min max );
 use JSON;
 use YAML;
 use DBI;
+use Digest::MD5 qw(md5 md5_hex md5_base64);
 
 binmode STDOUT, ':utf8';
 
@@ -550,9 +551,12 @@ sub saveTicket {
 
     my $dt = DateTime->now();
 
-    my $sql = "insert into `Ticket` (`provider_event`, `sector`, `price_min`, `price_max`, `status`, `created_at`) 
-        values(?, ?, ?, ?, ?, ?)";
+    my $sql = "insert into `Ticket` (`provider_event`, `sector`, `price_min`, `price_max`, `status`, `secret`, `created_at`) 
+        values(?, ?, ?, ?, ?, ?, ?)";
     my $sth = $d->prepare($sql);
+
+    my $hash_str = "$event_id-$sector-$min-$max-".rand(1000);
+    my $hash = md5_hex($hash_str);
 
     $sth->execute(
         $event_id,
@@ -560,6 +564,7 @@ sub saveTicket {
         $min,
         $max,
         1, 
+        $hash,
         $dt->ymd().' '.$dt->hms(),
     ); 
 

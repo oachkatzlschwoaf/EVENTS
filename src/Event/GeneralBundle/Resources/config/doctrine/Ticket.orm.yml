@@ -22,6 +22,9 @@ Event\GeneralBundle\Entity\Ticket:
             column: price_max
         status:
             type: integer
+        secret:
+            type: string
+            length: 255
         createdAt:
             type: datetime
             column: created_at
