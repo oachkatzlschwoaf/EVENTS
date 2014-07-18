@@ -22,3 +22,8 @@ Event\GeneralBundle\Entity\UserLike:
     uniqueConstraints:
         uid_ind_idx:
             columns: user_id, index_id
+    indexes:
+        start_user_idx:
+            columns: start, user_id 
+        index_user_idx:
+            columns: index_id, user_id 

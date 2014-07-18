@@ -17,3 +17,6 @@ Event\GeneralBundle\Entity\InternalProvider:
         status:
             type: integer
     lifecycleCallbacks: {  }
+    indexes:
+        internal_provider:
+            columns: internal_id, provider_id 

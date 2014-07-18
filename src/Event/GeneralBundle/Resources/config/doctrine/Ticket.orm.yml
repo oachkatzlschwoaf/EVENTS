@@ -36,3 +36,6 @@ Event\GeneralBundle\Entity\Ticket:
     uniqueConstraints:
         secret_idx:
             columns: secret 
+    indexes:
+        provider_idx:
+            columns: provider_event

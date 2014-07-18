@@ -68,3 +68,6 @@ Event\GeneralBundle\Entity\InternalEvent:
         postPersist: [ processPostPersist ]
         preUpdate: [ processPreUpdate ]
         postUpdate: [ processPostUpdate ]
+    indexes:
+        start_idx:
+            columns: start 

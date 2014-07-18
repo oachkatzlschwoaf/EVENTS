@@ -25,3 +25,6 @@ Event\GeneralBundle\Entity\UserAudio:
             type: text 
             nullable: true
     lifecycleCallbacks: {  }
+    indexes:
+        user_idx:
+            columns: user_id 

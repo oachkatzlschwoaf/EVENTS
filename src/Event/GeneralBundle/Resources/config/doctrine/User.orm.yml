@@ -55,3 +55,12 @@ Event\GeneralBundle\Entity\User:
         prePersist: [ processPrePersist ]
         postPersist: [ processPostPersist ]
         postUpdate: [ processPostUpdate ]
+    indexes:
+        email_subscribe_idx:
+            columns: email, subscribe 
+        email_idx:
+            columns: email
+        subscribe_secret_idx: 
+            columns: subscribe_secret 
+        network_idx: 
+            columns: network, network_id 

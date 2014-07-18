@@ -28,3 +28,8 @@ Event\GeneralBundle\Entity\UserAudioArtist:
         count:
             type: integer 
     lifecycleCallbacks: {  }
+    indexes:
+        user_idx:
+            columns: user_id 
+        artist_user_idx:
+            columns: clean_artist, user_id 

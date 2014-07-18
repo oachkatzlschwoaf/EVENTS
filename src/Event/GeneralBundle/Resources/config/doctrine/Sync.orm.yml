@@ -32,3 +32,6 @@ Event\GeneralBundle\Entity\Sync:
             type: datetime
             column: last_sync
     lifecycleCallbacks: {  }
+    indexes:
+        user_idx:
+            columns: user_id

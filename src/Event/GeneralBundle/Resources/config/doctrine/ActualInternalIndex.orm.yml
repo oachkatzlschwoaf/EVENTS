@@ -44,3 +44,8 @@ Event\GeneralBundle\Entity\ActualInternalIndex:
             type: text 
             nullable: true
     lifecycleCallbacks: {  }
+    indexes:
+        internal_idx:
+            columns: internal_id 
+        start_idx:
+            columns: start 

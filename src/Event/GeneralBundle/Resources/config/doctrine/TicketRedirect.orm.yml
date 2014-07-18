@@ -19,3 +19,6 @@ Event\GeneralBundle\Entity\TicketRedirect:
         prePersist: [ processPrePersist ]
         postPersist: [ processPostPersist ]
         postUpdate: [ processPostUpdate ]
+    indexes:
+        ticket_event_idx:
+            columns: ticket, event 
