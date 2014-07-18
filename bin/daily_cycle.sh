@@ -11,10 +11,13 @@
 ./grabbers/grab_afisha.pl;
 
 # 1.1. August fix (TODO: remove in august)
-./util/august_fix.pl
+./util/august_fix.pl;
 
 # 2. Grab tickets 
-./other/get_tickets.pl
+./other/get_tickets.pl;
 
 # 3. Check provider events health
-./other/check_events_health.pl
+./other/check_events_health.pl;
+
+# 4. Total stat 
+./other/global_stat.pl;

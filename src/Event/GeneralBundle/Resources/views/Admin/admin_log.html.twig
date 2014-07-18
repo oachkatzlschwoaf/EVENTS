@@ -27,6 +27,8 @@
                             style='background-color: #ffcfa7'
                         {% elseif l.type == 3 %}
                             style='background-color: #ecffa7'
+                        {% elseif l.type == 6 %}
+                            style='background-color: #ffcbcb'
                         {% endif %}
                 
                 >
@@ -44,6 +46,8 @@
                             tickets report 
                         {% elseif l.type == 6 %}
                             error report 
+                        {% elseif l.type == 7 %}
+                            daily report 
                         {% endif %}
                     </td>
                     <td style='border: none'>
@@ -60,24 +64,48 @@
                         {% elseif l.type == 5 %}
                             <div class='ticket-report'>
                                 <b>Update</b> 
-                                {% for p_id, val in l.getInfoVal('update')|sort %}
-                                    <li>{{ providers[ p_id ].name }}: {{ val }}</li>
-                                {% endfor %}
+                                {% if l.getInfoVal('update') and l.getInfoVal('update')|length %}
+                                    {% for p_id, val in l.getInfoVal('update')|sort %}
+                                        <li>{{ providers[ p_id ].name }}: {{ val }}</li>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                             <div class='ticket-report'>
-                                <b>New</b> 
-                                {% for p_id, val in l.getInfoVal('save')|sort %}
-                                    <li>{{ providers[ p_id ].name }}: {{ val }}</li>
-                                {% endfor %}
+                                {% if l.getInfoVal('save') and l.getInfoVal('save')|length %}
+                                    <b>New</b> 
+                                    {% for p_id, val in l.getInfoVal('save')|sort %}
+                                        <li>{{ providers[ p_id ].name }}: {{ val }}</li>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                             <div class='ticket-report'>
                                 <b>Off</b> 
-                                {% for p_id, val in l.getInfoVal('off')|sort %}
-                                    <li>{{ providers[ p_id ].name }}: {{ val }}</li>
-                                {% endfor %}
+                                {% if l.getInfoVal('off') and l.getInfoVal('off')|length %}
+                                    {% for p_id, val in l.getInfoVal('off')|sort %}
+                                        <li>{{ providers[ p_id ].name }}: {{ val }}</li>
+                                    {% endfor %}
+                                {% endif %}
                             </div>
                         {% elseif l.type == 6 %}
-                                <a href="{{ l.getInfoVal('link') }}">{{ l.getInfoVal('link') }}</a> : {{ l.getInfoVal('error') }}
+                                <a href="{{ path('provider_event', { "id" : l.getInfoVal('event') }) }}" target="_blank">EVENT {{ l.getInfoVal('event') }}</a> - <a target="_blank" href="{{ l.getInfoVal('link') }}">{{ l.getInfoVal('link') }}</a> : {{ l.getInfoVal('error') }}
+
+                        {% elseif l.type == 7 %}
+                            <b>Внутренние события</b>
+                            <li>New: {{ l.getInfoVal('internal').new }}</li>
+                            <li>Wait: {{ l.getInfoVal('internal').wait }}</li>
+                            <li>Total: {{ l.getInfoVal('internal').total }}</li>
+                            <br />
+                            <b>События провайдеров</b>
+                            <li>New: {{ l.getInfoVal('provider').new }}</li>
+                            <li>Total: {{ l.getInfoVal('provider').total }}</li>
+                            <br />
+                            <b>Билеты</b>
+                            <li>New: {{ l.getInfoVal('tickets').new }}</li>
+                            <li>Total: {{ l.getInfoVal('tickets').total }}</li>
+                            <br />
+                            <b>Пользователи</b>
+                            <li>New: {{ l.getInfoVal('users').new }}</li>
+                            <li>Total: {{ l.getInfoVal('users').total }}</li>
                         {% endif %}
                     </td>
                 </tr>
