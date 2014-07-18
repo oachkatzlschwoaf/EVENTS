@@ -740,6 +740,15 @@ class AdminController extends Controller {
         $em->persist($ie);
         $em->flush();
 
+        # Save admin action
+        $log = array('event_id' => $ie->getId(), 'event_name' => $ie->getName()); 
+
+        $aa = new AdminAction;
+        $aa->setType(8); // Action: event cancelled 
+        $aa->setInfo( json_encode($log) );
+        $em->persist($aa);
+        $em->flush();
+
         return $this->redirect($this->generateUrl('internal_event', array('id' => $i_id)));
     }
 
@@ -758,15 +767,6 @@ class AdminController extends Controller {
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($ie);
-        $em->flush();
-
-        # Save admin action
-        $log = array('event_id' => $ie->getId(), 'event_name' => $ie->getName()); 
-
-        $aa = new AdminAction;
-        $aa->setType(8); // Action: event cancelled 
-        $aa->setInfo( json_encode($log) );
-        $em->persist($aa);
         $em->flush();
 
         return $this->redirect($this->generateUrl('internal_event', array('id' => $i_id)));
