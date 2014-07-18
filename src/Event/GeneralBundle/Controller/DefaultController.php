@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 # Entities
 use Event\GeneralBundle\Entity\InternalEvent;
@@ -1442,4 +1443,30 @@ class DefaultController extends Controller {
         return new Response(json_encode($names));
     }
 
+
+    public function redirectTicketAction(Request $r) {
+        $secret = $r->get('secret');
+
+        $em = $this->getDoctrine()->getManager();
+        $ticket = $em->createQuery("select p from EventGeneralBundle:Ticket p where p.secret = :secret")
+            ->setParameter('secret', $secret)  
+            ->getResult();
+
+        if (!$ticket || count($ticket) == 0) {
+            throw new NotFoundHttpException("Page not found");
+        }
+
+        $ticket = $ticket[0];
+        
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:ProviderEvent');
+
+        $event = $rep->find( $ticket->getProviderEvent() );
+
+        if (!$event) {
+            throw new NotFoundHttpException("Page not found");
+        }
+
+        return $this->redirect( $event->getLink() );
+    }
 }

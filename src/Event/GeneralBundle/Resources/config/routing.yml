@@ -38,6 +38,10 @@ unsubscribe:
     pattern:  /user/{hash}/unsubscribe
     defaults: { _controller: EventGeneralBundle:Default:unsubscribe }
 
+ticket:
+    pattern:  /ticket/{secret}
+    defaults: { _controller: EventGeneralBundle:Default:redirectTicket }
+
 # ADMIN
 
 admin:

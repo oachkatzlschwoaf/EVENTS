@@ -154,7 +154,7 @@
                                 <td>{% if t.price_min == t.price_max %}{{ t.price_min|number_format(0, ',', ' ') }}{% else %}{{ t.price_min|number_format(0, ',', ' ') }} &mdash; {{ t.price_max|number_format(0, ',', ' ') }}{% endif %}</td>
                                 <td>{{ t.provider_name }}</td>
                                 <td>
-                                    <a target='_blank' href='{{ t.link }}' class='btn btn-small'>Купить</a>
+                                    <a target='_blank' href='{{ path('ticket', { 'secret': t.secret }) }}' class='btn btn-small'>Купить</a>
                                 </td>
                             </tr>
                         {% endfor %}
