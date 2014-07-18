@@ -653,12 +653,12 @@ foreach my $e_id (keys %$provider_events) {
     my $new_tickets = $tickets->{$e_id};
 
     foreach my $sector (keys %$new_tickets) {
-        $sector = trim($sector);
-
         my $min = $new_tickets->{$sector}{'price_min'};
         my $max = $new_tickets->{$sector}{'price_max'};
 
         next if (!$sector || !$min || !$max);
+
+        $sector = trim($sector);
 
         if (defined($ex_tickets->{$sector}) && scalar( keys %{ $ex_tickets->{$sector} } ) > 0) {
             $save_stat->{'update'}{ $event->{'provider'} }++;
