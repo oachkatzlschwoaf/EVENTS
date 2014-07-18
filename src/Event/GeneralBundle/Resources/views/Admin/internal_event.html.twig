@@ -424,7 +424,7 @@
             {% for a in event.getArtistsList() %}
                 <tr>
                     <td> 
-                        <b><a href="{{ path('artist', { 'id': a }) }}">{{ artists[ a ].name }}</a></b> 
+                        <b><a target="_blank" href="{{ path('artist', { 'id': a }) }}">{{ artists[ a ].name }}</a></b> 
                     </td>
                     {% if artists[ a ].getTags %}
                         <td>
