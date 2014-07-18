@@ -1,0 +1,21 @@
+Event\GeneralBundle\Entity\TicketRedirect:
+    type: entity
+    table: null
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        ticket:
+            type: integer
+        event:
+            type: integer
+        createdAt:
+            type: datetime
+            column: created_at
+    lifecycleCallbacks: 
+        prePersist: [ processPrePersist ]
+        postPersist: [ processPostPersist ]
+        postUpdate: [ processPostUpdate ]

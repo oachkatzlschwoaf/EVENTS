@@ -17,6 +17,7 @@ use Event\GeneralBundle\Entity\User;
 use Event\GeneralBundle\Entity\UserAudio;
 use Event\GeneralBundle\Entity\Sync;
 use Event\GeneralBundle\Entity\UserLike;
+use Event\GeneralBundle\Entity\TicketRedirect;
 
 # Forms
 use Event\GeneralBundle\Form\ProviderEventType; 
@@ -1466,6 +1467,14 @@ class DefaultController extends Controller {
         if (!$event) {
             throw new NotFoundHttpException("Page not found");
         }
+
+        # Count redirect
+        $tr = new TicketRedirect;
+        $tr->setTicket( $ticket->getId() );
+        $tr->setEvent( $event->getId() );
+
+        $em->persist($tr);
+        $em->flush();
 
         return $this->redirect( $event->getLink() );
     }
