@@ -144,11 +144,11 @@ sub getInternalEvents {
             
             next if (!$link || !$provider); 
 
-            $sql = "select `id`, `sector`, `price_min`, `price_max` from `Ticket` where provider_event = $provider_id and status = 1";
+            $sql = "select `id`, `sector`, `price_min`, `price_max`, `secret` from `Ticket` where provider_event = $provider_id and status = 1";
             my $sth4 = $d->prepare($sql);
             $sth4->execute();
 
-            while ( my ($ticket_id, $sector, $price_min, $price_max) = $sth4->fetchrow_array() ) {
+            while ( my ($ticket_id, $sector, $price_min, $price_max, $secret) = $sth4->fetchrow_array() ) {
                 $tickets->{$ticket_id} = {
                     'provider_id'   => $provider_id,
                     'link'          => $link,
@@ -157,6 +157,7 @@ sub getInternalEvents {
                     'sector'        => $sector,
                     'price_min'     => $price_min,
                     'price_max'     => $price_max,
+                    'secret'        => $secret,
                 };
             }
         }

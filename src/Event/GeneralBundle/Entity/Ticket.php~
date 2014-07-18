@@ -222,4 +222,32 @@ class Ticket
     {
         // Add your code here
     }
+    /**
+     * @var string
+     */
+    private $secret;
+
+
+    /**
+     * Set secret
+     *
+     * @param string $secret
+     * @return Ticket
+     */
+    public function setSecret($secret)
+    {
+        $this->secret = $secret;
+
+        return $this;
+    }
+
+    /**
+     * Get secret
+     *
+     * @return string 
+     */
+    public function getSecret()
+    {
+        return $this->secret;
+    }
 }

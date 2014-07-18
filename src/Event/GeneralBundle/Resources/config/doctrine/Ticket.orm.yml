@@ -33,3 +33,6 @@ Event\GeneralBundle\Entity\Ticket:
         postPersist: [ processPostPersist ]
         preUpdate: [ processPreUpdate ]
         postUpdate: [ processPostUpdate ]
+    uniqueConstraints:
+        secret_idx:
+            columns: secret 
