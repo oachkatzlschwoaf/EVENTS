@@ -29,6 +29,8 @@
                             style='background-color: #ecffa7'
                         {% elseif l.type == 6 %}
                             style='background-color: #ffcbcb'
+                        {% elseif l.type == 8 %}
+                            style='background-color: #ff4040'
                         {% endif %}
                 
                 >
@@ -48,6 +50,8 @@
                             error report 
                         {% elseif l.type == 7 %}
                             daily report 
+                        {% elseif l.type == 8 %}
+                            cancel event 
                         {% endif %}
                     </td>
                     <td style='border: none'>
@@ -106,6 +110,8 @@
                             <b>Пользователи</b>
                             <li>New: {{ l.getInfoVal('users').new }}</li>
                             <li>Total: {{ l.getInfoVal('users').total }}</li>
+                        {% elseif l.type == 8 %}
+                            Cancel event: <a href="{{ path('internal_event', { id: l.getInfoVal('event_id') }) }}">{{ l.getInfoVal('event_name') }}</a>
                         {% endif %}
                     </td>
                 </tr>
