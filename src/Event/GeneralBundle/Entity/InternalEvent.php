@@ -732,7 +732,15 @@ class InternalEvent
         if (!$this->video) {
             return array();
         } else {
-            return explode(',', $this->video);
+            $arr = explode(',', $this->video);
+
+            $ret = array();
+            foreach ($arr as $e) {
+                $e = trim($e);
+                array_push($ret, $e);
+            }
+
+            return $ret;
         }
     }
 
