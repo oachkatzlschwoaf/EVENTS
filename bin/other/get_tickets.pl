@@ -556,7 +556,7 @@ sub saveTicket {
     my $sth = $d->prepare($sql);
 
     my $hash_str = "$event_id-$sector-$min-$max-".rand(1000);
-    my $hash = md5_hex($hash_str);
+    my $hash = md5_hex(Encode::encode_utf8($hash_str));
 
     $sth->execute(
         $event_id,
