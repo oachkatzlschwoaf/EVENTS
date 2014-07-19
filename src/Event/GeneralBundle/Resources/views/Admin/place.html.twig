@@ -119,6 +119,27 @@
 </div>
 
 <div style='width: 450px; float: left;'>
+    <table class='settings' style='font-size: 12px;'>
+        <thead>
+            <tr>
+                <td colspan="5"><h5>Перенести в другое место</h5></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <p>
+                        <small>введите идентификатор места</small>
+                    </p>
+                    <form action="{{ path('move_place', { 'id': place.id }) }}" method="post" novalidate>
+                        <input name="to_id" type="text" /> 
+                        <input type="submit" value="Склеить" />
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
     <table class='settings'>
         <thead>
             <tr>

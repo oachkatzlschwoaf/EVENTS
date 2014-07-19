@@ -184,6 +184,10 @@ move_artist:
     pattern:  /admin/artist/{id}/move
     defaults: { _controller: EventGeneralBundle:Admin:moveArtist }
 
+move_place:
+    pattern:  /admin/place/{id}/move
+    defaults: { _controller: EventGeneralBundle:Admin:movePlace }
+
 internal_provider:
     pattern:  /admin/internal/provider
     defaults: { _controller: EventGeneralBundle:Admin:internalProvider }

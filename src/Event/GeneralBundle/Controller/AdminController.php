@@ -1728,4 +1728,57 @@ class AdminController extends Controller {
 
         return $this->redirect($this->generateUrl('artist', array( 'id' => $to_id )));
     }
+
+    public function movePlaceAction(Request $r) {
+        $id = $r->get('id');
+        $to_id = $r->get('to_id');
+        
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:Place');
+        $place = $rep->find( $id );
+
+        if (!$place) {
+            return $this->redirect($this->generateUrl('places'));
+        }
+
+        $to_place = $rep->find( $to_id );
+
+        if (!$to_place) {
+            return $this->redirect($this->generateUrl('place', array( 'id' => $id )));
+        }
+
+        # Change Intenral Events
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:InternalEvent');
+
+        $internal_events = $rep->findAll();
+
+        $em = $this->getDoctrine()->getManager();
+        foreach ($internal_events as $ie) {
+            if ($ie->getPlace() == $id) {
+                $ie->setPlace($to_id);
+                $em->persist($ie);
+                $em->flush();
+            }
+        }
+
+        # Change Provider Events
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:ProviderEvent');
+
+        $provider_events = $rep->findAll();
+
+        foreach ($provider_events as $pe) {
+            if ($pe->getPlace() == $id) {
+                $pe->setPlace($to_id);
+                $em->persist($pe);
+                $em->flush();
+            }
+        }
+        # Remove place 
+        $em->remove($place);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('place', array( 'id' => $to_id )));
+    }
 }
