@@ -13,7 +13,7 @@ security:
                     user:  { password: userpass, roles: [ 'ROLE_USER' ] }
                     admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
                     content: { password: Med5wBva4x, roles: [ 'ROLE_ADMIN' ] }
-                    #content2: { password: kSqSViZTYC63kTo, roles: [ 'ROLE_ADMIN' ] }
+                    content2: { password: kSqSViZTYC63kTo, roles: [ 'ROLE_ADMIN' ] }
                     content3: { password: W4MZ61g3UN0Jp5f, roles: [ 'ROLE_ADMIN' ] }
 
     firewalls:
