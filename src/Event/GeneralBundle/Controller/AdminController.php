@@ -741,7 +741,9 @@ class AdminController extends Controller {
         $em->flush();
 
         # Save admin action
-        $log = array('event_id' => $ie->getId(), 'event_name' => $ie->getName()); 
+        $admin = $this->get('security.context')->getToken()->getUser();
+
+        $log = array('event_id' => $ie->getId(), 'event_name' => $ie->getName(), 'admin' => $admin->getUsername()); 
 
         $aa = new AdminAction;
         $aa->setType(8); // Action: event cancelled 
@@ -790,7 +792,9 @@ class AdminController extends Controller {
         $em->flush();
 
         # Save admin action
-        $log = array('event_id' => $ie->getId(), 'event_name' => $ie->getName()); 
+        $admin = $this->get('security.context')->getToken()->getUser();
+
+        $log = array('event_id' => $ie->getId(), 'event_name' => $ie->getName(), 'admin' => $admin->getUsername()); 
 
         $aa = new AdminAction;
         $aa->setType(3); // Action: event to work 
@@ -960,7 +964,9 @@ class AdminController extends Controller {
         $em->flush();
 
         # Save admin action
-        $log = array('place_id' => $place->getId(), 'place_name' => $place->getName()); 
+        $admin = $this->get('security.context')->getToken()->getUser();
+
+        $log = array('place_id' => $place->getId(), 'place_name' => $place->getName(), 'admin' => $admin->getUsername()); 
 
         $aa = new AdminAction;
         $aa->setType(1); // Action: add place
@@ -1171,7 +1177,9 @@ class AdminController extends Controller {
                 $em->flush();
 
                 # Save admin action
-                $log = array('artist_id' => $artist->getId(), 'artist_name' => $artist->getName()); 
+                $admin = $this->get('security.context')->getToken()->getUser();
+
+                $log = array('artist_id' => $artist->getId(), 'artist_name' => $artist->getName(), 'admin' => $admin->getUsername()); 
 
                 $aa = new AdminAction;
                 $aa->setType(2); // Action: add artist 
