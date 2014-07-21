@@ -11,6 +11,7 @@
             <td style='width: 10%'>время</td>
             <td style='width: 12%'>действие</td>
             <td style='width: 70%'>описание</td>
+            <td style='width: 10%'>менеджер</td>
         </tr>
     </thead>
     <tbody>
@@ -112,6 +113,11 @@
                             <li>Total: {{ l.getInfoVal('users').total }}</li>
                         {% elseif l.type == 8 %}
                             Cancel event: <a href="{{ path('internal_event', { id: l.getInfoVal('event_id') }) }}">{{ l.getInfoVal('event_name') }}</a>
+                        {% endif %}
+                    </td>
+                    <td style='border: none'>
+                        {% if l.getInfoVal('admin') %}
+                            {{ l.getInfoVal('admin') }}
                         {% endif %}
                     </td>
                 </tr>
