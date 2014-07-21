@@ -112,9 +112,14 @@
 
             <h4>Популярные Тэги</h4>
             <p class='popular_tags'>
-                {% for t_id, t in popular_tags %}
+                {% for t in popular_tags %}
                     <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
                 {% endfor %}
+
+                {% if not user_id %} 
+                    <a href="#" class='more-tags' onclick="showLoginSignupWindow()">Больше жанров!</a>
+                {% endif %}
+
                 <a href="#" class='music-tag unset-tag'>Отменить тэги</a>
             </p>
         </div>

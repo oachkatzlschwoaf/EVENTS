@@ -257,6 +257,28 @@ h2 {
     margin: .2em 0 1em 0;
 }
 
+.popular_tags a {
+    display: inline-block;
+    color: #999;
+    border: 1px solid #ccc;
+    padding: 0 .5em 0 .5em;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    margin: 0px .3em .3em 0px;
+    text-decoration: none;
+}
+
+.popular_tags a:hover {
+    color: #333;
+    border: 1px solid #333;
+    text-decoration: none;
+}
+
+.popular_tags .selected {
+    color: #d70a16;
+    border: 1px solid #d70a16;
+}
+
 .music-tag {
     margin: 0em .7em 0 0;
     text-decoration: none;
@@ -268,10 +290,13 @@ h2 {
 }
 
 .unset-tag {
-    border-top: 1px solid #eee;
-    margin-top: 5px;
-    display: block;
-    padding-top: 5px;
+    color: #333 !important;
+    border: 1px solid #333 !important;
+}
+
+.more-tags {
+    color: #159776 !important;
+    border: 1px solid #159776 !important;
 }
 
 .filters {
@@ -547,6 +572,7 @@ h2 {
 .event-tags a:hover {
     color: #333;
     border: 1px solid #333;
+    text-decoration: none;
 }
 
 #avatar {

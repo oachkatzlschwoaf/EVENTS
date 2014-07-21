@@ -26,9 +26,10 @@
     <h2>Главные концерты</h2>
 
     <div class='unit-100 popular_tags'>
-        {% for t_id, t in popular_tags %}
-            <a href="#" class='music-tag lead {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
+        {% for t in popular_tags %}
+            <a href="#" class='music-tag {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
         {% endfor %}
+        <a href="#" class='more-tags' onclick="showLoginSignupWindow()">Больше жанров!</a>
     </div>
 
     <div id="general_events_list">

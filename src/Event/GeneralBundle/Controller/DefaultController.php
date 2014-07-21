@@ -32,7 +32,7 @@ use Event\GeneralBundle\MobileDetect;
 class DefaultController extends Controller {
 
     private function getPopularTags() {
-        $tags = array( 11 => 'rock', 10 => 'russian rock', 46 => 'jazz', 39 => 'blues', 78 => 'pop', 6 => 'alternative', 28 => 'electronic', 3 => 'hip-hop', 34 => 'metal', 42 => 'indie', 20 => 'instrumental', 1 => 'rap', 15 => 'punk', 43 => 'british', 4 => 'russian rap', 26 => 'hardcore', 66 => 'chanson', 33 => 'heavy metal', 120 => 'classical', 57 => 'folk', 129 => 'experimental', 124 => '90s', 105 => 'punk rock', 24 => 'metalcore');
+        $tags = array( '80s', '90s', 'alternative', 'blues', 'chill out', 'classical', 'chanson', 'dance', 'disco', 'electronic', 'experimental', 'fusion', 'funk', 'folk', 'hardcore', 'heavy metal', 'hip-hop', 'house', 'indie', 'jazz', 'metal', 'pop', 'punk', 'rock', 'rap', 'soul', 'techno' );
         
         return $tags;
     }
@@ -461,7 +461,7 @@ class DefaultController extends Controller {
             // Check sync status 
             $sync = $this->checkSync($user_id, $session);
 
-            $my_tags = array_slice($user->getTagsListFull('sort'), 0, 50);
+            $my_tags = array_slice($user->getTagsListFull('sort'), 0, 30);
 
             $period = $this->prepareTimeInterval('all'); 
             $likes = $this->getUserLikes(array(
@@ -763,7 +763,7 @@ class DefaultController extends Controller {
 
         if ($user_id) {
             $user = $this->fetchUserById($user_id);
-            $my_tags = array_slice($user->getTagsListFull('sort'), 0, 50);
+            $my_tags = array_slice($user->getTagsListFull('sort'), 0, 30);
 
             $lperiod = $this->prepareTimeInterval('all'); 
             $likes = $this->getUserLikes(array(
