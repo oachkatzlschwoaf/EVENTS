@@ -1,22 +1,121 @@
 @import "museocyr.css";
 @import "charis.css";
 
-body, h1, h2, h3, h4 {
-    font-family: 'Museo Sans Cyr';
+/* 
+==============================================================================
+                                 G L O B A L 
+==============================================================================
+*/
+
+body, h1, h2, h3, h4, h5, h6 {
+    font-family: 'Museo Sans Cyr' !important;
 }
 
 
-h1, h2, h3, h4 {
-    font-weight: normal;
+h1, h2, h3, h4, h5 {
+    font-weight: normal !important;
+}
+
+h5 {
+    font-size: 16px !important;
 }
 
 p {
     font-family: 'Charis';
+    font-size: 16px;
+    line-height: 1.4em;
 }
 
-h2 {
-    font-size: 26px;
+.hidden {
+    opacity: .2;
 }
+
+.selected {
+    color: #d70a16;
+}
+
+.sans {
+    font-family: 'Museo Sans Cyr' !important;
+}
+
+.font-size-14 {
+    font-size: 14px;
+}
+
+.margin-top-1d2 {
+    margin-top: 1.2em !important;
+}
+
+.margin-bottom-0 {
+    margin-bottom: 0;
+}
+
+.margin-bottom-1d6 {
+    margin-bottom: 1.6em;
+}
+
+.margin-bottom-3 {
+    margin-bottom: 3em;
+}
+
+.min-height-500 {
+    min-height: 500px;
+}
+
+.min-height-800 {
+    min-height: 800px;
+}
+
+.margin-left-10 {
+    margin-left: 10px;
+}
+
+.margin-right-10 {
+    margin-right: 10px;
+}
+
+.icon-40 {
+    display: inline-block;
+    width: 40px;
+    height: 39px;
+    opacity: .5;
+    border-radius: 50px;
+    background-size: 100% 100%;
+}
+
+.icon-30 {
+    display: inline-block;
+    width: 30px;
+    height: 29px;
+    opacity: .5;
+    border-radius: 50px;
+    background-size: 100% 100%;
+}
+
+.btn-vk {
+    background: #5a7ca0;
+    color: #fff !important;
+}
+
+.btn-vk img {
+    width: 22px;
+    margin-right: 10px;
+}
+
+.btn-vk:hover {
+    background: #4b6b8f;
+    color: #fff !important;
+}
+
+.btn-vk:active {
+    color: #fff !important;
+}
+
+/* 
+==============================================================================
+                                G R I D 
+==============================================================================
+*/
 
 .container { 
     position: relative; 
@@ -25,7 +124,6 @@ h2 {
     padding: 0; 
 }
 
-/* GRID */
 .section {
 	clear: both;
 	padding: 0px;
@@ -40,8 +138,6 @@ h2 {
 
 .col:first-child { margin-left: 0; }
 
-
-/*  GROUPING  */
 .group:before,
 .group:after {
 	content:"";
@@ -78,66 +174,32 @@ h2 {
     width: 717px;
 }
 
-
-/* OTHER */
-
-#logo {
-    margin: -8px 25px 0 0;
-    display: block;
-    background-image: url('../images/logonew.png');
-    width: 190px;
-    height: 42px;
-    float: left;
+.span_3_of_12 h3 {
+    width: 80%;
 }
 
-#logo-box {
-    margin: 1.6em auto;
-    margin-bottom: 1em;
-    border-bottom: 1px solid #eee;
-    font-size: 18px;
+.span_6_of_12 h3 {
+    width: 50%;
 }
 
-#logo-box form, #logo-box nav {
-    margin-bottom: .8em;
-}
+/* 
+==============================================================================
+                          ELEMENT: EVENTS GRID 
+==============================================================================
+*/
 
-#logo-box form {
-    margin-right: .6em;
-}
-
-#logo-box .units-row {
-    margin-bottom: 0em;
-}
-
-#logo-box .navbar {
-    margin-top: 1px;
-}
-
-#logo-box .navbar a {
-    color: #000;
-}
-
-#logo-box .navbar a:hover {
-    color: #d70a16;
-}
-
-#logo-box .navbar .selected a {
-    color: #d70a16;
-}
-
-#welcome {
-    margin: 0px auto;
-    margin-bottom: 2em;
-}
+/* EVENT GRID */
 
 .event-block {
     display: block;
-    background-color: #999;
+
     height: 260px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
 
     text-decoration: none;
+
+    background-color: #999;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
 
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -166,79 +228,138 @@ h2 {
 
 .event-block .head {
     clear: both;
-    height: 180px;
     overflow: hidden;
+    height: 180px;
 }
 
-.event-block h3 {
-    font-family: 'Museo Sans Cyr';
+.event-block .head h3 {
+    overflow: hidden;
+    float: left;
+
     font-size: 18px;
     line-height: 24px;
     color: #fff;
+}
+
+.event-block .additional {
     overflow: hidden;
-    float: left;
+    margin-top: 32px;
+    color: #ccc;
+    font-size: 12px;
+}
+
+.event-block .additional .date-time {
+    padding: 0 .8em 0 .8em;
+
+    background: rgba(0, 0, 0, 0.4);
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    font-weight: bold;
+}
+
+.event-block .additional .tags {
+    list-style: none;
+}
+
+.event-block .additional .tags li {
+    display: inline-block;
+    padding: 0 .3em 0 .3em;
+
+    color: #111;
+    background: rgba(255, 255, 255, 0.5);
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.event-block .additional .tags .highlight {
+    color: #000;
+    background: rgba(255, 255, 255, 0.9);
 }
 
 .event-block .event-likes {
     display: none;
-    width: 30px;
-    height: 180px;
     overflow: hidden;
     float: right;
-}
-
-.hidden {
-    opacity: .2;
-}
-
-.likes-show .event-likes {
-    display: block !important;
+    width: 30px;
+    height: 180px;
 }
 
 .event-block:hover .event-likes {
     display: block;
 }
 
-.span_3_of_12 h3 {
-    width: 80%;
+.likes-show .event-likes {
+    display: block !important;
 }
 
-.span_6_of_12 h3 {
-    width: 50%;
+
+/* 
+==============================================================================
+                     ELEMENT: TOP & FOOTER & SEARCH
+==============================================================================
+*/
+
+/* TOP */
+
+#logo-box {
+    margin: 1.6em auto;
+    margin-bottom: 1em;
+    border-bottom: 1px solid #eee;
+    font-size: 18px;
 }
 
-.event-block .additional {
-    margin-top: 32px;
-    color: #ccc;
-    font-size: 12px;
-    overflow: hidden;
+#logo-box form, #logo-box nav {
+    margin-bottom: .8em;
 }
 
-.event-block .date-time {
-    background: rgba(0, 0, 0, 0.4);
-    padding: 0 .8em 0 .8em;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-    font-weight: bold;
+#logo-box form {
+    margin-right: .6em;
 }
 
-.event-block .tags {
-    list-style: none;
+#logo-box .navbar {
+    margin-top: 1px;
 }
 
-.event-block .tags li {
-    display: inline-block;
-    color: #111;
-    background: rgba(255, 255, 255, 0.5);
-    padding: 0 .3em 0 .3em;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-}
-
-.event-block .tags .highlight {
+#logo-box .navbar a {
     color: #000;
-    background: rgba(255, 255, 255, 0.9);
 }
+
+#logo-box .navbar a:hover {
+    color: #d70a16;
+}
+
+#logo-box .navbar .selected a {
+    color: #d70a16;
+}
+
+#logo {
+    margin: -8px 25px 0 0;
+    display: block;
+    background-image: url('../images/logonew.png');
+    width: 190px;
+    height: 42px;
+    float: left;
+}
+
+#top-search {
+    width: 250px;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+
+    display: inline-block;
+    vertical-align: top;
+    margin: -10px 0 0 10px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+
+    background-size: 50px 50px;
+}
+
+/* FOOTER */
 
 #footer {
     margin-top: 1.6em;
@@ -248,81 +369,24 @@ h2 {
     color: #737373;
 }
 
-#footer p {
-    font-family: 'Museo Sans Cyr';
-}
-
-.popular_tags {
-    font-family: 'Charis';
-    margin: .2em 0 1em 0;
-}
-
-.popular_tags a {
-    display: inline-block;
-    color: #999;
-    border: 1px solid #ccc;
-    padding: 0 .5em 0 .5em;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-    margin: 0px .3em .3em 0px;
-    text-decoration: none;
-}
-
-.popular_tags a:hover {
-    color: #333;
-    border: 1px solid #333;
-    text-decoration: none;
-}
-
-.popular_tags .selected {
-    color: #d70a16;
-    border: 1px solid #d70a16;
-}
-
-.music-tag {
-    margin: 0em .7em 0 0;
-    text-decoration: none;
-    white-space: nowrap;
-}
-
-.music-tag:hover {
-    text-decoration: underline;
-}
-
-.unset-tag {
-    color: #333 !important;
-    border: 1px solid #333 !important;
-}
-
-.more-tags {
-    color: #159776 !important;
-    border: 1px solid #159776 !important;
-}
-
-.filters {
-    padding-left: 14px;
-}
-
-.selected {
-    color: #d70a16;
-}
+/* AUTOCOMPLETE */
 
 .ui-autocomplete {
     -webkit-border-radius: 2px;
     border-radius: 2px;
     background: #fff;
     font-family: 'Museo Sans Cyr';
-    font-size: 100%;
+    font-size: 14px;
 }
 
 .ui-menu .ui-menu-item {
-  display: block;
-  border-bottom: 1px solid #eee;
-  padding: 5px 0 5px 0;
+    display: block;
+    border-bottom: 1px solid #eee;
+    padding: 5px 0 5px 0;
 }
 
 .ui-menu li:last-child {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 .ui-menu .ui-state-focus {
@@ -365,200 +429,19 @@ h2 {
     overflow: hidden;
 }
 
-#top-search {
-    width: 250px;
+/* 
+==============================================================================
+                              ELEMENT: TAGS 
+==============================================================================
+*/
+
+.popular_tags {
+    margin: .2em 0 1em 0;
 }
 
-#no-results {
-    margin-top: 1em;
-}
-
-#no-results h3 {
-    margin-bottom: 0;
-}
-
-#no-results .desc {
-    font-size: 14px;
-    width: 520px;
-    margin: 0px auto;
-}
-
-#no-results small {
-    font-size: 1.2em;
+.popular_tags a {
+    font-family: 'Museo Sans Cyr';
     font-weight: normal;
-}
-
-.event-title {
-    width: 100%;
-    height: 600px;
-    background: #ccc;
-    clear: both;
-    overflow: hidden;
-}
-
-.event-title .border {
-    border: 1px solid #fff;
-    margin: 15px;
-    height: 570px;
-    overflow: hidden;
-}
-
-.event-title .title {
-    margin: 0px auto;
-    margin-top: 400px;
-    width: 500px;
-    height: 137px;
-    overflow: hidden;
-}
-
-.event-title .title h1 {
-    font-size: 2.4em;
-    margin-bottom: 10px;
-}
-
-.event-title .title h5 {
-    font-weight: normal;
-}
-
-.event-title p {
-    font-size: 1.2em; 
-    font-family: 'Museo Sans Cyr';
-    margin-bottom: 5px;
-}
-
-.event-title .buttons {
-    margin: 0px auto;
-    overflow: hidden;
-    margin-top: -20px;
-}
-
-/* medium title */
-
-.event-title-medium {
-    width: 100%;
-    height: 450px;
-    background: #ccc;
-    clear: both;
-    overflow: hidden;
-}
-
-.event-title-medium .title {
-    margin: 0px auto;
-    margin-top: 30px;
-    width: 500px;
-    height: 120px;
-    overflow: hidden;
-}
-
-.event-title-medium .title h1 {
-    font-size: 2em;
-    margin-bottom: 6px;
-}
-
-.event-title-medium .title h5 {
-    font-weight: normal;
-}
-
-.event-title-medium p {
-    font-size: 1.2em; 
-    font-family: 'Museo Sans Cyr';
-    margin-bottom: 5px;
-}
-
-.event-title-medium .border {
-    border: 1px solid #fff;
-    margin: 15px;
-    height: 420px;
-    overflow: hidden;
-}
-
-.event-title-medium .buttons {
-    margin: 0px auto;
-    margin-top: 215px;
-    overflow: hidden;
-}
-
-.event-white, .event-white h5, .event-white p, .event-white h1 {
-    color: #fff !important;
-}
-
-.event-big-white, .event-big-white h5, .event-big-white p, .event-big-white h1 {
-    color: #fff !important;
-}
-
-/* EVENT PAGE */
-
-.event-desc {
-    clear: both;
-}
-
-.event-desc p {
-    font-size: 16px;
-    line-height: 1.4em;
-    font-weight: 300;
-}
-
-.when {
-    font-size: 100%;
-    font-family: 'Museo Sans Cyr';
-}
-
-#tickets-sub-title {
-    margin-top: 20px;
-}
-
-.container-light-gray {
-    background-color: #eee;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-}
-
-#map {
-    background-color: #eee;
-    width: 474px; 
-    height: 200px;
-    float: left;
-    margin-right: 12px;
-}
-
-#map-desc {
-    width: 231px; 
-    height: 200px;
-    float: left;
-}
-
-#map-desc h5 {
-    font-size: 16px;
-}
-
-.likes {
-    background: #eee;
-    padding: .6em 0 .4em .8em;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-}
-
-.likes .button-container {
-    display: inline-block;
-    width: 130px;
-}
-
-.likes small {
-    display: inline-block;
-    width: 100px;
-    float: left;
-    font-family: 'Museo Sans Cyr';
-    font-size: 14px;
-    margin-left: 47px;
-    padding-top: 6px;
-}
-
-.event-tags {
-    list-style: none;
-    margin: 10px 12px 10px 0px;
-}
-
-.event-tags a {
     display: inline-block;
     color: #999;
     border: 1px solid #ccc;
@@ -569,69 +452,42 @@ h2 {
     text-decoration: none;
 }
 
-.event-tags a:hover {
+.popular_tags a:hover {
     color: #333;
     border: 1px solid #333;
     text-decoration: none;
 }
 
-#avatar {
-    width: 50px;
-    height: 50px;
-
-    display: inline-block;
-    vertical-align: top;
-    margin: -10px 0 0 10px;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-
-    background-size: 50px 50px;
+.popular_tags .selected {
+    color: #d70a16;
+    border: 1px solid #d70a16;
 }
 
-#afisha-preloader {
-    margin-top: 1em;
-    min-height: 500px; 
+.unset-tag {
+    color: #333 !important;
+    border: 1px solid #333 !important;
 }
 
-.tags-list {
-    height: 250px;
-    overflow: hidden;
+.more-tags {
+    color: #159776 !important;
+    border: 1px solid #159776 !important;
 }
 
-.min-height-500 {
-    min-height: 500px;
+/* 
+==============================================================================
+                              ELEMENT: FILTERS 
+==============================================================================
+*/
+
+.filters {
+    padding-left: 14px;
 }
 
-.min-height-800 {
-    min-height: 800px;
-}
-
-.icon-40 {
-    display: inline-block;
-    width: 40px;
-    height: 39px;
-    opacity: .5;
-    border-radius: 50px;
-    background-size: 100% 100%;
-}
-
-.icon-30 {
-    display: inline-block;
-    width: 30px;
-    height: 29px;
-    opacity: .5;
-    border-radius: 50px;
-    background-size: 100% 100%;
-}
-
-.margin-left-10 {
-    margin-left: 10px;
-}
-
-.margin-right-10 {
-    margin-right: 10px;
-}
+/* 
+==============================================================================
+                             ELEMENT: LIKES 
+==============================================================================
+*/
 
 .like-icon {
     background-image: url('../images/heart-inactive.png');
@@ -679,6 +535,12 @@ h2 {
     color: #d70a16;
 }
 
+/* 
+==============================================================================
+                            ELEMENT: WINDOW 
+==============================================================================
+*/
+
 #login-signup-window {
     width: 350px;
     height: 200px;
@@ -688,28 +550,15 @@ h2 {
     width: 500px;
 }
 
-#subscribe-window .forms {
-    margin-bottom: 0;
-}
-
 #subscribe-window p {
     padding-left: 0px;
-}
-
-#subscribe-window input {
-    font-size: 16px;
 }
 
 #email-window {
     width: 500px;
 }
 
-#email-window input {
-    font-size: 16px;
-}
-
 #email-window p {
-    font-size: 16px;
     padding: 0px;
     margin-top: .8em;
     margin-bottom: .8em;
@@ -740,76 +589,177 @@ h2 {
     display: inline-block;
     background-image: url('../images/logo.png');
     width: 140px;
-    height: 22px;
-    margin-top: 8px;
-}
-
-.btn-vk {
-  background: #5a7ca0;
-  color: #fff;
-}
-
-.btn-vk img {
-    width: 22px;
-    margin-right: 10px;
-}
-
-.btn-vk:hover {
-  background: #4b6b8f;
-  color: #fff;
-}
-
-.btn-vk:active {
-  color: #fff;
+    height: 33px;
+    margin-top: 4px;
 }
 
 
-.exit-icon {
-    background-image: url('../images/exit.png');
-    color: #000;
+/* 
+==============================================================================
+                        PAGE: INDEX, AFISHA, SEARCH
+==============================================================================
+*/
+
+#welcome {
+    margin: 0px auto;
+    margin-bottom: 2em;
 }
 
-.exit-icon:hover {
-    background-image: url('../images/exit-hover.png');
-    opacity: .8 !important;
-    color: #000;
-}
-
-#exit {
-    margin-top: 2px;   
-    margin-right: 5px;
-}
-
-
-#more-tags {
-    margin-bottom: 1.6em;
-}
-
-
-#media-info {
-    padding-left: 14px;
-}
-
-
-#first-time .desc {
-    font-size: 14px;
+.desc {
     width: 520px;
     margin: 0px auto;
+    line-height: 1.4em;
+    font-size: 16px;
 }
 
-#first-time small {
-    font-size: 1.2em;
-    font-weight: normal;
-}
+/* NO RESULTS */
 
 #sad-full {
     margin: 0px auto;
     width: 70%;
 }
 
+#no-results {
+    margin-top: 1em;
+}
+
+/* 
+==============================================================================
+                               PAGE: EVENT 
+==============================================================================
+*/
+
+/* BIG TITLE */
+
+.event-title {
+    width: 100%;
+    height: 600px;
+    background: #ccc;
+    clear: both;
+    overflow: hidden;
+}
+
+.event-title .border {
+    border: 1px solid #fff;
+    margin: 15px;
+    height: 570px;
+    overflow: hidden;
+}
+
+.event-title .title {
+    margin: 0px auto;
+    margin-top: 400px;
+    width: 500px;
+    height: 137px;
+    overflow: hidden;
+}
+
+.event-title .title h1 {
+    margin-bottom: 10px;
+}
+
+.event-title .buttons {
+    margin: 0px auto;
+    overflow: hidden;
+    margin-top: -20px;
+}
+
+/* MEDIUM TITLE */
+
+.event-title-medium {
+    width: 100%;
+    height: 450px;
+    background: #ccc;
+    clear: both;
+    overflow: hidden;
+}
+
+.event-title-medium .title {
+    margin: 0px auto;
+    margin-top: 30px;
+    width: 500px;
+    height: 120px;
+    overflow: hidden;
+}
+
+.event-title-medium .title h1 {
+    margin-bottom: 6px;
+}
+
+.event-title-medium .border {
+    border: 1px solid #fff;
+    margin: 15px;
+    height: 420px;
+    overflow: hidden;
+}
+
+.event-title-medium .buttons {
+    margin: 0px auto;
+    margin-top: 215px;
+    overflow: hidden;
+}
+
+.event-white, .event-white h5, .event-white p, .event-white h1 {
+    color: #fff !important;
+}
+
+.event-big-white, .event-big-white h5, .event-big-white p, .event-big-white h1 {
+    color: #fff !important;
+}
+
+/* MAP */
+
+#map {
+    background-color: #eee;
+    width: 474px; 
+    height: 200px;
+    float: left;
+    margin-right: 12px;
+}
+
+#map-desc {
+    width: 231px; 
+    height: 200px;
+    float: left;
+}
+
+/* LIKES ON EVENT PAGE */
+
 .like-buttons {
     min-height: 34px;
     overflow: hidden;
     margin-top: 1.2em;
+}
+
+.likes {
+    background: #eee;
+    padding: .6em 0 .4em .8em;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.likes .button-container {
+    display: inline-block;
+    width: 130px;
+}
+
+.likes small {
+    display: inline-block;
+    width: 100px;
+    float: left;
+    font-size: 14px;
+    margin-left: 47px;
+    padding-top: 6px;
+}
+
+/* 
+==============================================================================
+                               PAGE: PROFILE 
+==============================================================================
+*/
+
+.tags-list {
+    height: 250px;
+    overflow: hidden;
 }
 

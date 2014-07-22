@@ -1,0 +1,25 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+
+{% include 'EventGeneralBundle:Default:top.html.twig' %}
+
+<div class="container min-height-500">
+    <div class="section group">
+        <div class="col span_9_of_12">
+            <h1>О MusicMate</h1> 
+            <div class='margin-bottom-3'>
+                <p>Привет!</p> 
+                <p>MusicMate задумывался мной еще в институте, когда я делал дипломную работу. Будучи студентом и не имея много денег, я хотел решить проблему поиска лучших цен на билеты на концерты. Кроме этого, мне ужасно не нравилось, что я часто упускаю из виду концерты любимых музыкантов. А происходит это потому, что я не могу найти информации о концертах. Музыкальные афиши не знают, какую музыку я слушаю и не умеют предлагать мне то, что я хочу.</p>
+                <p>Не так давно, появилась идея как решить эту проблему. Что если создать персональную афишу, основываясь на плейлисте в социальных сетях. Так появился MusicMate. Мы анализируем ваш плейлист и составляем по нему персональную подборку концертов. Кроме этого, MusicMate будет оповещать вас о концертах любимых групп.</p>
+                <p>Буду рад вашим отзывам &mdash; пишите на musicmate@mail.ru</p>
+            </div>
+            <div>
+                <div class="avatar left" style="background-image: url('http://cs303210.vk.me/u493081/e_ff0e17ad.jpg')"></div>
+                <small class="left margin-left-10 font-size-14">Роман Новиков,<br />основатель MusicMate</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'EventGeneralBundle:Default:bottom.html.twig' %}
+
+{% endblock %}

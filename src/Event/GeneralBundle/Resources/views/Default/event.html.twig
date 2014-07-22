@@ -1,6 +1,6 @@
 {% extends '::base.html.twig' %}
 
-{% block title %}{{ event.name }} билеты - Eventmate{% endblock %}
+{% block title %}{{ event.name }} билеты - Москва{% endblock %}
 
 {% block body %}
 
@@ -17,7 +17,7 @@
                 '>
                     <div class='border'>
                         <div class="title">
-                            <p>{{ event.fullStartHuman() }}</p>
+                            <h5>{{ event.fullStartHuman() }}</h5>
                             <h1>{{ event.name }}</h1>
                             <h5>{{ place.name }}</h5>
                         </div>
@@ -37,7 +37,7 @@
                 '>
                     <div class='border'>
                         <div class="title">
-                            <p>{{ event.fullStartHuman() }}</p>
+                            <h5>{{ event.fullStartHuman() }}</h5>
                             <h1>{{ event.name }}</h1>
                             <h5>{{ place.name }}</h5>
                         </div>
@@ -58,7 +58,7 @@
     <div class="section group">
         <div class="col span_8_of_12 event-content">
             {% if index.getTagsNamesList()|length > 0 %}
-                <div class='event-tags' style='margin: 0 0 10px 0'>
+                <div class='popular_tags'>
                     {% for tag in index.getTagsNamesList() %}
                         <a href="{{ path('search') }}?query=(@tags_names+{{ tag }})&sort=date">{{ tag }}</a>
                     {% endfor %}
@@ -107,16 +107,16 @@
         </div>
     {% endif %}
 
-    <div class="section group">
+    <div class="section group margin-top-1d2">
         <div class="col span_9_of_12 event-content">
             <h3>Когда?</h3>
-            <p class='when'>
-                {{ event.fullEventDate() }} - {{ event.howLong() }} 
-            </p>
+            <div class='font-size-14'>
+                {{ event.fullEventDate() }} &mdash; {{ event.howLong() }} 
+            </div>
         </div>
     </div>
 
-    <div class="section group">
+    <div class="section group margin-top-1d2">
         <div class="col span_9_of_12 event-content">
             <h3>Где?</h3>
             {% if place.latitude and place.longitude and place.zoom %}
@@ -134,9 +134,9 @@
     </div>
 
     {% if tickets|length > 0 %}
-        <div class="section group">
+        <div class="section group margin-top-1d2">
             <div class="col span_9_of_12 event-content">
-                <h3 id="tickets-sub-title">Билеты</h3>
+                <h3>Билеты</h3>
 
                 <table class='width-100'>
                     <thead>
@@ -165,7 +165,7 @@
     {% endif %}
 
     {% if similar|length > 0 %}
-        <div class="section group">
+        <div class="section group margin-top-1d2">
             <div class="col span_9_of_12 event-content">
                 <h3>Похожие события</h3>
 

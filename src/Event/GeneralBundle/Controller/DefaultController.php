@@ -31,6 +31,12 @@ use Event\GeneralBundle\MobileDetect;
 
 class DefaultController extends Controller {
 
+/* 
+==============================================================================
+                              UTIL FUNCTIONS 
+==============================================================================
+*/
+
     private function getPopularTags() {
         $tags = array( '80s', '90s', 'alternative', 'blues', 'chill out', 'classical', 'chanson', 'dance', 'disco', 'electronic', 'experimental', 'fusion', 'funk', 'folk', 'hardcore', 'heavy metal', 'hip-hop', 'house', 'indie', 'jazz', 'metal', 'pop', 'punk', 'rock', 'rap', 'soul', 'techno' );
         
@@ -86,24 +92,6 @@ class DefaultController extends Controller {
         return array('start' => $start, 'end' => $end);
     }
 
-
-    private function getUserLikes( $params = array() ) {
-        # Date Interval
-        $em = $this->getDoctrine()->getManager();
-        $likes = $em->createQuery("select p from EventGeneralBundle:UserLike p where p.start >= :start and p.start <= :end and p.userId = :user_id")
-            ->setParameter('start', $params['start'])  
-            ->setParameter('end', $params['end'])  
-            ->setParameter('user_id', $params['user_id'])  
-            ->getResult();
-
-        $ret = array();
-        foreach ($likes as $l) {
-            $ret[ $l->getIndexId() ] = $l;
-        }
-
-        return $ret;
-    }
-
     private function serialIndexEvents ($events) {
         $ret_events = array();
         foreach ($events as $e) {
@@ -137,11 +125,11 @@ class DefaultController extends Controller {
                 $part_events = $em->createQuery("select p from EventGeneralBundle:ActualInternalIndex p where p.start >= :start and p.start <= :end and p.id in ($ids_str) order by p.start")
                     ->setParameter('start', $params['start'])  
                     ->setParameter('end', $params['end'])  
-                    ->useResultCache(true, 60) 
+                    ->useResultCache(true, 600) 
                     ->getResult();
             } else {
                 $part_events = $em->createQuery("select p from EventGeneralBundle:ActualInternalIndex p where p.id in ($ids_str) order by p.start")
-                    ->useResultCache(true, 60) 
+                    ->useResultCache(true, 600) 
                     ->getResult();
             }
 
@@ -174,7 +162,7 @@ class DefaultController extends Controller {
             $index = $em->createQuery("select p from EventGeneralBundle:ActualInternalIndex p where p.start >= :start and p.start <= :end order by p.start ASC")
                 ->setParameter('start', $params['start'])  
                 ->setParameter('end', $params['end'])  
-                ->useResultCache(true, 60) 
+                ->useResultCache(true, 600) 
                 ->getResult();
         } else {
             # Order
@@ -189,7 +177,7 @@ class DefaultController extends Controller {
                 $index = $em->createQuery("select p from EventGeneralBundle:ActualInternalIndex p order by p.catalogRate DESC, p.start ASC")
                     ->setMaxResults($params['limit'])
                     ->setFirstResult($params['offset'])
-                    ->useResultCache(true, 60) 
+                    ->useResultCache(true, 600) 
                     ->getResult();
             }
         }
@@ -207,64 +195,17 @@ class DefaultController extends Controller {
         }
     }
 
-    private function getSessionTags($session) {
-        $tags = $session->get('set_tags');
-
-        $tags_json = array();
-        if ($tags) {
-            $tags_json = json_decode($tags, 1);
-        }
-
-        return $tags_json;
-    }
-
-    public function setTagAction(Request $r) {
-        $tag = $r->get('tag');
-
-        if (!$tag) {
-            $answer = array( 'error' => 'no tag' );
-            return new Response(json_encode($answer));
-        }
-
-        # Get tags
-        $session = $r->getSession();
-        $tags = $this->getSessionTags($session);
-
-        $action = 'set';
-        if (!isset($tags[$tag])) {
-            $tags[$tag] = 1;
-        } else {
-            $action = 'unset';
-            unset($tags[$tag]);
-        }
-
-        $tags_str = json_encode($tags, 1);
-        $session->set('set_tags', $tags_str);
-
-        $answer = array( 'done' => 1, 'tags' => $tags, 'action' => $action );
-        return new Response(json_encode($answer));
-    }
-
-    public function unsetTagsAction(Request $r) {
-        # Get tags
-        $session = $r->getSession();
-        $tags = $this->getSessionTags($session);
-
-        $tags = array();
-
-        $tags_str = json_encode($tags, 1);
-
-        $session->set('set_tags', $tags_str);
-
-        $answer = array( 'done' => 1 );
-        return new Response(json_encode($answer));
-    }
+/* 
+==============================================================================
+                        LOGIN, LOGOUT & REGISTRATION 
+==============================================================================
+*/
 
     private function fetchUserById($id) {
         $em = $this->getDoctrine()->getManager();
         $users = $em->createQuery("select p from EventGeneralBundle:User p where p.id = :id")
             ->setParameter('id', $id)  
-            ->useResultCache(true, 60) 
+            ->useResultCache(true, 600) 
             ->getResult();
 
         if (!$users || count($users) == 0) {
@@ -279,7 +220,7 @@ class DefaultController extends Controller {
         $users = $em->createQuery("select p from EventGeneralBundle:User p where p.network = :network and p.networkId = :network_id")
             ->setParameter('network', $network)  
             ->setParameter('network_id', $network_id)  
-            ->useResultCache(true, 60) 
+            ->useResultCache(true, 600) 
             ->getResult();
 
         if ($users && count($users) > 0) {
@@ -295,48 +236,6 @@ class DefaultController extends Controller {
         return;
     }
 
-    private function checkSync($user_id, $session) {
-        $em = $this->getDoctrine()->getManager();
-
-        $sync_list = $em->createQuery("select p from EventGeneralBundle:Sync p where p.userId = :user_id")
-            ->setParameter('user_id', $user_id)  
-            ->getResult();
-
-        $sync = array();
-
-        if ($sync_list && isset($sync_list[0])) {
-            $sync = $sync_list[0];
-
-            if (!$sync->isLastSyncActual()) {
-                $sync->setAuthInfo( json_encode( array( 'access_token' => $session->get('access_token') ) ) );
-                $sync->setStatus(0);
-                $sync->setLastSync();
-
-                $em->persist($sync);
-                $em->flush();
-            }
-
-        } else {
-            $sync = new Sync;
-            $sync->setUserId( $user_id );
-            $sync->setNetwork( $session->get('network') );
-            $sync->setNetworkId( $session->get('network_id') );
-            $sync->setAuthInfo( json_encode( array( 'access_token' => $session->get('access_token') ) ) );
-            $sync->setStatus(0);
-            $sync->setLastSync();
-
-            $em->persist($sync);
-            $em->flush();
-        }
-
-        return $sync;
-    }
-
-/* 
-==============================================================================
-                        LOGIN, LOGOUT & REGISTRATION 
-==============================================================================
-*/
 
     private function registerVkUser($network_id, $auth) {
         $api = $this->get('vk_api');
@@ -506,7 +405,7 @@ class DefaultController extends Controller {
             'popular_tags' => $this->getPopularTags(),
             'tags_name_selected' => $tags,
             'my_tags' => $my_tags,
-            'my_tags_short' => array_slice($my_tags, 0, 30),
+            'my_tags_short' => array_slice($my_tags, 0, 23),
             'likes'   => $likes,
             'month_intervals' => $this->getMonthIntervals(),
         ));
@@ -540,6 +439,12 @@ class DefaultController extends Controller {
 
         return $ret;
     }
+
+/* 
+==============================================================================
+                        PERSONAL AFISHA 
+==============================================================================
+*/
 
     private function getPersonalAfisha($user, $session_tags, $interval) {
         $user_tags    = $user->getTagsList();
@@ -661,6 +566,44 @@ class DefaultController extends Controller {
 
         return new Response(json_encode($answer));
     }
+
+    private function checkSync($user_id, $session) {
+        $em = $this->getDoctrine()->getManager();
+
+        $sync_list = $em->createQuery("select p from EventGeneralBundle:Sync p where p.userId = :user_id")
+            ->setParameter('user_id', $user_id)  
+            ->getResult();
+
+        $sync = array();
+
+        if ($sync_list && isset($sync_list[0])) {
+            $sync = $sync_list[0];
+
+            if (!$sync->isLastSyncActual()) {
+                $sync->setAuthInfo( json_encode( array( 'access_token' => $session->get('access_token') ) ) );
+                $sync->setStatus(0);
+                $sync->setLastSync();
+
+                $em->persist($sync);
+                $em->flush();
+            }
+
+        } else {
+            $sync = new Sync;
+            $sync->setUserId( $user_id );
+            $sync->setNetwork( $session->get('network') );
+            $sync->setNetworkId( $session->get('network_id') );
+            $sync->setAuthInfo( json_encode( array( 'access_token' => $session->get('access_token') ) ) );
+            $sync->setStatus(0);
+            $sync->setLastSync();
+
+            $em->persist($sync);
+            $em->flush();
+        }
+
+        return $sync;
+    }
+
 
     public function syncStatusAction(Request $r) {
         $session = $r->getSession();
@@ -815,7 +758,7 @@ class DefaultController extends Controller {
             'events' => $pre_events,
             'tags_name_selected' => $tags,
             'my_tags' => $my_tags,
-            'my_tags_short' => array_slice($my_tags, 0, 30),
+            'my_tags_short' => array_slice($my_tags, 0, 23),
         ));
     }
 
@@ -1009,7 +952,7 @@ class DefaultController extends Controller {
             ->setParameter('start', $dt_start->format('Y-m-d'))  
             ->setParameter('end', $dt_end->format('Y-m-d'))  
             ->setParameter('event_id', $event_id)  
-            ->useResultCache(true, 60) 
+            ->useResultCache(true, 3600) 
             ->getResult();
 
         if (!$event || count($event) == 0) {
@@ -1102,6 +1045,41 @@ class DefaultController extends Controller {
         return $events;
     }
 
+    public function redirectTicketAction(Request $r) {
+        $secret = $r->get('secret');
+
+        $em = $this->getDoctrine()->getManager();
+        $ticket = $em->createQuery("select p from EventGeneralBundle:Ticket p where p.secret = :secret")
+            ->setParameter('secret', $secret)  
+            ->useResultCache(true, 3600) 
+            ->getResult();
+
+        if (!$ticket || count($ticket) == 0) {
+            throw new NotFoundHttpException("Page not found");
+        }
+
+        $ticket = $ticket[0];
+        
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:ProviderEvent');
+
+        $event = $rep->find( $ticket->getProviderEvent() );
+
+        if (!$event) {
+            throw new NotFoundHttpException("Page not found");
+        }
+
+        # Count redirect
+        $tr = new TicketRedirect;
+        $tr->setTicket( $ticket->getId() );
+        $tr->setEvent( $event->getId() );
+
+        $em->persist($tr);
+        $em->flush();
+
+        return $this->redirect( $event->getLink() );
+    }
+
 /* 
 ==============================================================================
                                 PROFILE PAGE 
@@ -1161,6 +1139,83 @@ class DefaultController extends Controller {
         ));
     }
 
+/* 
+==============================================================================
+                           USER ACTIONS 
+==============================================================================
+*/
+
+    private function getSessionTags($session) {
+        $tags = $session->get('set_tags');
+
+        $tags_json = array();
+        if ($tags) {
+            $tags_json = json_decode($tags, 1);
+        }
+
+        return $tags_json;
+    }
+
+    public function setTagAction(Request $r) {
+        $tag = $r->get('tag');
+
+        if (!$tag) {
+            $answer = array( 'error' => 'no tag' );
+            return new Response(json_encode($answer));
+        }
+
+        # Get tags
+        $session = $r->getSession();
+        $tags = $this->getSessionTags($session);
+
+        $action = 'set';
+        if (!isset($tags[$tag])) {
+            $tags[$tag] = 1;
+        } else {
+            $action = 'unset';
+            unset($tags[$tag]);
+        }
+
+        $tags_str = json_encode($tags, 1);
+        $session->set('set_tags', $tags_str);
+
+        $answer = array( 'done' => 1, 'tags' => $tags, 'action' => $action );
+        return new Response(json_encode($answer));
+    }
+
+    public function unsetTagsAction(Request $r) {
+        # Get tags
+        $session = $r->getSession();
+        $tags = $this->getSessionTags($session);
+
+        $tags = array();
+
+        $tags_str = json_encode($tags, 1);
+
+        $session->set('set_tags', $tags_str);
+
+        $answer = array( 'done' => 1 );
+        return new Response(json_encode($answer));
+    }
+
+
+    private function getUserLikes( $params = array() ) {
+        # Date Interval
+        $em = $this->getDoctrine()->getManager();
+        $likes = $em->createQuery("select p from EventGeneralBundle:UserLike p where p.start >= :start and p.start <= :end and p.userId = :user_id")
+            ->setParameter('start', $params['start'])  
+            ->setParameter('end', $params['end'])  
+            ->setParameter('user_id', $params['user_id'])  
+            ->getResult();
+
+        $ret = array();
+        foreach ($likes as $l) {
+            $ret[ $l->getIndexId() ] = $l;
+        }
+
+        return $ret;
+    }
+
     public function likeEventAction(Request $r) {
         $id   = $r->get('id');
         $type = $r->get('type');
@@ -1188,7 +1243,7 @@ class DefaultController extends Controller {
             $like_type = 2;
         }
 
-        // Lookup index info
+        // Lookup likes info
         $em = $this->getDoctrine()->getManager();
         $like = $em->createQuery("select p from EventGeneralBundle:UserLike p where p.indexId = :id and p.userId = :uid and p.type = :type")
             ->setParameter('id', $id)  
@@ -1296,6 +1351,12 @@ class DefaultController extends Controller {
         $answer = array( 'done' => 1 );
         return new Response(json_encode($answer));
     }
+
+/* 
+==============================================================================
+                          SUBSCRIBE 
+==============================================================================
+*/
 
     public function subscribeAction(Request $r) {
         $user_id = $r->get('uid');
@@ -1444,38 +1505,32 @@ class DefaultController extends Controller {
         return new Response(json_encode($names));
     }
 
+/* 
+==============================================================================
+                         CONTACTS PAGE 
+==============================================================================
+*/
 
-    public function redirectTicketAction(Request $r) {
-        $secret = $r->get('secret');
+    public function contactsAction(Request $r) {
+        // General info
+        $session = $r->getSession();
+        $user_id = $session->get('user_id');
 
-        $em = $this->getDoctrine()->getManager();
-        $ticket = $em->createQuery("select p from EventGeneralBundle:Ticket p where p.secret = :secret")
-            ->setParameter('secret', $secret)  
-            ->getResult();
-
-        if (!$ticket || count($ticket) == 0) {
-            throw new NotFoundHttpException("Page not found");
+        $user = array();
+        if ($user_id) {
+            $user = $this->fetchUserById($user_id);
         }
 
-        $ticket = $ticket[0];
-        
-        $rep = $this->getDoctrine()
-            ->getRepository('EventGeneralBundle:ProviderEvent');
-
-        $event = $rep->find( $ticket->getProviderEvent() );
-
-        if (!$event) {
-            throw new NotFoundHttpException("Page not found");
+        // Detect Mobile
+        $mob = $this->get('mobile_detect');
+        $template = 'EventGeneralBundle:Default:contacts.html.twig';
+        if ($mob->isMobile()) {
+            $template = 'EventGeneralBundle:Default:contacts.mob.html.twig';
         }
 
-        # Count redirect
-        $tr = new TicketRedirect;
-        $tr->setTicket( $ticket->getId() );
-        $tr->setEvent( $event->getId() );
-
-        $em->persist($tr);
-        $em->flush();
-
-        return $this->redirect( $event->getLink() );
+        return $this->render($template, array(
+            'user_id' => $user_id,
+            'user'    => $user,
+        ));
     }
 }

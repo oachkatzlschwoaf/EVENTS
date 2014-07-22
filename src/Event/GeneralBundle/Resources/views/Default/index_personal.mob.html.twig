@@ -1,12 +1,12 @@
 {% include 'EventGeneralBundle:Default:search_form.mob.html.twig' %}
 
 <div class="page-head">
-    <h2>Персональная афиша</h2>
+    <h3 class='margin-bottom-d1'>Персональная афиша</h3>
 </div>
 <div class="page-head-sub">
-    <small><a href="#" onclick="showTimeWindow()">время</a></small>
-    {% if my_tags_short is defined and my_tags_short|length > 0 %}<small><a href="#" onclick="showMyTagsWindow()">мои тэги</a></small>{% endif %}
-    <small><a href="#" onclick="showPopularTagsWindow()">популярные тэги</a></small>
+    <a href="#" onclick="showTimeWindow()">время</a>
+    {% if my_tags_short is defined and my_tags_short|length > 0 %}<a href="#" onclick="showMyTagsWindow()">мои тэги</a>{% endif %}
+    <a href="#" onclick="showPopularTagsWindow()">популярные тэги</a>
 </div>
 
 <div id="no-results" class='text-centered' style='display: none'>

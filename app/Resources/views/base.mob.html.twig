@@ -9,6 +9,8 @@
             <link href="{{ asset('css/kube.css') }}" rel="stylesheet" type="text/css">
             <link href="{{ asset('css/eventmate.mob.css') }}" rel="stylesheet" type="text/css">
             <link href="{{ asset('js/fancybox/jquery.fancybox.css') }}?v=2.1.5" rel="stylesheet"  type="text/css" media="screen" />
+
+            <link href="{{ asset('css/jquery.sidr.dark.css') }}" rel="stylesheet" type="text/css">
         {% endblock %}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
@@ -17,6 +19,8 @@
             <script src="{{ asset('js/jquery-2.1.1.min.js') }}" type="text/javascript"></script>
             <script src="{{ asset('js/eventmate.js') }}" type="text/javascript"></script>
             <script src="{{ asset('js/fancybox/jquery.fancybox.pack.js') }}?v=2.1.5" type="text/javascript"></script>
+
+            <script src="{{ asset('js/jquery.sidr.min.js') }}" type="text/javascript"></script>
 
             {% if top is defined and top == 'event' %} 
                 <script src="//api-maps.yandex.ru/2.1/?lang=ru_RU&load=Map,Placemark&key={{ yandex_key }}" type="text/javascript"></script>

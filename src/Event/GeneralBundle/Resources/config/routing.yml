@@ -42,6 +42,10 @@ ticket:
     pattern:  /ticket/{secret}
     defaults: { _controller: EventGeneralBundle:Default:redirectTicket }
 
+contacts:
+    pattern:  /contacts
+    defaults: { _controller: EventGeneralBundle:Default:contacts }
+
 # ADMIN
 
 admin:

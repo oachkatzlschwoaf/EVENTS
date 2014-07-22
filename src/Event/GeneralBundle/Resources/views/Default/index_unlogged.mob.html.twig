@@ -1,20 +1,21 @@
 <div class="container" id="welcome">
     <div class="unit-100 text-centered">
         {% set what_title = random(4) %}
-        {% if what_title == 0 %}
-            <h1>Без Лепса и Билана!</h1>
-        {% elseif what_title == 1 %}
-            <h1>Без Ай-нэ-нэ-нэ!</h1>
-        {% elseif what_title == 2 %}
-            <h1>Без #kircore!</h1>
-        {% elseif what_title == 3 %}
-            <h1><strike>Без тебя! Бееез тебя!</strike></h1>
-        {% elseif what_title == 4 %}
-            <h1>Без Михаила Стасова!</h1>
-        {% endif %}
-        <p>
+        <h3 class='margin-bottom-d1'>
+            {% if what_title == 0 %}
+                Без Лепса и Билана!
+            {% elseif what_title == 1 %}
+                Без Ай-нэ-нэ-нэ!
+            {% elseif what_title == 2 %}
+                Без #kircore!
+            {% elseif what_title == 3 %}
+                <strike>Без тебя! Бееез тебя!</strike>
+            {% elseif what_title == 4 %}
+                Без Михаила Стасова!
+            {% endif %}
+        </h3>
+        <p class="margin-bottom-d1">
             Любите музыку и мечтаете о персональной музыкальной афише без Лепса и Билана?  
-            Eventmate &mdash; афиша концертов, составленная по вашему плейлисту в социальной сети. 
         </p>
         <a href="#" class="btn btn-green margin-top-06" onclick="showLoginSignupWindow()">Составить афишу</a>
     </div>
@@ -23,10 +24,10 @@
 {% include 'EventGeneralBundle:Default:search_form.mob.html.twig' %}
 
 <div class="page-head">
-    <h2>Главные концерты</h2>
+    <h3 class="margin-0">Главные концерты</h3>
 </div>
 <div class="page-head-sub">
-    <small><a href="#" onclick="showPopularTagsWindow()">популярные тэги</a></small>
+    <a href="#" onclick="showPopularTagsWindow()">популярные тэги</a>
 </div>
 
 <div id="general_events_list">

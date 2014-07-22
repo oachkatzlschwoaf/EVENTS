@@ -1,14 +1,28 @@
 <div id="footer">
     <div class="text-centered padding-1">
-        <img src="{{ asset('images/eventmate-dark.png') }}" />
+        <img src="{{ asset('images/logo-dark.png') }}" />
     </div>
     <p>
-        © 2014 Eventmate.me 
+        © 2014 MusicMate 
         <br />
-        Использование материалов Eventmate разрешено только с предварительного согласия правообладателей. Все права на картинки принадлежат их авторам. 
+        Использование материалов MusicMate разрешено только с предварительного согласия правообладателей. Все права на картинки принадлежат их авторам. 
         <br />
         Сайт может содержать контент, не предназначенный для лиц младше 18 лет.
     </p>
+</div>
+
+<div id="sidr">
+    <ul>
+        <li {% if top is defined and top == 'index' %}class="active"{% endif %}>
+            <a href="{{ path('index') }}">{% if user_id %}Ваша афиша{% else %}Главная{% endif %}</a>
+        </li>
+        <li {% if top is defined and top == 'afisha' %}class="active"{% endif %}><a href="{{ path('afisha') }}">Афиша</a></li>
+        {% if not user_id %}
+            <li class='vk-menu'><a href="http://oauth.vk.com/authorize?client_id={{ vk_app_id }}&redirect_uri={{ vk_redirect }}&response_type=code&scope={{ vk_scope}}">Ваша афиша</a></li>
+        {% else %}
+            <li {% if top is defined and top == 'profile' %}class="active"{% endif %}><a href="{{ path('profile') }}">Профиль</a></li>
+        {% endif %}
+    </ul>
 </div>
 
 <div style='display:none'>
@@ -16,18 +30,18 @@
         <div class='head'>
             <div class='logo-img'></div> 
         </div>
-        <p class='color-gray-light'>Создайте персональную афишу авторизовавшись через Вконтакте</p>
+        <p class='margin-bottom-1'>Создайте персональную афишу авторизовавшись через Вконтакте</p>
         <a href="http://oauth.vk.com/authorize?client_id={{ vk_app_id }}&redirect_uri={{ vk_redirect }}&response_type=code&scope={{ vk_scope}}" class='btn btn-vk'><img src="{{ asset('images/logo_vk.png') }}" />Авторизоваться</a>
     </div>
 
     {% if popular_tags is defined %}
         <div id='popular-tags-window' class='text-centered window'>
             <h4>Популярные Тэги</h4>
-            <p id='popular-tags'>
+            <div class='popular-tags'>
                 {% for t in popular_tags %}
                     <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
                 {% endfor %}
-            </p>
+            </div>
             <a href="#" onclick="$.fancybox.close()" class="btn">Готово</a>
         </div>
     {% endif %}
@@ -35,11 +49,11 @@
     {% if my_tags_short is defined and my_tags_short|length > 0 %}
         <div id='my-tags-window' class='text-centered window'>
             <h4>Мои Тэги</h4>
-            <p id='my-tags'>
+            <div class='popular-tags'>
                 {% for t, val in my_tags_short %}
                     <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
                 {% endfor %}
-            </p>
+            </div>
             <a href="#" onclick="$.fancybox.close()" class="btn">Готово</a>
         </div>
     {% endif %}
@@ -48,7 +62,7 @@
         <div id='time-window' class='text-centered window'>
             <h4>Время</h4>
 
-            <nav class="nav nav-stroked">
+            <nav class="nav nav-stroked margin-bottom-1">
                 <ul>
                     <li><a href="#" interval="all" class='time-interval'>Все</a></li>
                     <li><a href="#" interval="weekend" class='time-interval'>Выходные</a></li>
@@ -83,5 +97,9 @@ util.api.get_sync_status = "{{ path('sync_status') }}";
 util.api.like = "{{ path('like_event') }}";
 util.api.update_email = "{{ path('updateUserEmail') }}";
 util.api.update_settings = "{{ path('updateUserSettings') }}";
+
+$(document).ready(function() {
+    $('#menu').sidr();
+});
 
 </script>

@@ -1,11 +1,13 @@
 <div class="container">
     <footer id="footer">
-        <p class="left">(C) EVENTMATE 2014</p>
-        <navbar class="navbar navbar-right">
+        <div class="left sans">
+            © 2014 MusicMate 
+        </div>
+        <navbar class="right navbar navbar-right">
             <ul>
-                <li>Главная</li>
-                <li>Афиша</li>
-                <li>Контакты</li>
+                <li><a href="{{ path('index') }}">Главная</a></li>
+                <li><a href="{{ path('afisha') }}">Афиша</a></li>
+                <li><a href="{{ path('contacts') }}">Контакты</a></li>
             </ul>
         </navbar>
     </footer>

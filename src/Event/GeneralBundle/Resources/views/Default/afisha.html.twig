@@ -1,6 +1,6 @@
 {% extends '::base.html.twig' %}
 
-{% block title %}Афиша - Eventmate{% endblock %}
+{% block title %}Афиша - MusicMate{% endblock %}
 
 {% block body %}
 
@@ -14,17 +14,15 @@
             </div>
 
             <div id="no-results" class='text-centered' {% if events|length > 0 %}style='display: none'{% endif %}>
-                <h3 class='color-gray-light'>Ой, событий не найдено</h3>
+                <h3 class='color-gray-light margin-bottom-0'>Ой, событий не найдено</h3>
                 <img src="{{ asset('images/sad_robot.png') }}">
                 
-                <div class='desc'>
-                    <small class='color-gray-light'>
-                        К сожалению, мы не нашли таких концертов! 
-                        <br />
-                        Попробуйте выбрать другое время или
-                        <br />
-                        <a href="#" id="unset-tags">отменить фильтр тегов</a>.
-                    </small>
+                <div class='desc color-gray-light'>
+                    К сожалению, мы не нашли таких концертов! 
+                    <br />
+                    Попробуйте выбрать другое время или
+                    <br />
+                    <a href="#" id="unset-tags">отменить фильтр тегов</a>.
                 </div>
             </div>
 
@@ -102,16 +100,16 @@
 
             {% if my_tags|length > 0 %}
                 <h4>Мои Тэги</h4>
-                <p class='popular_tags'>
+                <div class='popular_tags'>
                     {% for t, val in my_tags %}
                         <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
                     {% endfor %}
                     <a href="#" class='music-tag unset-tag'>Отменить тэги</a>
-                </p>
+                </div>
             {% endif %}
 
             <h4>Популярные Тэги</h4>
-            <p class='popular_tags'>
+            <div class='popular_tags'>
                 {% for t in popular_tags %}
                     <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
                 {% endfor %}
@@ -121,7 +119,7 @@
                 {% endif %}
 
                 <a href="#" class='music-tag unset-tag'>Отменить тэги</a>
-            </p>
+            </div>
         </div>
     </div>
 </div>

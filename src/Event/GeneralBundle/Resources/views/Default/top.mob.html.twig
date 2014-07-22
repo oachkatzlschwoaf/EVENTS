@@ -1,14 +1,6 @@
 <div class="units-row" id="top-bar">
-    <div class="unit-100">
+    <div class="unit-100 text-centered">
         <a href="{{ path('index') }}" id="logo"></a>
-        <nav class="top-nav">
-            <a href="{{ path('index') }}">{% if top is defined and top == 'index' %}<span>Главная</span>{% else %}Главная{% endif %}</a>
-            <a href="{{ path('afisha') }}">{% if top is defined and top == 'afisha' %}<span>Афиша</span>{% else %}Афиша{% endif %}</a>
-        </nav>
-        {% if not user_id %}
-            <a onclick="showLoginSignupWindow()" id="login-vk"></a>
-        {% else %}
-            <a href="{{ path('profile') }}" id="avatar" style="background-image: url('{{ user.getAdditionalInfo('photo_50') }}')"></a>
-        {% endif %}
+        <a href="#" id="menu" class="menu-icon"></a>
     </div>
 </div>

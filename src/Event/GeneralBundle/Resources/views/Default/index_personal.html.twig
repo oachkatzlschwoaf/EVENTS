@@ -7,17 +7,15 @@
                 </div>
 
                 <div id="no-results" class='unit-100 text-centered' style='display: none'>
-                    <h3 class='color-gray-light'>Ой, событий не найдено</h3>
+                    <h3 class='color-gray-light margin-bottom-0'>Ой, событий не найдено</h3>
                     <img src="{{ asset('images/sad_robot.png') }}">
 
-                    <div class='desc'>
-                        <small class='color-gray-light'>
-                            К сожалению, мы не нашли таких концертов! 
-                            <br />
-                            Попробуйте выбрать другое время или
-                            <br />
-                            <a href="#" id="unset-tags">отменить фильтр тегов</a>.
-                        </small>
+                    <div class='desc color-gray-light'>
+                        К сожалению, мы не нашли таких концертов! 
+                        <br />
+                        Попробуйте выбрать другое время или
+                        <br />
+                        <a href="#" id="unset-tags">отменить фильтр тегов</a>.
                     </div>
                 </div>
 
@@ -27,8 +25,8 @@
                         <h3 id="sync-status" class='subheading'>Статус синхронизации</h3>
                     </hgroup>
                     <img src="{{ asset('images/happy_robot.png') }}">
-                    <div class='desc'>
-                        <small class='color-gray'>Сейчас мы анализируем ваш плейлист<br />и подбираем для вас самые интересные концерты.<br />Первый раз это может занять несколько минут. <br />Спасибо за ожидание :-)</small>
+                    <div class='desc color-gray'>
+                        Сейчас мы анализируем ваш плейлист<br />и подбираем для вас самые интересные концерты.<br />Первый раз это может занять несколько минут. <br />Спасибо за ожидание :-)
                     </div>
                 </div>
 
@@ -51,21 +49,23 @@
                 </ul>
             </nav>
 
-            <h4>Мои Тэги</h4>
-            <p class='popular_tags'>
-                {% for t, val in my_tags %}
-                    <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
-                {% endfor %}
-                <a href="#" class='music-tag unset-tag'>Отменить тэги</a>
-            </p>
+            {% if my_tags|length > 0 %}
+                <h4>Мои Тэги</h4>
+                <div class='popular_tags'>
+                    {% for t, val in my_tags %}
+                        <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
+                    {% endfor %}
+                    <a href="#" class='music-tag unset-tag'>Отменить тэги</a>
+                </div>
+            {% endif %}
 
             <h4>Популярные Тэги</h4>
-            <p class='popular_tags'>
+            <div class='popular_tags'>
                 {% for t in popular_tags %}
                     <a href="#" class='music-tag {{ t|replace({' ': '-'}) }} {% if tags_name_selected[t] is defined and tags_name_selected[t] == 1 %}selected{% endif %}'>{{ t }}</a>
                 {% endfor %}
                 <a href="#" class='music-tag unset-tag'>Отменить тэги</a>
-            </p>
+            </div>
         </div>
     </div>
 </div>

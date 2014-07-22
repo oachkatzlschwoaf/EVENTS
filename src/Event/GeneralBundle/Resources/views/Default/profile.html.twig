@@ -3,16 +3,6 @@
 
 {% include 'EventGeneralBundle:Default:top.html.twig' %}
 
-<div class="container">
-    <div class="units-row">
-        <div class="unit-100">
-            <h1 class="left">{{ user.name }}</h1>
-
-            <a id="exit" alt="Выход" href="{{ path('logout') }}" class='icon-40 exit-icon right'></a>
-        </div>
-    </div>
-</div>
-
 <div class="container min-height-500">
     <div class="section group">
         {% if events|length == 0 %}
@@ -99,19 +89,19 @@
             </p>
 
             <h4>Мои тэги</h4>
-            <div id='my-tags' class='event-tags tags-list' style='width: 100%'>
+            <div id='my-tags' class='tags-list popular_tags'>
                 {% for tag, value in my_tags %}
                     <a href="{{ path('search') }}?query=(@tags_names+{{ tag }})&sort=date">{{ tag }}</a>
                 {% endfor %}
             </div>
             {% if my_tags|length >= 60 %}
-                <button id="more-tags" onclick="showMoreTags()" class="btn width-100">
+                <button onclick="showMoreTags()" class="btn width-100 margin-bottom-1d6">
                     показать больше    
                 </button>
             {% endif %}
 
             <h4>Мои артисты</h4>
-            <div id='my-artists' class='event-tags tags-list' style='width: 100%'>
+            <div id='my-artists' class='tags-list popular_tags'>
                 {% for artist, value in my_artists %}
                     <a href="{{ path('search') }}?query={{ artist }}&sort=date">{{ artist }}</a>
                 {% endfor %}
@@ -122,6 +112,9 @@
                 </button>
             {% endif %}
 
+            <a href="{{ path('logout') }}" class="btn btn-red width-100 margin-top-1d2">
+                выход 
+            </a>
         </div>
     </div>
 </div>
@@ -133,9 +126,9 @@
         </div>
         <div class='window-main-content'>
             <p class='color-gray'>
-                Мы заботимся о наших пользователях и не надоедаем назойлевыми письмами. Ваш персонализированный дайджест концертов приходит только один раз в неделю.
+                Мы заботимся о наших пользователях и не надоедаем назойливыми письмами. Ваш персонализированный дайджест концертов приходит только один раз в неделю.
             </p>
-            <form class="forms">
+            <form class="margin-bottom-0">
                 <label>
                     Адрес электронной почты:
                     <input type="email" id="user-email" name="user-email" class="width-100" style='width:100%' value="{{ user.email }}" />
