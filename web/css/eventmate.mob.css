@@ -44,8 +44,8 @@ p {
     margin-bottom: 1em;
 }
 
-.selected {
-    color: #d70a16;
+.margin-top-1 {
+    margin-top: 1em !important;
 }
 
 /* 
@@ -205,7 +205,7 @@ p {
 }
 
 .popular-tags .selected {
-    color: #d70a16;
+    color: #d70a16 !important;
     border: 1px solid #d70a16;
     box-shadow: none;
 }
@@ -228,9 +228,23 @@ p {
     text-decoration: none;
 }
 
+.music-tag:hover {
+    color: #777;
+}
+
 #time-window {
     min-width: 300px;
 }
+
+#time-window a:hover, a:active {
+    text-decoration: none;
+    color: #3570c3;
+}
+
+#time-window .selected, #time-window .selected:hover {
+    color: #d70a16;
+}
+
 
 #email-window {
     padding: .8em;
@@ -303,6 +317,12 @@ p {
     color: #777;
     background: rgba(255, 255, 255, 0.85);
     box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+
+.page-head-sub .selected {
+    color: #d70a16;
+    border: 1px solid #d70a16;
+    box-shadow: none;
 }
 
 #no-results {

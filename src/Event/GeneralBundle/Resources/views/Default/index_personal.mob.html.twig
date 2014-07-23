@@ -5,8 +5,8 @@
 </div>
 <div class="page-head-sub">
     <a href="#" onclick="showTimeWindow()">время</a>
-    {% if my_tags_short is defined and my_tags_short|length > 0 %}<a href="#" onclick="showMyTagsWindow()">мои тэги</a>{% endif %}
-    <a href="#" onclick="showPopularTagsWindow()">популярные тэги</a>
+    {% if my_tags_short is defined and my_tags_short|length > 0 %}<a href="#" id='show_my_tags' onclick="showMyTagsWindow()" {% if tags_name_selected|length > 0 %}class='selected'{% endif %}>мои тэги</a>{% endif %}
+    <a href="#" id='show_popular_tags' onclick="showPopularTagsWindow()" {% if tags_name_selected|length > 0 %}class='selected'{% endif %}>популярные тэги</a>
 </div>
 
 <div id="no-results" class='text-centered' style='display: none'>
@@ -45,6 +45,7 @@
 <script>
     var check_status_timer = { };
     var sync_status = {{ sync.status }};
+    var is_sync_now = {% if sync.status == 1 %}0{% else %}1{% endif %};
     var processing = false;
     var time_interval = "all";
 
@@ -104,6 +105,21 @@
         $('.music-tag').click(function(e) {
             setTag(this).done(function() {
                 showPersonalAfisha();
+
+                count = 0;
+                $.each(tags_name_selected, function(i, e) {
+                    if (e == 1) {
+                        count++;
+                    }
+                });
+
+                if (count > 0) {
+                    $('#show_my_tags').addClass('selected');
+                    $('#show_popular_tags').addClass('selected');
+                } else {
+                    $('#show_my_tags').removeClass('selected');
+                    $('#show_popular_tags').removeClass('selected');
+                }
             });
 
             e.preventDefault();

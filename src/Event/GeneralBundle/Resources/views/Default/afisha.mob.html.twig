@@ -9,9 +9,9 @@
     <h3 class="margin-0" id='afisha_title'>Ближайшие 2 недели</h3>
 </div>
 <div class="page-head-sub">
-    <a href="#" onclick="showTimeWindow()">время</a>
-    {% if user_id and my_tags_short is defined and my_tags_short|length > 0 %}<a href="#" onclick="showMyTagsWindow()">мои тэги</a>{% endif %}
-    <a href="#" onclick="showPopularTagsWindow()">популярные тэги</a>
+    <a id='show_time' href="#" onclick="showTimeWindow()">время</a>
+    {% if user_id and my_tags_short is defined and my_tags_short|length > 0 %}<a id='show_my_tags' href="#" onclick="showMyTagsWindow()" {% if tags_name_selected|length > 0 %}class='selected'{% endif %}>мои тэги</a>{% endif %}
+    <a id='show_popular_tags' href="#" onclick="showPopularTagsWindow()" {% if tags_name_selected|length > 0 %}class='selected'{% endif %}>популярные тэги</a>
 </div>
 
 <div id="no-results" class='text-centered' {% if events|length > 0 %}style='display: none'{% endif %}>
@@ -68,8 +68,23 @@
         $('.music-tag').click(function(e) {
             $('#no-results').hide();
 
-            setTag(this).done(function() {
+            setTag(this).done(function(data) {
                 getAfishaEvents();
+
+                count = 0;
+                $.each(tags_name_selected, function(i, e) {
+                    if (e == 1) {
+                        count++;
+                    }
+                });
+
+                if (count > 0) {
+                    $('#show_my_tags').addClass('selected');
+                    $('#show_popular_tags').addClass('selected');
+                } else {
+                    $('#show_my_tags').removeClass('selected');
+                    $('#show_popular_tags').removeClass('selected');
+                }
             });
 
             e.preventDefault();
@@ -80,7 +95,7 @@
             setPeriod(this); 
 
             $('#no-results').hide();
-            
+
             getAfishaEvents();
 
             e.preventDefault();

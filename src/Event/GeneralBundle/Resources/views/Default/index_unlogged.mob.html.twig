@@ -27,7 +27,7 @@
     <h3 class="margin-0">Главные концерты</h3>
 </div>
 <div class="page-head-sub">
-    <a href="#" onclick="showPopularTagsWindow()">популярные тэги</a>
+    <a href="#" id='show_popular_tags' onclick="showPopularTagsWindow()" {% if tags_name_selected|length > 0 %}class='selected'{% endif %}>популярные тэги</a>
 </div>
 
 <div id="general_events_list">
@@ -81,6 +81,19 @@
                         renderGeneralEvents(data.grid, data.events);
                         $('#general_events_list').fadeIn("fast");
                     });
+
+                    count = 0;
+                    $.each(tags_name_selected, function(i, e) {
+                        if (e == 1) {
+                            count++;
+                        }
+                    });
+
+                    if (count > 0) {
+                        $('#show_popular_tags').addClass('selected');
+                    } else {
+                        $('#show_popular_tags').removeClass('selected');
+                    }
                 });
             });
         });
