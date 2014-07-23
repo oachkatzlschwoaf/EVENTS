@@ -229,7 +229,7 @@ p {
     font-family: 'Museo Sans Cyr';
     font-weight: normal;
 
-    margin: .3em;
+    margin-right: .3em;
     padding: .05em .5em .05em .5em;
 
     color: #777;
@@ -239,10 +239,6 @@ p {
     border-radius: 2px;
 
     text-decoration: none;
-}
-
-.music-tag:first-child {
-    margin-left: 0px;
 }
 
 .music-tag:hover {
@@ -446,16 +442,17 @@ p {
 
 /* SIMILAR EVENTS */
 
-.desc-container .similar a {
-    color: #333;
-    padding: 0;
-}
-
 .desc-container .similar li {
     border-bottom: 1px solid #ccc;
+    padding-top: 10px;
 }
 
-.desc-container .similar li::first-child {
+.desc-container .similar li:first-child {
+    padding-top: 0;
+}
+
+.desc-container .similar a {
+    color: #333;
     padding: 0;
 }
 

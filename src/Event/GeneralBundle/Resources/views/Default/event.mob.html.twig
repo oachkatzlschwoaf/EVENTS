@@ -86,7 +86,7 @@
             <ul>
                 {% for e in similar %}
                     <li {% if loop.last %}style="border-bottom: none"{% endif %}>
-                        <h4 class="margin-0"><a href="{{ path('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}">{{ e.name }}</a></h4>
+                        <h4 class="margin-bottom-0"><a href="{{ path('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}">{{ e.name }}</a></h4>
                         <div class='tags'> 
                             {% for t in e.getTagsNamesList(0, 10) %}
                                 {{ t }}{% if not loop.last %},{% endif %}
