@@ -14,7 +14,7 @@
         <small>Отметьте понравившееся событие сердечком и вы его никогда не пропустите</small>
     </div>
 {% else %}
-    <div id="general_events_list" class="margin-top-06">
+    <div id="general_events_list" class="margin-top-d6">
         {% for e in events %}
             <a id="event_{{ e.id }}" href="{{ path('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}" class="container event-container {% if likes[e.id] is defined and likes[e.id].type == 2 %}hidden{% endif %}" style="background-image: url('{{ asset('uploads/catalog/small_' ~ e.internalId ~ '.jpg') }}')">
                 <div id='event-content_{{ e.id }}' class='content {% if likes[e.id] is defined %}likes-show{% endif %}'>

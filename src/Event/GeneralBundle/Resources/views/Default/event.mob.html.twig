@@ -6,35 +6,44 @@
 <div class="event-cover" style="background-image: url('{{ asset('uploads/catalog/small_' ~ event.id ~ '.jpg') }}')">
     <div class="content">
         <div class="head">
-            <p>{{ event.fullStartHuman() }}</p>
-            <h1>{{ event.name }}</h1>
+            <h5>{{ event.fullStartHuman() }}</h5>
+            <h2 class='margin-bottom-d1'>{{ event.name }}</h2>
             <h5>{{ place.name }}</h5>
         </div>
     </div>
 </div>
 
 <div class="desc-container">
+    {% if index.getTagsNamesList()|length > 0 %}
+        <div class='popular-tags'>
+            {% for tag in index.getTagsNamesList() %}
+                <a class='music-tag' href="{{ path('search') }}?query=(@tags_names+{{ tag }})&sort=date">{{ tag }}</a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+
     {% if event.description %}
         <div class='desc'>
             {{ event.description|raw }}
         </div>
     {% endif %}
 
-    <h5>Нравится?</h5>
-    <div class='buttons'>
+    <h4>Нравится?</h4>
+    <div class='buttons margin-bottom-1'>
         <a href="#" onclick='like({{ index.id }}); return false;' class='like icon-40 margin-right-10 
             {% if not like or (like and like.type == 2) %}like-icon{% else %}like-active-icon{% endif %}'></a>
         <a href="#" onclick='dislike({{ index.id }}); return false;' class='dislike icon-40 margin-right-10
             {% if not like or (like and like.type == 1) %}dislike-icon{% else %}dislike-active-icon{% endif %}'></a>
     </div>
 
-    <h5>Когда?</h5>
-    <p class='when'>
+    <h4>Когда?</h4>
+    <div class='margin-bottom-1'>
         {{ event.fullEventDate() }} - {{ event.howLong() }} 
-    </p>
+    </div>
 
-    <h5>Где?</h5>
-    <address>
+    <h4>Где?</h4>
+    <address class='margin-bottom-1'>
         {% if place.url %}<a href="{{ place.url }}">{{ place.name }}</a>{% else %}{{ place.name }}{% endif %}<br />
         {% if place.metro %}м. {{ place.metro }}<br>{% endif %}
         {% if place.address %}{{ place.address }}<br>{% endif %}
@@ -42,7 +51,7 @@
     </address>
 
     {% if tickets|length > 0 %}
-        <h5>Билеты</h5>
+        <h4>Билеты</h4>
 
         <table class='width-100'>
             <thead>
@@ -72,12 +81,17 @@
 
 {% if similar|length > 0 %}
     <div class="desc-container back-gray-light">
-        <h5>Похожие события</h5>
+        <h4 class='margin-bottom-d6'>Похожие события</h4>
         <nav class="nav similar">
             <ul>
                 {% for e in similar %}
                     <li {% if loop.last %}style="border-bottom: none"{% endif %}>
-                        <h4><a href="{{ path('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}">{{ e.name }}</a></h4>
+                        <h4 class="margin-0"><a href="{{ path('event', { 'year': e.getYear(), 'month': e.getMonth(), 'event_id': e.getUrlId() } ) }}">{{ e.name }}</a></h4>
+                        <div class='tags'> 
+                            {% for t in e.getTagsNamesList(0, 10) %}
+                                {{ t }}{% if not loop.last %},{% endif %}
+                            {% endfor %}
+                        </div>
                         <p>{{ e.fullEventDate() }} &mdash; {{ e.getPlaceInfo('name') }}</p>
                     </li>
                 {% endfor %}

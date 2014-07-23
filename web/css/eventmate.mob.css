@@ -40,12 +40,25 @@ p {
     margin-bottom: .1em;
 }
 
+.margin-bottom-d6 {
+    margin-bottom: .6em;
+}
+
 .margin-bottom-1 {
     margin-bottom: 1em;
 }
 
 .margin-top-1 {
     margin-top: 1em !important;
+}
+
+.margin-top-d6 {
+    margin-top: .6em !important;
+}
+
+
+.back-gray-light {
+    background: #eee !important;
 }
 
 /* 
@@ -228,6 +241,10 @@ p {
     text-decoration: none;
 }
 
+.music-tag:first-child {
+    margin-left: 0px;
+}
+
 .music-tag:hover {
     color: #777;
 }
@@ -256,6 +273,21 @@ p {
     margin-bottom: .4em;
 }
 
+.btn-vk {
+    background: #5a7ca0;
+    color: #fff;
+}
+
+.btn-vk img {
+    width: 22px;
+    margin-right: 10px;
+}
+
+.btn-vk:hover {
+  background: #4b6b8f;
+  color: #fff;
+}
+
 
 /* 
 ==============================================================================
@@ -280,12 +312,6 @@ p {
     text-align: center;
     margin-top: .9em;
     margin-bottom: .9em;
-}
-
-#load_more {
-    margin: 0 0 1.6em 0;
-    width: 97%; 
-    max-width: 710px;
 }
 
 .page-head {
@@ -330,66 +356,66 @@ p {
     min-height: 500px;
 }
 
-.btn-vk {
-    background: #5a7ca0;
-    color: #fff;
+#load_more {
+    margin: 0 0 1.6em 0;
+    width: 95%; 
+    max-width: 710px;
 }
 
-.btn-vk img {
-    width: 22px;
-    margin-right: 10px;
+.first-time {
+    min-height: 500px;
+    padding: 1.6em;
+    max-width: 500px;
+    margin: 0px auto;
 }
 
-.btn-vk:hover {
-  background: #4b6b8f;
-  color: #fff;
+.first-time hgroup {
+    height: 110px;
 }
 
+
+/* 
+==============================================================================
+                                PAGE: EVENT 
+==============================================================================
+*/
+
+/* COVER */
 
 .event-cover {
     display: block;
     position: relative; 
     height: 400px;
     width: 100%; 
-    background-color: #fff;
-    overflow: hidden;
-    background-position: center;
-    background-size: cover;
     max-width: 710px;
     margin: 0px auto;
+
+    background-color: #fff;
+    overflow: hidden;
+
+    background-position: center;
+    background-size: cover;
 }
 
 .event-cover .content {
     padding: 1em;
     height: 400px;
-    background: linear-gradient(to bottom, rgba(0,0,0,0) 30%,rgba(0,0,0,0.92) 100%);
+    background: linear-gradient(to bottom, rgba(0,0,0,0) 30%,rgba(0,0,0,0.87) 100%);
 }
 
 .event-cover .content .head {
     margin: 0px auto;
     margin-top: 220px;
+
     width: 80%;
     text-align: center;
 }
 
-.event-cover h1 {
-    color: #fff;
-    font-size: 21px;
-    margin-bottom: .2em;
-    max-height: 95px; 
-    overflow: hidden;
+.event-cover .content .head h2, .event-cover .content .head h5 {
+    color: #eee;
 }
 
-.event-cover p {
-    color: #eee;
-    font-size: 16px;
-    margin-bottom: .4em;
-}
-
-.event-cover h5 {
-    color: #eee;
-    font-size: 16px;
-}
+/* DESC & OTHER STUFF & TICKETS */
 
 .desc-container {
     display: block;
@@ -401,17 +427,8 @@ p {
     margin: 0px auto;
 }
 
-.when {
-    font-family: 'Museo Sans Cyr';
-    margin-bottom: .6em; 
-}
-
 .desc-container .desc p {
     margin-bottom: 1em;
-}
-
-.desc-container address {
-    margin-bottom: .6em; 
 }
 
 .desc-container table {
@@ -423,36 +440,48 @@ p {
     font-size: 13px;
 }
 
-.desc-container h5 {
-    font-size: 18px;
-}
-
 .desc-container td, th {
     padding: 5px 2px 5px 2px;
 }
 
-.back-gray-light {
-    background: #eee !important;
-}
-
-.desc-container .similar h4 {
-    line-height: 1.2em;
-}
+/* SIMILAR EVENTS */
 
 .desc-container .similar a {
-    color: #222;
+    color: #333;
     padding: 0;
 }
 
 .desc-container .similar li {
     border-bottom: 1px solid #ccc;
-    padding: 1em 0 0 0;
+}
+
+.desc-container .similar li::first-child {
+    padding: 0;
+}
+
+.desc-container .similar .tags {
+    color: #d70a16;
 }
 
 .desc-container .similar p {
     margin-bottom: 1em;
     color: #777;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #avatar {
     width: 40px;
@@ -483,25 +512,6 @@ p {
     margin-right: .2em;
 
     background-size: cover;
-}
-
-.first-time {
-    min-height: 500px;
-    padding: 1.6em;
-}
-
-.first-time hgroup {
-    height: 110px;
-}
-
-.first-time .header {
-    margin-bottom: .6em;
-}
-
-.first-time small {
-    display: block;
-    line-height: 1.5em;
-    margin-top: 2em;
 }
 
 .like-icon {
@@ -572,18 +582,8 @@ p {
     margin-right: .6em;
 }
 
-.buttons {
-    display: block;
-    overflow: hidden;
-    clear: both;
-}
-
 .hidden {
     opacity: .2;
-}
-
-.margin-top-06 {
-    margin-top: .6em !important;
 }
 
 #exit {
