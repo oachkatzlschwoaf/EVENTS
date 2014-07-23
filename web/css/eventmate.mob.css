@@ -7,6 +7,12 @@
 ==============================================================================
 */
 
+@media only screen and (max-width: 690px) {
+    #general_events_list {
+        text-align: center;
+    }
+}
+
 body {
     font-family: 'Museo Sans Cyr';
     background-color: #eee;
@@ -22,6 +28,10 @@ h1, h2, h3, h4 {
 
 p {
     font-family: 'Charis';
+}
+
+.hidden {
+    opacity: .2;
 }
 
 .padding-1 {
@@ -87,6 +97,11 @@ p {
 ==============================================================================
 */
 
+#general_events_list {
+    margin: 0px auto;
+    width: 97%; 
+    max-width: 710px;
+}
 
 .event-container {
     margin-bottom: .4em;
@@ -165,6 +180,18 @@ p {
 ==============================================================================
 */
 
+.menu-icon {
+    position: absolute;
+    top: 4px;
+    left: 5px;
+    background-image: url('../images/menu.png');
+    display: block;
+    width: 40px;
+    height: 40px;
+    background-size: 100% 100%;
+    margin-right: .6em;
+}
+
 #logo {
     display: block;
     background-image: url('../images/logo.png');
@@ -196,6 +223,70 @@ p {
     font-size: 14px;
     line-height: 16px;
 }
+
+/* 
+==============================================================================
+                            ELEMENT: LIKES 
+==============================================================================
+*/
+
+.like-icon {
+    background-image: url('../images/heart-inactive.png');
+    color: #000;
+}
+
+.like-icon:hover {
+    background-image: url('../images/heart-hover.png');
+    opacity: .8 !important;
+    color: #000;
+}
+
+.like-active-icon {
+    background-image: url('../images/active-heart.png');
+    opacity: 1 !important;
+    color: #d70a16;
+}
+
+.like-active-icon:hover {
+    background-image: url('../images/active-heart-hover.png');
+    opacity: 1 !important;
+    color: #d70a16;
+}
+
+.dislike-icon {
+    background-image: url('../images/broken-heart-inactive.png');
+    color: #000;
+}
+
+.dislike-icon:hover {
+    background-image: url('../images/broken-heart-hover.png');
+    opacity: .8 !important;
+    color: #000;
+}
+
+.dislike-active-icon {
+    background-image: url('../images/active-broken-heart.png');
+    opacity: 1 !important;
+    color: #d70a16;
+}
+
+.dislike-active-icon:hover {
+    background-image: url('../images/active-broken-heart-hover.png');
+    opacity: 1 !important;
+    color: #d70a16;
+}
+
+.icon-40 {
+    display: inline-block;
+    width: 40px;
+    height: 39px;
+    opacity: .5;
+    border-radius: 50px;
+    background-size: 100% 100%;
+    margin-right: .6em;
+}
+
+
 
 /* 
 ==============================================================================
@@ -287,7 +378,7 @@ p {
 
 /* 
 ==============================================================================
-                        PAGE: INDEX, AFISHA, SEARCH
+                    PAGE: INDEX, AFISHA, SEARCH, PROFILE
 ==============================================================================
 */
 
@@ -369,6 +460,11 @@ p {
     height: 110px;
 }
 
+#exit {
+    margin: 0 0 1.6em 0;
+    width: 97%; 
+    max-width: 710px;
+}
 
 /* 
 ==============================================================================
@@ -465,123 +561,3 @@ p {
     color: #777;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#login-vk {
-    width: 40px;
-    height: 40px;
-
-    background-image: url('../images/vk-login.png');
-    display: inline-block;
-    vertical-align: top;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    float: right;
-    margin-right: .2em;
-
-    background-size: cover;
-}
-
-.like-icon {
-    background-image: url('../images/heart-inactive.png');
-    color: #000;
-}
-
-.like-icon:hover {
-    background-image: url('../images/heart-hover.png');
-    opacity: .8 !important;
-    color: #000;
-}
-
-.like-active-icon {
-    background-image: url('../images/active-heart.png');
-    opacity: 1 !important;
-    color: #d70a16;
-}
-
-.like-active-icon:hover {
-    background-image: url('../images/active-heart-hover.png');
-    opacity: 1 !important;
-    color: #d70a16;
-}
-
-.dislike-icon {
-    background-image: url('../images/broken-heart-inactive.png');
-    color: #000;
-}
-
-.dislike-icon:hover {
-    background-image: url('../images/broken-heart-hover.png');
-    opacity: .8 !important;
-    color: #000;
-}
-
-.dislike-active-icon {
-    background-image: url('../images/active-broken-heart.png');
-    opacity: 1 !important;
-    color: #d70a16;
-}
-
-.dislike-active-icon:hover {
-    background-image: url('../images/active-broken-heart-hover.png');
-    opacity: 1 !important;
-    color: #d70a16;
-}
-
-.icon-40 {
-    display: inline-block;
-    width: 40px;
-    height: 39px;
-    opacity: .5;
-    border-radius: 50px;
-    background-size: 100% 100%;
-    margin-right: .6em;
-}
-
-.menu-icon {
-    position: absolute;
-    top: 4px;
-    left: 5px;
-    background-image: url('../images/menu.png');
-    display: block;
-    width: 40px;
-    height: 40px;
-    background-size: 100% 100%;
-    margin-right: .6em;
-}
-
-.hidden {
-    opacity: .2;
-}
-
-#exit {
-    margin: 0 0 1.6em 0;
-    width: 97%; 
-    max-width: 710px;
-}
-
-#general_events_list {
-    margin: 0px auto;
-    width: 97%; 
-    max-width: 710px;
-}
-
-@media only screen and (max-width: 690px) {
-    #general_events_list {
-        text-align: center;
-    }
-}
