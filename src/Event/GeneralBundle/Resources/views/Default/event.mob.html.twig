@@ -37,6 +37,13 @@
             {% if not like or (like and like.type == 1) %}dislike-icon{% else %}dislike-active-icon{% endif %}'></a>
     </div>
 
+    {% if event.getVideoList()|length > 0 %}
+        <h4>Послушать<h4>
+        {% for video in event.getVideoList() %}
+            <iframe width="210" height="118" src="//www.youtube.com/embed/{{ video }}?controls=0&showinfo=0" frameborder="0" allowfullscreen></iframe>
+        {% endfor %}
+    {% endif %}
+
     <h4>Когда?</h4>
     <div class='margin-bottom-1'>
         {{ event.fullEventDate() }} - {{ event.howLong() }} 
