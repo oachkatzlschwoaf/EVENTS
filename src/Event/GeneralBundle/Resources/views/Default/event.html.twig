@@ -101,7 +101,7 @@
             <div class="col span_9_of_12 event-content">
                 <h3>Послушать<h3>
                     {% for video in event.getVideoList() %}
-                        <iframe width="235" height="132" src="//www.youtube.com/embed/{{ video }}?controls=1&showinfo=1" frameborder="0" allowfullscreen></iframe>
+                        <iframe width="235" height="132" src="//www.youtube.com/embed/{{ video }}?controls=0&showinfo=1" frameborder="0" allowfullscreen></iframe>
                     {% endfor %}
             </div>
         </div>
