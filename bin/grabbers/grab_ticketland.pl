@@ -111,8 +111,8 @@ sub grabEvents {
     my $events = {};
 
     for (my $i = $start_page; $i <= $last_page; $i++) {  
-        #print "\n\tGET ".$url.$i.'/';
-        my $r = $ua->get($url.$i.'/');
+        #print "\n\tGET ".$url.'page-'.$i.'/';
+        my $r = $ua->get($url.'page-'.$i.'/');
         my $c = $r->decoded_content();
 
         my $t = HTML::TreeBuilder->new();
