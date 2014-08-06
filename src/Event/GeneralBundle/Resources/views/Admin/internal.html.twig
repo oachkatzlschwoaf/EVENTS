@@ -7,7 +7,21 @@
 
 <table class='top_menu'>
     <tr>
-        <td><a href="{{ path('internal_events') }}?status={{ internal_status }}&suspicious=1">Suspicious</a></td>
+        {% if internal_status == 1 %}
+            <td><a href="{{ path('internal_events') }}?status={{ internal_status }}">All</a></td>
+
+            {% if not suspicious %}
+                <td><a href="{{ path('internal_events') }}?status={{ internal_status }}&suspicious=1">Suspicious</a></td>
+            {% else %}
+                <td><b>Suspicious</b></td>
+            {% endif %}
+
+            {% if not no_text %}
+                <td><a href="{{ path('internal_events') }}?status={{ internal_status }}&no_text=1">Админка текстов</a></td>
+            {% else %}
+                <td><b>Админка текстов</b></td>
+            {% endif %}
+        {% endif %}
     </tr>
 </table>
 
@@ -45,7 +59,13 @@
                 <tr>
                     <td>{{ e.id }}</td>
 
-                    <td><a target="_blank" href="{{ path('internal_event', { "id": e.id }) }}">{{ e.name }}</a></td>
+                    <td>
+                        {% if not no_text %}
+                            <a target="_blank" href="{{ path('internal_event', { "id": e.id }) }}">{{ e.name }}</a>
+                        {% else %}
+                            <a target="_blank" href="{{ path('internal_event', { "id": e.id }) }}?text=1">{{ e.name }}</a>
+                        {% endif %}
+                    </td>
 
                     {% if matches_count[ e.id ] is defined and matches_count[ e.id ] > 0 %}
                         <td class='text-centered'>{{ matches_count[e.id] }}</td>
@@ -71,7 +91,7 @@
                         <td class="text-centered">+</td>
                     {% endif %}
 
-                    {% if e.description == '' %}
+                    {% if e.description|trim == '' %}
                         <td class="warning text-centered">-</td>
                     {% else %}
                         <td class="text-centered">+</td>

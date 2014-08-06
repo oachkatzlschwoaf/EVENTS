@@ -1,0 +1,71 @@
+<div style='width: 700px; margin-right: 20px; float: left;'>
+
+    <form id="general_form" action="{{ path('internal_event', { 'id': id }) }}?text=1" method="post" {{ form_enctype(form) }} novalidate>
+
+    <table class='settings'>
+        <thead>
+            <td colspan="2">
+                <h5>Параметры внутреннего события</h5>
+            </td>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Название</b></td>
+                <td>{{ event.name }}</td>
+            </tr>
+            <tr>
+                <td style='width: 20%'><b>Место</b></td>
+                <td style='width: 60%'><a href="{{ path('place', { 'id': event.place }) }}">{{ places[ event.place ].name }}</a></td>
+            </tr>
+            <tr>
+                <td><b>Дата</b></td>
+                <td>{{ event.getHumanStart() }}</td>
+            </tr>
+            <tr>
+                <td><b>Тэги</b></td>
+                <td>
+                    {% for t in event.getTagsList() %}
+                        {{ tags[t].name }}{% if not loop.last %},{% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" {% if not event.description or event.description|length < 100 %}class='notice-warning'{% endif %}><b>Описание</b></td>
+            </tr>
+            <tr>
+                <td colspan="2">{{ form_widget(form.description) }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center">
+                    <input type="button" onclick="preSubmit()" class="btn width-100" value="Сохранить" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    </form>
+</div>
+
+<div style='width: 450px; float: left;'>
+    {% if matched|length > 0 %}
+        <table class='settings' style='font-size: 12px;'>
+            <thead>
+                <tr>
+                    <td><h5>Внешние ссылки</h5></td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in matched %}
+                    <tr>
+                        <td>
+                            <a href="{{ matched_events[m.getProviderId].link }}" target="_blank">
+                                {{ matched_events[m.getProviderId].link }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+<div>

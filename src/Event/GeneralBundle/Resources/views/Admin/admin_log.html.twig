@@ -5,6 +5,14 @@
 
 {% include 'EventGeneralBundle:Admin:admin_menu.html.twig' %}
 
+<table class='top_menu'>
+    <tr>
+        <td><a href="{{ path('admin_log') }}">All</a></td>
+        <td><a href="{{ path('admin_log') }}?report=1">Reports</a></td>
+        <td><a href="{{ path('admin_log') }}?moderator=content2">content2</a></td>
+    </tr>
+</table>
+
 <table class='events'>
     <thead>
         <tr>
@@ -15,6 +23,8 @@
         </tr>
     </thead>
     <tbody>
+        {% set i = 0 %}
+
         {% for dt, e_id in agg_log %}
             <tr>
                 <td colspan="11" class='date' style='background: #ccc'><h5>{{ dt }}</h5></td>
@@ -23,15 +33,17 @@
             {% for l in agg_log[dt] %}
                 <tr 
                         {% if l.type == 1 %}
-                            style='background-color: #cfe66e'
+                            style='background-color: #ecffa7'
                         {% elseif l.type == 2 %}
                             style='background-color: #e0f294'
                         {% elseif l.type == 3 %}
-                            style='background-color: #ecffa7'
+                            style='background-color: #cfe66e'
                         {% elseif l.type == 6 %}
                             style='background-color: #ffcbcb'
                         {% elseif l.type == 8 %}
                             style='background-color: #ff4040'
+                        {% elseif l.type == 9 %}
+                            style='background-color: #5dcfc3'
                         {% endif %}
                 
                 >
@@ -53,6 +65,8 @@
                             daily report 
                         {% elseif l.type == 8 %}
                             cancel event 
+                        {% elseif l.type == 9 %}
+                            save text
                         {% endif %}
                     </td>
                     <td style='border: none'>
@@ -113,11 +127,19 @@
                             <li>Total: {{ l.getInfoVal('users').total }}</li>
                         {% elseif l.type == 8 %}
                             Cancel event: <a href="{{ path('internal_event', { id: l.getInfoVal('event_id') }) }}">{{ l.getInfoVal('event_name') }}</a>
+
+                        {% elseif l.type == 9 %}
+                            Save text: <a href="{{ path('internal_event', { id: l.getInfoVal('event_id') }) }}">{{ l.getInfoVal('event_name') }}</a>
                         {% endif %}
                     </td>
                     <td style='border: none'>
                         {% if l.getInfoVal('admin') %}
                             {{ l.getInfoVal('admin') }}
+
+                            {% if is_moderator and l.type == 3 %}
+                                ({{ sum_approved - i }})
+                                {% set i = i + 1 %}
+                            {% endif %}
                         {% endif %}
                     </td>
                 </tr>

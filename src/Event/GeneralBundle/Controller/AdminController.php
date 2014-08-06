@@ -360,6 +360,7 @@ class AdminController extends Controller {
 
     public function internalEventAction(Request $r) {
         $e_id = $r->get('id'); 
+        $is_text = $r->get('text'); 
 
         $em = $this->getDoctrine()->getManager();
         $rep = $this->getDoctrine()
@@ -374,17 +375,39 @@ class AdminController extends Controller {
         $form = $this->createForm(new InternalEventType(), $event);
 
         if ($r->getMethod() == 'POST') {
-            $form->handleRequest($r);
+            if (!$is_text) {
+                $form->handleRequest($r);
 
-            $process_tags = $this->processTags( $event->getTags() );
-            $event->setTags( implode(',', $process_tags) );
+                $process_tags = $this->processTags( $event->getTags() );
+                $event->setTags( implode(',', $process_tags) );
 
-            if ($form->isValid()) {
+                if ($form->isValid()) {
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($event);
+                    $em->flush();
+
+                    return $this->redirect($this->generateUrl('internal_event', array('id' => $event->getId())));
+                }
+            } else {
+                $data = $r->request->get('event_generalbundle_internalevent');
+                $event->setDescription($data['description']);
+
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($event);
                 $em->flush();
 
-                return $this->redirect($this->generateUrl('internal_event', array('id' => $event->getId())));
+                # Save admin action
+                $admin = $this->get('security.context')->getToken()->getUser();
+
+                $log = array('event_id' => $event->getId(), 'event_name' => $event->getName(), 'admin' => $admin->getUsername()); 
+
+                $aa = new AdminAction;
+                $aa->setType(9); // Action: text save 
+                $aa->setInfo( json_encode($log) );
+                $em->persist($aa);
+                $em->flush();
+
+                return $this->redirect($this->generateUrl('internal_event', array('id' => $event->getId(), 'text' => 1)));
             }
         }
 
@@ -428,6 +451,7 @@ class AdminController extends Controller {
 
         return $this->render('EventGeneralBundle:Admin:internal_event.html.twig', array(
             'id'   => $e_id,
+            'is_text' => $is_text,
             'event' => $event,
             'form' => $form->createView(),
             'internal_status' => $event->getStatus(),
@@ -446,6 +470,7 @@ class AdminController extends Controller {
     public function internalEventsAction(Request $r) {
         $status = $r->get('status');
         $suspicious = $r->get('suspicious');
+        $no_text = $r->get('no_text');
 
         if (!$status) {
             $status = 0;
@@ -462,6 +487,10 @@ class AdminController extends Controller {
         # Aggregate internal events
         $agg_events = array();
         foreach ($events as $e) {
+            if ($no_text && strlen($e->getDescription()) > 10) {
+                continue; 
+            }
+
             $agg_events[ $e->getHumanDate() ][ $e->getId() ] = $e;
         }
 
@@ -558,6 +587,8 @@ class AdminController extends Controller {
 
         return $this->render('EventGeneralBundle:Admin:internal.html.twig', array(
             'internal_status' => $status,
+            'suspicious' => $suspicious,
+            'no_text' => $no_text,
             'agg_events' => $agg_events,
             'agg_ipevents' => $agg_ipevents,
             'agg_ipevents_total' => $agg_ipevents_total,
@@ -1594,6 +1625,9 @@ class AdminController extends Controller {
     }
 
     public function adminLogAction(Request $r) {
+        $is_reports = $r->get('report');
+        $is_moderator = $r->get('moderator');
+
         $em = $this->getDoctrine()->getManager();
         
         # Get Provider events
@@ -1601,7 +1635,24 @@ class AdminController extends Controller {
             ->getResult();
 
         $agg_log = array();
+        $sum_approved = 0;
         foreach ($log as $e) {
+            if ($is_reports && $e->getType() != 4 && $e->getType() != 5 && $e->getType() != 6 && $e->getType() != 7) {
+                continue; 
+            }
+
+            if ($is_moderator && $e->getType() != 1 && $e->getType() != 2 && $e->getType() != 3 && $e->getType() != 8) {
+                continue; 
+            }
+
+            if ($is_moderator && $e->getInfoVal('admin') != 'admin') {
+                continue;
+            }
+
+            if ($is_moderator && $e->getType() == 3) {
+                $sum_approved++;
+            }
+
             $agg_log[ $e->getHumanDate() ][ $e->getId() ] = $e;
         }
 
@@ -1622,6 +1673,8 @@ class AdminController extends Controller {
         return $this->render('EventGeneralBundle:Admin:admin_log.html.twig', array(
             'admin_log' => 1,
             'log' => $log,
+            'is_moderator' => $is_moderator,
+            'sum_approved' => $sum_approved,
             'agg_log' => $agg_log,
             'providers' => $providers,
             'counters' => $counters,
