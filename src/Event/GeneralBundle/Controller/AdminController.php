@@ -1645,7 +1645,7 @@ class AdminController extends Controller {
                 continue; 
             }
 
-            if ($is_moderator && $e->getInfoVal('admin') != 'admin') {
+            if ($is_moderator && $e->getInfoVal('admin') != $is_moderator) {
                 continue;
             }
 
