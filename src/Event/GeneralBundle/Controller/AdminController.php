@@ -472,6 +472,7 @@ class AdminController extends Controller {
         $suspicious = $r->get('suspicious');
         $no_text = $r->get('no_text');
         $no_approved = $r->get('no_approved');
+        $by_rate = $r->get('by_rate');
 
         if (!$status) {
             $status = 0;
@@ -481,9 +482,17 @@ class AdminController extends Controller {
 
         # Get Internal Events
         $em = $this->getDoctrine()->getManager();
-        $events = $em->createQuery("select p from EventGeneralBundle:InternalEvent p where p.status = :status order by p.date")
-            ->setParameter('status', $status) 
-            ->getResult();
+        $events = array();
+        
+        if (!$by_rate) {
+            $events = $em->createQuery("select p from EventGeneralBundle:InternalEvent p where p.status = :status order by p.date")
+                ->setParameter('status', $status) 
+                ->getResult();
+        } else {
+            $events = $em->createQuery("select p from EventGeneralBundle:InternalEvent p where p.status = :status order by p.catalogRate")
+                ->setParameter('status', $status) 
+                ->getResult();
+        }
 
         # Aggregate internal events
         $agg_events = array();
@@ -594,6 +603,7 @@ class AdminController extends Controller {
             'internal_status' => $status,
             'suspicious' => $suspicious,
             'no_text' => $no_text,
+            'by_rate' => $by_rate,
             'no_approved' => $no_approved,
             'agg_events' => $agg_events,
             'agg_ipevents' => $agg_ipevents,
