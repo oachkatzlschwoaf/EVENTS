@@ -135,11 +135,10 @@
 
     </form>
 
+    <h3>Картинки для каталога</h3>
+
     <div class="col span_8_of_12 event-content">
         <table class='settings'>
-            <thead>
-                <td>Картинки</td>
-            </thead>
             <tbody>
                 <form action="{{ path('crop_image') }}" method="post" enctype='multipart/form-data'>
                     <input type="hidden" id="small_x" name="x" />
@@ -242,7 +241,13 @@
                         </td>
                     </tr>
                 </form>
+            </tbody>
+        </table>
 
+        <h3>Картинки для оформления</h3>
+
+        <table class='settings'>
+            <tbody>
                 <form action="{{ path('crop_image') }}" method="post" enctype='multipart/form-data'>
                     <input type="hidden" id="medium2_x" name="x" />
                     <input type="hidden" id="medium2_y" name="y" />
