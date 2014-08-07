@@ -793,4 +793,60 @@ class InternalEvent
     {
         return $this->createdAt;
     }
+    /**
+     * @var integer
+     */
+    private $approved;
+
+    /**
+     * @var string
+     */
+    private $moderator;
+
+
+    /**
+     * Set approved
+     *
+     * @param integer $approved
+     * @return InternalEvent
+     */
+    public function setApproved($approved)
+    {
+        $this->approved = $approved;
+
+        return $this;
+    }
+
+    /**
+     * Get approved
+     *
+     * @return integer 
+     */
+    public function getApproved()
+    {
+        return $this->approved;
+    }
+
+    /**
+     * Set moderator
+     *
+     * @param string $moderator
+     * @return InternalEvent
+     */
+    public function setModerator($moderator)
+    {
+        $this->moderator = $moderator;
+
+        return $this;
+    }
+
+    /**
+     * Get moderator
+     *
+     * @return string 
+     */
+    public function getModerator()
+    {
+        return $this->moderator;
+    }
 }

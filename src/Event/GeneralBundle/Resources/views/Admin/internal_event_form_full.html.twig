@@ -349,6 +349,21 @@
 </div>
 
 <div style='width: 450px; float: left;'>
+    {% if event.status == 1 %}
+        <table class='settings'>
+            <thead>
+                <td colspan="2"><h5>Модератор</h5></td>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        {{ event.moderator }}    
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    {% endif %}
+
     <table class='settings'>
         <thead>
             <td colspan="2"><h5>Действия</h5></td>
@@ -389,6 +404,33 @@
             {% endif %}
         </tbody>
     </table>
+
+    {% if event.status == 1 %}
+        <table class='settings'>
+            <thead>
+                <td 
+                {% if event.approved == 1 %}class="notice-blue-light"{% endif %}
+                colspan="2">
+                    {% if event.approved == 1 %}
+                        <h5>ОДОБРЕНО</h5>
+                    {% else %}
+                        <h5>Одобрение</h5>
+                    {% endif %}
+                </td>
+            </thead>
+            <tbody>
+                {% if event.approved == 1 %}
+                    <tr>
+                        <td><a href="{{ path('approve_internal_event', { 'id': id }) }}?status=0">Снять одобрение</a></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td><a href="{{ path('approve_internal_event', { 'id': id }) }}?status=1">Одобрить событие</a></td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    {% endif %}
 
     <table class='settings'>
         <thead>

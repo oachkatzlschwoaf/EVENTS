@@ -471,6 +471,7 @@ class AdminController extends Controller {
         $status = $r->get('status');
         $suspicious = $r->get('suspicious');
         $no_text = $r->get('no_text');
+        $no_approved = $r->get('no_approved');
 
         if (!$status) {
             $status = 0;
@@ -488,6 +489,10 @@ class AdminController extends Controller {
         $agg_events = array();
         foreach ($events as $e) {
             if ($no_text && strlen($e->getDescription()) > 10) {
+                continue; 
+            }
+
+            if ($no_approved && $e->getApproved() == 1) {
                 continue; 
             }
 
@@ -589,6 +594,7 @@ class AdminController extends Controller {
             'internal_status' => $status,
             'suspicious' => $suspicious,
             'no_text' => $no_text,
+            'no_approved' => $no_approved,
             'agg_events' => $agg_events,
             'agg_ipevents' => $agg_ipevents,
             'agg_ipevents_total' => $agg_ipevents_total,
@@ -816,19 +822,52 @@ class AdminController extends Controller {
             return $this->redirect($this->generateUrl('internal_events'));
         }
 
+        $admin = $this->get('security.context')->getToken()->getUser();
+
         $ie->setStatus( 1 ); # work
+        $ie->setModerator( $admin->getUsername() );
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($ie);
         $em->flush();
 
         # Save admin action
-        $admin = $this->get('security.context')->getToken()->getUser();
-
         $log = array('event_id' => $ie->getId(), 'event_name' => $ie->getName(), 'admin' => $admin->getUsername()); 
 
         $aa = new AdminAction;
         $aa->setType(3); // Action: event to work 
+        $aa->setInfo( json_encode($log) );
+        $em->persist($aa);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('internal_event', array('id' => $i_id)));
+    }
+
+    public function approveInternalEventAction(Request $r) {
+        $i_id = $r->get('id');
+        $status = $r->get('status');
+
+        $rep = $this->getDoctrine()
+            ->getRepository('EventGeneralBundle:InternalEvent');
+        $ie = $rep->find( $i_id );
+
+        if (!$ie) {
+            return $this->redirect($this->generateUrl('internal_events'));
+        }
+
+        $admin = $this->get('security.context')->getToken()->getUser();
+
+        $ie->setApproved( $status );
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($ie);
+        $em->flush();
+
+        # Save admin action
+        $log = array('event_id' => $ie->getId(), 'event_name' => $ie->getName(), 'admin' => $admin->getUsername()); 
+
+        $aa = new AdminAction;
+        $aa->setType(10); // Action: approve event 
         $aa->setInfo( json_encode($log) );
         $em->persist($aa);
         $em->flush();

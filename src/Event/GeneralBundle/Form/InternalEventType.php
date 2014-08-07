@@ -32,6 +32,8 @@ class InternalEventType extends AbstractType
             )))
             ->add('tags', 'hidden')
             ->add('status', 'hidden')
+            ->add('approved', 'hidden')
+            ->add('moderator', 'hidden')
             ->add('theme', 'choice', array(
                 'choices' => array(
                     0  => 'black',

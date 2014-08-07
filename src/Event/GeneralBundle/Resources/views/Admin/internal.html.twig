@@ -16,6 +16,12 @@
                 <td><b>Suspicious</b></td>
             {% endif %}
 
+            {% if not no_approved %}
+                <td><a href="{{ path('internal_events') }}?status={{ internal_status }}&no_approved=1">Не одобренные</a></td>
+            {% else %}
+                <td><b>Не одобренные</b></td>
+            {% endif %}
+
             {% if not no_text %}
                 <td><a href="{{ path('internal_events') }}?status={{ internal_status }}&no_text=1">Админка текстов</a></td>
             {% else %}
@@ -59,7 +65,7 @@
                 <tr>
                     <td>{{ e.id }}</td>
 
-                    <td>
+                    <td {% if e.approved == 1 %}class="notice-blue-light"{% endif %}>
                         {% if not no_text %}
                             <a target="_blank" href="{{ path('internal_event', { "id": e.id }) }}">{{ e.name }}</a>
                         {% else %}

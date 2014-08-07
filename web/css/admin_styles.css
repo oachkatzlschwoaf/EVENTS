@@ -87,6 +87,14 @@ h5 {
     color: #fff;
 }
 
+.notice-blue-light {
+    background-color: #6dbfed;
+}
+
+.notice-blue-light a {
+    color: #fff;
+}
+
 .notice-black a {
     color: white;
 }

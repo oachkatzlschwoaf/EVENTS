@@ -55,7 +55,6 @@ Event\GeneralBundle\Entity\InternalEvent:
             type: integer
             nullable: true
             column: big_theme 
-            nullable: true
         video:
             type: string
             length: 255
@@ -63,6 +62,13 @@ Event\GeneralBundle\Entity\InternalEvent:
         createdAt:
             type: datetime
             column: created_at
+        approved:
+            type: integer
+            nullable: true
+        moderator:
+            type: string
+            length: 255
+            nullable: true
     lifecycleCallbacks: 
         prePersist: [ processPrePersist ]
         postPersist: [ processPostPersist ]

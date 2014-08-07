@@ -403,8 +403,8 @@ class InternalEvent
     /**
      * @ORM\PrePersist
      */
-    public function processPrePersist()
-    {
+    public function processPrePersist() {
+        $this->setCreatedAt();
     }
 
     /**
@@ -732,7 +732,15 @@ class InternalEvent
         if (!$this->video) {
             return array();
         } else {
-            return explode(',', $this->video);
+            $arr = explode(',', $this->video);
+
+            $ret = array();
+            foreach ($arr as $e) {
+                $e = trim($e);
+                array_push($ret, $e);
+            }
+
+            return $ret;
         }
     }
 
@@ -758,4 +766,31 @@ class InternalEvent
         return implode(array_slice($parts, 0, $last_part));
     }
 
+    /**
+     * @var \DateTime
+     */
+    private $createdAt;
+
+
+    /**
+     * Set createdAt
+     *
+     * @param \DateTime $createdAt
+     * @return InternalEvent
+     */
+    public function setCreatedAt() {
+        $this->createdAt = new \DateTime;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return \DateTime 
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
 }
