@@ -14,6 +14,7 @@ security:
                     content2: { password: kSqSViZTYC63kTo, roles: [ 'ROLE_ADMIN' ] }
                     content3: { password: W4MZ61g3UN0Jp5f, roles: [ 'ROLE_ADMIN' ] }
                     content4: { password: dW4Gp738Bi7L00J, roles: [ 'ROLE_ADMIN' ] }
+                    content5: { password: 80cxC6I2aCV44Cn, roles: [ 'ROLE_ADMIN' ] }
 
     firewalls:
         secured_area:
