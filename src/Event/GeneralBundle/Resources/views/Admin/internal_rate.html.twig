@@ -1,0 +1,64 @@
+<table class='events'>
+    <thead>
+        <tr>
+            <td style='width: 3%'>id</td>
+            <td style='width: 25%'>название</td>
+            <td style='width: 3%'>cancel</td>
+            <td style='width: 3%'>rate</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in events %}
+            <tr>
+                <td>{{ e.id }}</td>
+                <td {% if e.approved == 1 %}class="notice-blue-light"{% endif %}>
+                    <a target="_blank" href="{{ path('internal_event', { "id": e.id }) }}">{{ e.name }}</a>
+                </td>
+                <td></td>
+                <td>{{ e.catalogRate }}</td>
+            </tr>
+            <tr>
+                <td colspan="4" class="event-content">
+                    <a id="small_preview" href="#" class="col span_3_of_12 event-block" style="background-image: url('{{ asset('uploads/catalog/small_' ~ e.id ~ '.jpg') }}')">
+                        <div class='event-content'>
+                            <div class='head'>
+                                <h3>{{ e.shortName(120) }}</h3>
+                            </div>
+
+                            <div class='additional'>
+                                <div class='date-time left'>
+                                    {{ e.shortStartHuman() }}
+                                </div>
+                                <ul class='tags right'>
+                                    {% for t in e.getTagsList()|slice(0,2) %}
+                                        <li>{{ tags[t].name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a id="medium_preview" href="#" class="col span_6_of_12 event-block" style="background-image: url('{{ asset('uploads/catalog/medium_' ~ e.id ~ '.jpg') }}')">
+                        <div class='event-content'>
+                            <div class='head'>
+                                <h3>{{ e.shortName(120) }}</h3>
+                            </div>
+
+                            <div class='additional'>
+                                <div class='date-time left'>
+                                    {{ e.shortStartHuman() }}
+                                </div>
+                                <ul class='tags right'>
+                                    {% for t in e.getTagsList()|slice(0,3) %}
+                                        <li>{{ tags[t].name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </a>
+                </td>
+
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

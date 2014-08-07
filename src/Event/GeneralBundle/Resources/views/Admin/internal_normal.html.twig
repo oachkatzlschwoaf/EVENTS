@@ -1,0 +1,98 @@
+<table class='events'>
+    <thead>
+        <tr>
+            <td style='width: 3%'>id</td>
+            <td style='width: 20%'>название</td>
+
+            <td style='width: 2%' class='text-centered'>событий</td>
+            <td style='width: 2%' class='text-centered'>тэги</td>
+            <td style='width: 2%' class='text-centered'>артисты</td>
+            <td style='width: 2%' class='text-centered'>URL</td>
+            <td style='width: 2%' class='text-centered'>опис.</td>
+            <td style='width: 2%' class='text-centered'>картин.</td>
+
+            <td style='width: 2%' class='text-centered'>рейтинг</td>
+
+            <td style='width: 10%'>место</td>
+            <td style='width: 5%'>время</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dt, e_id in agg_events %}
+            <tr>
+                <td colspan="11" class='date'><h5>{{ dt }}</h5></td>
+            </tr>
+            {% for e in agg_events[dt] %}
+                <tr>
+                    <td>{{ e.id }}</td>
+
+                    <td {% if e.approved == 1 %}class="notice-blue-light"{% endif %}>
+                        {% if not no_text %}
+                            <a target="_blank" href="{{ path('internal_event', { "id": e.id }) }}">{{ e.name }}</a>
+                        {% else %}
+                            <a target="_blank" href="{{ path('internal_event', { "id": e.id }) }}?text=1">{{ e.name }}</a>
+                        {% endif %}
+                    </td>
+
+                    {% if matches_count[ e.id ] is defined and matches_count[ e.id ] > 0 %}
+                        <td class='text-centered'>{{ matches_count[e.id] }}</td>
+                    {% else %}
+                        <td class='warning text-centered'>0</td>
+                    {% endif %}
+
+                    {% if e.getTagsList()|length == 0 %}
+                        <td class="warning text-centered">-</td>
+                    {% else %}
+                        <td class="text-centered">+</td>
+                    {% endif %}
+
+                    {% if e.getArtistsCount == 0 %}
+                        <td class="warning text-centered">-</td>
+                    {% else %}
+                        <td class="text-centered">{{ e.getArtistsCount }}</td>
+                    {% endif %}
+
+                    {% if e.urlName == '' %}
+                        <td class="warning text-centered">-</td>
+                    {% else %}
+                        <td class="text-centered">+</td>
+                    {% endif %}
+
+                    {% if e.description|trim == '' %}
+                        <td class="warning text-centered">-</td>
+                    {% else %}
+                        <td class="text-centered">+</td>
+                    {% endif %}
+
+                    <td {% if not e.getAddParam('catalog-image-small') or
+                        not e.getAddParam('catalog-image-medium') %}
+                        class='warning text-centered'
+                        {% else %}
+                        class='text-centered'
+                        {% endif %}>
+                        {% if e.getAddParam('catalog-image-small') %}
+                            <b>S</b>
+                        {% endif %}
+                        {% if e.getAddParam('catalog-image-medium') %}
+                            <b>M</b>
+                        {% endif %}
+                        {% if not e.getAddParam('catalog-image-small') or
+                        not e.getAddParam('catalog-image-medium') %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ e.catalogRate }}
+                    </td>
+
+                    <td {% if places[ e.place ].status == 0 %}class='warning'{% endif %}>
+                        {{ places[ e.place ].name }}
+                    </td>
+
+                    <td class="text-centered">{{ e.getHumanStartTime() }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
